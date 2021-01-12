@@ -1,0 +1,75 @@
+{% extends 'courses/layout.html' %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'courses/aquarium.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<main class="container-xl" style="text-align: center;">
+    <br>
+    {% if assign_only_list or new_courses_list %}
+    <div style="height: 100px; overflow-y: auto;">
+        <div style="width: 50%; float: left; text-align: left;">
+            <h5>Nuevos Cursos</h5>
+            <ul>
+                {% for course in new_courses_list %}
+                    <li>
+                        <a href="{% url 'courses:course' course.id %}" style="color: green;">
+                            {{course.date|date:"l"}} {{course.date}} desde {{course.start_time|date:"P"}} hasta {{course.end_time|date:"P"}}
+                        </a>
+                    </li>
+                {% empty %}
+                    - Ninguno
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="width: 50%; float: right; text-align: left;">
+            <h5>Clases donde se añadieron nuevos estudiantes</h5>
+            <ul>
+                {% for course in assign_only_list %}
+                    <li>
+                        <a href="{% url 'courses:course' course.id %}" style="color: rgb(185, 133, 0);">
+                            {{course.date|date:"l"}} {{course.date}} desde {{course.start_time|date:"P"}} hasta {{course.end_time|date:"P"}}
+                        </a>
+                    </li>
+                {% empty %}
+                    - Ninguno
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <br>
+    <hr>
+    {% endif %}
+    
+    <div style="text-align:center; margin-left: auto; margin-right: auto;">
+        <h5 style="color: crimson;">{{ message }}</h5>
+        <form id="form-date">
+            <div style="width: 50%; float: left; height: 200px;">
+                <h5>Fecha:</h5>
+                <input id="add-date" class="form-control" type="date" name="date" style="display: inline; width: 300px;" required> <br> <br>
+                <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Añadir Fecha">
+            </div>
+        </form>
+
+        <form action="{% url 'courses:create_course' %}" method="POST" id="create" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="width: 50%; float: right; text-align: center; height: 200px;">
+            <h5>Fechas Añadidas:</h5>
+                <select id="dates" name="dates" multiple class="form-control" style="width: 450px; height: 150px;margin-left: auto; margin-right: auto;" required></select>
+            </div>
+            <h5>Hora Inicio:</h5>
+            <input class="form-control" type="time" name="start_time" style="display: inline; width: 300px;" required> <hr>
+            <h5>Hora Final:</h5>
+            <input class="form-control" type="time" name="end_time" style="display: inline; width: 300px;" required> <hr>
+            <table style="text-align:center; margin-right: auto; margin-left: auto;">
+                {{ form.media }}
+                {{ form.as_table }}
+                <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+            </table>
+            <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Crear Curso"> <!--CREATE-->
+        </form>
+    </div>           
+</main>
+{% endblock %}

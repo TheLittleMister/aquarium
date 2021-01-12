@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Aquarium School</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <link href="{% static 'courses/styles.css' %}" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'courses/logo.png' %}" rel="icon">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand mb-0 h1" href="{% url 'courses:index' %}">
+                    <img src="{% static 'courses/nav3.png' %}" alt="Aquarium" height="31" class="d-inline-block align-top">
+                </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              {% if user.is_authenticated and user.is_admin %}
+              <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                <ul class="navbar-nav">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Estudiantes
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        <li class="nav-item">
+                            <a class="dropdown-item" href="{% url 'courses:index' %}">Ver Estudiantes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dropdown-item" href="{% url 'courses:create_student' %}">Crear Estudiante</a>
+                        </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Cursos
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        <li class="nav-item">
+                            <a class="dropdown-item" href="{% url 'courses:courses' %}">Ver Cursos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dropdown-item" href="{% url 'courses:create_course' %}">Crear Curso</a>
+                        </li>
+                    </ul>
+                  </li>
+                </ul>
+                <div class="navbar-nav">
+                  <a class="nav-link" href="{% url 'courses:assign' %}">Asignar</a>
+                </div>
+                <div class="navbar-nav ml-auto">
+                  <a class="nav-link" href="{% url 'courses:logout' %}">Salir</a>
+                </div>
+              
+              {% else %}
+                <div class="navbar-nav ml-auto">
+                  <a class="nav-link" href="{% url 'courses:login' %}">Entrar</a>
+                </div>
+              {% endif %}
+              </div>
+            </div>
+          </nav>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>

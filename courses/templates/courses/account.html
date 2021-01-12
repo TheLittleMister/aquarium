@@ -1,0 +1,276 @@
+{% extends 'courses/layout.html' %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'courses/aquarium.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+<br>
+    <main class="container-xl" style="text-align: center;">
+        <div>
+            <div style="width: 39%; float: left;">
+                <div class="table-responsive" style="text-align: center; display: inline-block;">
+                    <table class="table table-bordered"style="display: inline;">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th scope="col" style="text-align: center; background-color: #066DAF; color: white;">Información
+                                    <!---->
+                                    <div id="student-edit" style="display: inline-block;">
+                                        <a onclick="student_edit();" class="badge badge-info" style="padding: 5px;color: white;">EDITAR</a>
+                                    </div>
+                                    <div id="student-edit-back" style="display: none;">
+                                        <a onclick="student_edit_back();" class="badge badge-info" style="padding: 5px;color: white;">ATRAS</a>
+                                    </div>
+                                    <!---->
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:left;">
+                                <td style="background-color: #e3f2fd;">
+                                    <div style="width: 300px;">
+                                        <div style="text-align: center;">
+                                            <span id="quota" onclick="quota();" class="badge badge-warning" style="display: block;font-size: medium; overflow-x: auto;">
+                                                Saldo: ${{ student.amount }}
+                                            </span>
+                                            <form id="quota-form" style="display: none;" action="{% url 'courses:quota' student.id %}" method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="text" name="quota" class="form-control" style="display: inline; width: 200px;" placeholder="$" value="{{ student.amount }}" maxlength="100">
+                                                <input type="submit" style="color: black; display: inline;" class="btn btn-warning" value="Saldo" >
+                                            </form>
+                                        </div>
+                                    </div>                                   
+                                    <br>
+                                    {% if student.image %}
+                                    <h6 style="color: #066DAF; font-size: large;">Foto:</h6>
+                                    <div style="text-align: center;">
+                                        <img src="{{ student.image.url }}" alt="photo" style="width: 300px; height: 300px; border-radius: 50%;">
+                                    </div>
+                                    <hr>
+                                    {% endif %}
+                                    <h6 style="color: #066DAF; font-size: large;">Personal:</h6>
+                                        <p class="info">Nombres:</p> {{ student.first_name }} <br>
+                                        <p class="info">Apellidos:</p> {{ student.last_name }} <br> <br>
+                                        <p class="info">Tipo Documento:</p> {{ student.id_type }} <br>
+                                        <p class="info">No. Documento:</p> {{ student.identity_document }} <br> <br>
+                                        <p class="info">Nacionalidad:</p> {{ student.nationality }} <br>
+                                        <p class="info">Sexo:</p> {{ student.sex }} <br>
+                                        <p class="info">Edad:</p> {{ age }} años<br>
+                                        <p class="info">Fecha de Nacimiento:</p> {{ student.date_birth }}<br><hr>
+                                    <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
+                                        <p class="info">Correo:</p> {{ student.email }} <br>
+                                        <p class="info">Dirección:</p> {{ student.address }} <br> <br>
+                                        <p class="info">Teléfono/Celular(1):</p> {{ student.phone_1 }} <br>
+                                        <p class="info">Teléfono/Celular(2):</p> {{ student.phone_2 }} <br>
+                                        <hr>
+                                    {% if student.is_teacher == False %}
+                                        <h6 style="text-align: center; color: darkblue;">Estudiante</h6>
+                                    {% else %}
+                                        <h6 style="text-align: center; color: darkblue;">Profesor</h6>
+                                    {% endif %} 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="width: 61%; float: right;">
+                <div id="student-schedule" class="table-responsive" style="text-align: center; display: block;">
+                    <h5 style="background-color: #066DAF; color: white; padding: 10px;">Horario</h5>
+                    <table class="table table-bordered" style="display: inline;">
+                        <thead>
+                            <tr style="text-align: center; background-color: #e3f2fd;">
+                                <th scope="col">Hora</th>
+                                <th scope="col">Lunes</th>
+                                <th scope="col">Martes</th>
+                                <th scope="col">Miercoles</th>
+                                <th scope="col">Jueves</th>
+                                <th scope="col">Viernes</th>
+                                <th scope="col">Sabado</th>
+                                <th scope="col">Domingo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in schedule %}
+                            <tr style="text-align:center;">
+                                <td>
+                                    {% for info in row|slice:":1" %}
+                                        <!-- <p style="font-weight: bold; display: block;">{{ info }}</p> -->
+                                        <h6 style="font-size: medium;">{{ info|date:"P" }}</h6>
+                                    {% endfor %}
+                                    {% for info in row|slice:"1:2" %}
+                                        <!-- <p style="font-weight: bold; display: block;">{{ info }}</p> -->
+                                        <h6 style="font-size: medium; display: inline;">{{ info|date:"P" }}</h6>
+                                    {% endfor %}
+                                </td>
+                                {% for info in row|slice:"2:" %}
+                                <td style="color: #066DAF; font-weight: bold; font-size: large;">{{ info }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% empty %}
+                            <tr class="table-borderless">
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col" style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin</th>
+                                <th scope="col" style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Resultados</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div id="warning-message" class="table-responsive" style="text-align: center; display: block;">
+                    <table class="table table-bordered"style="display: inline;">
+                        <tbody>
+                            <tr style="text-align:left;">
+                                <h5 style="text-align: center; background-color: crimson; color: white; margin-bottom: -0.5px;">Importante</h5>
+                                <td class="alert alert-danger" data-alert="danger" role="alert">
+                                    <div class="alert" data-alert="danger" role="alert">
+                                        <p style="margin: -20px;"> 
+                                        Una vez asignado el horario, tu asistencia es 
+                                        <strong>fundamental</strong>.
+                                        Si no asistes, se da por vista la clase. 
+                                        <strong>No se puede cancelar la clase</strong>,
+                                        la única excepción es que traigas una 
+                                        <strong>excusa médica</strong> 
+                                        y la podrás reponer.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="student-next">
+                    <h5 style="background-color: #066DAF; color: white; margin-top: 30px; padding: 10px;">
+                        Próximas Clases:
+                        <a href="{% url 'courses:history' student.id %}" class="badge badge-info" style="margin-left: 50px; color: white;">Ver todos los cursos del Estudiante</a>
+                    </h5>
+                    <ul style="text-align: left; margin-top: 20px;">
+                        {% for course in page.object_list %}
+                        <li>
+                            <span class="badge badge-info">{{ course.students.all.count }}</span>
+                            <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                        </li>
+                        <hr>
+
+                        {% empty %}
+
+                        <li style="text-align: left; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</li>
+
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="student-pag" style="text-align: center; padding: 10px;">
+                    <nav aria-label="Page navigation">   
+                        <ul class="pagination justify-content-center">
+                            {% if page.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">begin</span>
+                                    </a>
+                                </li>   
+                            {% endif %}
+                    
+                            {% for n in page.paginator.page_range %}
+                                {% if page.number == n %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                                    </li>
+                                {% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                    
+                            {% if page.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">end</span>
+                                </a>
+                            </li>
+                            {% endif %}   
+                        </ul> 
+                    </nav>
+                </div>
+                <div id="student-form" style="text-align:left;  visibility: hidden;">
+                    <button id="student-delete" onclick="student_secure_delete();" class="btn btn-danger" style="font-size: small; font-weight: bold;">ELIMINAR ESTUDIANTE</button> <br>
+                    <form action="{% url 'courses:edit_student' student.id %}" method="POST" id="create" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h6 style="color: #066DAF; font-size: large;">Foto:</h6>
+                            {{ form }} <br><br>
+                            Tamaño máximo de la foto: <span style="color: crimson; font-weight: bold;">5 MB</span>
+                        <br> <hr>
+                        <h6 style="color: #066DAF; font-size: large;">Personal:</h6>
+                        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="text" name="first_name" placeholder="Nombres" value="{{ student.first_name }}">
+                        <input style="width: 40%; display: inline;" class="form-control" type="text" name="last_name" placeholder="Apellidos" value="{{ student.last_name }}">
+                        <br>
+                        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="id_type" aria-label="Default select example">
+                            {% for id in ids %}
+                                {% if id == student.id_type %}
+                                    <option value="{{id.id}}" selected>{{ id }}</option>
+                                {% else %}
+                                    <option value="{{id.id}}">{{ id }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input style="width: 40%; display: inline;" class="form-control" type="number" name="identity_document" placeholder="No. Documento" value="{{ student.identity_document }}">
+                        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="nationality" aria-label="Default select example">
+                            {% for nationality in nationalities %}
+                                {% if nationality == student.nationality %}
+                                    <option value="{{nationality.id}}" selected>{{ nationality }}</option>
+                                {% else %}
+                                    <option value="{{nationality.id}}">{{ nationality }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <select style="width: 40%; display: inline;" class="form-control" name="sex" aria-label="Default select example">
+                            {% for gender in sex %}
+                                {% if gender == student.sex %}
+                                    <option value="{{gender.id}}" selected>{{ gender }}</option>
+                                {% else %}
+                                    <option value="{{gender.id}}">{{ gender }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input style="width: 40%; display: inline; margin-right: 10px;" class="form-control" type="date" name="date_birth" placeholder="Fecha de Nacimiento" value="{{ date_birth }}">
+                        <input style="width: 40%; display: inline;" class="form-control" type="number" name="age" placeholder="Edad" value="{{ age }}">
+                        <br> <hr>
+                        <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
+                        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="email" name="email" placeholder="Email" value="{{ email }}">
+                        <input style="width: 40%; display: inline;" class="form-control" type="text" name="address" placeholder="Dirección" value="{{ student.address }}">
+                        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)" value="{{ student.phone_1 }}">
+                        <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)" value="{{ student.phone_2 }}"> <br>
+                        <hr>
+                        <table style="text-align:center;">
+                            {{ courses_form.media }}
+                            {{ courses_form.as_table }}
+                            <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+                        </table>
+                        <br>
+                        <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Guardar Información">
+                        <br><br>
+                    </form>
+                </div>
+                <div id="student_secure_delete" style="display: none;">
+                    <h6>¿Estas seguro/a que quieres <span style="color: crimson; font-weight: bold;">eliminar</span> el estudiante?:</h6>
+                    <h6>{{ student }}</h6>
+                    <a class="btn btn-danger" href="{% url 'courses:delete_student' student.id %}">Si</a>
+                    <button onclick="student_secure_delete_back();" class="btn btn-success">No</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+<br>
+
+{% endblock %}

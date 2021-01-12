@@ -1,0 +1,53 @@
+{% extends 'courses/layout.html' %}
+{% block body %}
+<main class="container-xl" style="text-align: center;">
+<br>
+<div style="text-align:center;">
+    <form action="{% url 'courses:create_student' %}" method="POST" id="create" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h6 style="color: #066DAF; font-size: large;">Foto:</h6>
+            <p style="margin-left: auto; margin-right: auto;">{{ form }}</p>
+            Tamaño máximo de la foto: <span style="color: crimson; font-weight: bold;">5 MB</span>
+        <br> <hr>
+        <h6 style="color: #066DAF; font-size: large;">Personal:</h6>
+        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="text" name="first_name" placeholder="Nombres" required>
+        <input style="width: 40%; display: inline;" class="form-control" type="text" name="last_name" placeholder="Apellidos" required>
+        <br>
+        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="id_type" aria-label="Default select example">
+            {% for id in ids %}
+                <option value="{{id.id}}">{{ id }}</option>
+            {% endfor %}
+        </select>
+        <input style="width: 40%; display: inline;" class="form-control" type="number" name="identity_document" placeholder="No. Documento">
+        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="nationality" aria-label="Default select example">
+            {% for nationality in nationalities %}
+                <option value="{{nationality.id}}">{{ nationality }}</option>
+            {% endfor %}
+        </select>
+        <select style="width: 40%; display: inline;" class="form-control" name="sex" aria-label="Default select example">
+            {% for gender in sex %}
+                <option value="{{gender.id}}" selected>{{ gender }}</option>
+            {% endfor %}
+        </select>
+        <input style="width: 40%; display: inline; margin-right: 10px;" class="form-control" type="date" name="date_birth" placeholder="Fecha de Nacimiento">
+        <input style="width: 40%; display: inline;" class="form-control" type="number" name="age" placeholder="Edad">
+        <br> <hr>
+        <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
+        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="email" name="email" placeholder="Email">
+        <input style="width: 40%; display: inline;" class="form-control" type="text" name="address" placeholder="Dirección">
+        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)">
+        <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)"> <br>
+        <hr>
+        <table style="text-align:center; margin-right: auto; margin-left: auto;">
+            {{ courses_form.media }}
+            {{ courses_form.as_table }}
+            <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+        </table>
+        <br>
+        <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Crear Estudiante"> <!--CREATE-->
+    </form>
+</div>
+<hr>
+</main>
+
+{% endblock %}

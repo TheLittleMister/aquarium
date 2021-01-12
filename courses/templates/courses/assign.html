@@ -1,0 +1,33 @@
+{% extends 'courses/layout.html' %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'courses/aquarium.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<main class="container-xl" style="text-align: center;">
+    <br>
+    <div style="text-align:center; margin-left: auto; margin-right: auto;">
+        <h3>Asignar</h3>
+        <hr>
+        <form action="{% url 'courses:assign' %}" method="POST" id="form-assign" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table style="text-align:center; margin-right: auto; margin-left: auto;">
+                {{ form.media }}
+                {{ form.as_table }}
+                <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+            </table>
+            <hr>
+            <table style="text-align:center; margin-right: auto; margin-left: auto;">
+                {{ courses_form.media }}
+                {{ courses_form.as_table }}
+                <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+            </table>
+            <input style="margin-left: auto; margin-right: auto;" class="btn btn-info" type="submit" value="Asignar">
+        </form>
+    </div>
+    <br>
+</main>
+    
+{% endblock %}

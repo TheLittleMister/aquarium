@@ -1,0 +1,24 @@
+{% extends "courses/layout.html" %}
+
+{% block body %}
+    <br>
+    <h2 style="text-align: center; padding-bottom: 30px;">Ingresar</h2>
+
+    {% if message %}
+        <div style="text-align: center; color: crimson;font-weight: bold;">{{ message }}</div>
+        <br>
+    {% endif %}
+    <div style="width:300px; text-align:center; margin-right: auto; margin-left:auto;">
+    <form action="{% url 'courses:login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" type="text" name="username" placeholder="Usuario" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Contraseña" required>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Entrar">
+    </form>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,271 @@
+{% extends 'courses/layout.html' %}
+{% block body %}
+    <main class="container" style="margin-top: 30px;">
+        <h2 style="text-align: center; background-color: #066DAF; color: white; padding: 30px; margin-bottom: 30px;">{{message}} Cursos:</h2>
+        <div style="width:500px; text-align:center; margin-right: auto; margin-left:auto; margin-bottom: 30px;">
+            <form action="{% url 'courses:courses' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input class="form-control" type="date" name="date" style="display: inline; width: 200px;" required>
+                <input class="btn btn-info" style="display: inline;" type="submit" value="Buscar Fecha">
+            </form>
+        </div>
+
+        {% if results or old_page or next_page %}
+
+                <div>
+                    <div class="table-responsive" style="text-align: center; display: inline-block;">
+                        {% if old_page %}
+                        <table class="table table-secondary" style="margin-left: auto; margin-right: auto;">
+                        {% elif next_page %}
+                        <table class="table table-warning" style="margin-left: auto; margin-right: auto;">
+                        {% else %}
+                        <table class="table table-primary" style="margin-left: auto; margin-right: auto;">
+                        {% endif %}
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th scope="col">{{ message }} Cursos
+                                        {% if results %}
+                                            <a href="{% url 'courses:print_search' results.first.id %}" class="badge badge-primary" style="margin-left: 50px; color: white;">Imprimir estos cursos</a>
+                                        {% endif %}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if old_page %}
+                                    {% for course in old_page.object_list reversed %}
+                                    <tr style="text-align:center;">
+                                        <td>
+                                            <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                            <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <nav aria-label="Page navigation">   
+                                        <ul class="pagination justify-content-center">
+                                            {% if old_page.has_previous %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=1" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                        <span class="sr-only">begin</span>
+                                                    </a>
+                                                </li>   
+                                            {% endif %}
+                                    
+                                            {% for n in old_page.paginator.page_range %}
+                                                {% if old_page.number == n %}
+                                                    <li class="page-item active">
+                                                        <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                                                    </li>
+                                                {% elif n > old_page.number|add:'-3' and n < old_page.number|add:'3' %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                    
+                                            {% if old_page.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ old_page.paginator.num_pages }}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                    <span class="sr-only">end</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}   
+                                        </ul> 
+                                    </nav>
+
+                                {% elif next_page %}
+
+                                    {% for course in next_page.object_list %}
+                                    <tr style="text-align:center;">
+                                        <td>
+                                            <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                            <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <nav aria-label="Page navigation">   
+                                        <ul class="pagination justify-content-center">
+                                            {% if next_page.has_previous %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=1" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                        <span class="sr-only">begin</span>
+                                                    </a>
+                                                </li>   
+                                            {% endif %}
+                                    
+                                            {% for n in next_page.paginator.page_range %}
+                                                {% if next_page.number == n %}
+                                                    <li class="page-item active">
+                                                        <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                                                    </li>
+                                                {% elif n > next_page.number|add:'-3' and n < next_page.number|add:'3' %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                    
+                                            {% if next_page.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ next_page.paginator.num_pages }}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                    <span class="sr-only">end</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}   
+                                        </ul> 
+                                    </nav>
+
+                                {% else %}
+                                    {% for course in results %}
+                                    <tr style="text-align:center;">
+                                        <td>
+                                            <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                            <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+        {% else %}
+        
+        <div>
+            <div class="table-responsive" style="text-align: center; display: inline-block;">
+                <table class="table table-success" style="margin-left: auto; margin-right: auto;">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th scope="col">Cursos de hoy
+                                <a href="{% url 'courses:print_courses' %}" class="badge badge-success" style="margin-left: 50px; color: white;">Imprimir cursos de hoy</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in today_page.object_list %}
+                        <tr style="text-align:center;">
+                            <td>
+                                <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation">   
+                <ul class="pagination justify-content-center">
+                    {% if today_page.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">begin</span>
+                            </a>
+                        </li>   
+                    {% endif %}
+            
+                    {% for n in today_page.paginator.page_range %}
+                        {% if today_page.number == n %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                            </li>
+                        {% elif n > today_page.number|add:'-3' and n < today_page.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% if today_page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ today_page.paginator.num_pages }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">end</span>
+                        </a>
+                    </li>
+                    {% endif %}   
+                </ul> 
+            </nav>
+            
+        </div>
+        <div>
+            <div style="width: 50%; float: left;">
+                <div class="table-responsive" style="text-align: center; display: inline-block;">
+                    <table class="table table-bordered table-secondary"style="margin-left: auto; margin-right: auto;">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th scope="col">Cursos Anteriores
+                                    <a href="{% url 'courses:past_courses' %}" class="badge badge-secondary" style="margin-left: 50px; color: white;">Ver todos los Cursos Anteriores</a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in old_courses|slice:":10" reversed %}
+                            <tr style="text-align:left;">
+                                <td>
+                                    <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                    <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="width: 50%; float: right;">
+                <div class="table-responsive" style="text-align: center; display: inline-block;">
+                    <table class="table table-bordered table-warning"style="margin-left: auto; margin-right: auto;">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th scope="col">Proximos Cursos
+                                    <a href="{% url 'courses:next_courses' %}" class="badge badge-warning" style="margin-left: 50px; color: black;">Ver todos los Proximos Cursos</a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in next_courses|slice:":10" %}
+                                <tr style="text-align:left;">
+                                    <td>
+                                        <span class="badge badge-info">{{ course.students.all.count }}</span>
+                                        <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+{% endblock %}

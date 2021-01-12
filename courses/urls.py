@@ -1,0 +1,37 @@
+from django.urls import path
+from django.conf.urls import url
+from django import views as django_views
+from . import views
+
+app_name = "courses"
+
+urlpatterns = [
+    url(r'^jsi18n/$', django_views.i18n.JavaScriptCatalog.as_view(), name='jsi18n'),
+    path("", views.index, name="index"), # "" == courses/
+    path("student/<int:account_id>", views.student, name="student"),
+    path("student/edit/<int:account_id>", views.edit_student, name="edit_student"),
+    path("student/history/<int:account_id>", views.student_history, name="history"),
+    path("student/create/", views.create_student, name="create_student"),
+    path("student/delete/<int:account_id>", views.delete_student, name="delete_student"),
+    path("course/<int:course_id>", views.course, name="course"),
+    path("course/edit/<int:course_id>", views.edit_course, name="edit_course"),
+    path("course/create/", views.create_course, name="create_course"),
+    path("course/print/<int:course_id>", views.print_course, name="print_course"),
+    path("course/print/search/<int:course_id>", views.print_search, name="print_search"),
+    path("course/print/today", views.print_courses, name="print_courses"),
+    path("course/delete/<int:course_id>", views.delete_course, name="delete_course"),
+    path("course/attendance/<int:course_id>", views.attendance_course, name="attendance_course"),
+    path("attendance/<int:attendance_id>", views.attendance, name="attendance"),
+    path("course/payment/<int:attendance_id>", views.payment, name="payment"),
+    path("courses", views.courses, name="courses"),
+    path("courses/all/past", views.past_courses, name="past_courses"),
+    path("courses/all/next", views.next_courses, name="next_courses"),
+    path("courses/past/<int:account_id>", views.past_student_courses, name="past_student_courses"),
+    path("courses/next/<int:account_id>", views.next_student_courses, name="next_student_courses"),
+    path("assign", views.assign, name="assign"),
+    path("quota/<int:student_id>", views.quota, name="quota"),
+
+    path("login", views.login_view, name="login"),
+    path("logout", views.logout_view, name="logout"),
+
+] 
