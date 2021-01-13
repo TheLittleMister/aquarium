@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+    <head>
+        <title>Aquarium School</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="{% static 'main/logo.png' %}" rel="icon">
+        <style>
+            body,h1 {font-family: "Raleway", sans-serif}
+            body, html {height: 100%}
+
+            .bgimg {
+            background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('{% static "main/water.jpg" %}');
+            min-height: 100%;
+            background-position: center;
+            background-size: cover;
+            }
+
+            .fa {
+                padding: 10px;
+                font-size: 30px;
+                width: 50px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 50%;
+            }
+
+            .fa:hover {
+                opacity: 0.7;
+            }
+
+            .fa-facebook {
+                background: #3B5998;
+                color: white;
+            }
+
+            .fa-instagram {
+                background: #125688;
+                color: white;
+            }
+
+            #admin:hover {
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+            <div class="w3-display-topright w3-padding-large w3-large" style="color: steelblue;">
+                <a id="admin "href="{% url 'courses:index' %}" target="_blank" style="text-decoration: none;">Admin</a>
+            </div>
+            <div class="w3-display-middle">
+              <img class="w3-jumbo w3-animate-top" src="{% static 'main/mainaq.png' %}">
+              <hr class="w3-border-grey" style="margin:auto;width:40%">
+              <p class="w3-large w3-center" style="color:steelblue; font-weight: bold;">MUY PRONTO</p>
+            </div>
+            <div class="w3-display-bottomleft w3-padding-large">
+                <a href="https://www.facebook.com/AquariumSchoolBogota" target="_blank" class="fa fa-facebook"></a>
+                <a href="https://www.instagram.com/aquarium.school/" target="_blank" class="fa fa-instagram"></a>
+            </div>
+          </div>
+
+    </body>
+</html>

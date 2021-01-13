@@ -30,18 +30,18 @@ class Attendance(models.Model):
 
     PAID = "PAGO"
     N_PAID = "NO PAGO"
-    DEF = "SEPARADO"
+    SEP = "SEPARADO"
     
     quota_choices = (
         (PAID, "PAGO"),
         (N_PAID, "NO PAGO"),
-        (DEF, "SEPARADO"),
+        (SEP, "SEPARADO"),
     )
 
     quota = models.CharField(
         max_length=10,
         choices=quota_choices,
-        default=DEF,
+        default=PAID,
     ) # SEPARADO / PAGO / NO PAGO
 
     amount = models.CharField(max_length=100)

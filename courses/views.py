@@ -44,7 +44,7 @@ class CourseForm(forms.Form):
 
         self.fields["students"].initial = students
 
-    students = forms.ModelMultipleChoiceField(queryset=Account.objects.all(), label="", widget=FilteredSelectMultiple("Estudiantes", is_stacked=False), required=True)
+    students = forms.ModelMultipleChoiceField(queryset=Account.objects.filter(is_admin=False), label="", widget=FilteredSelectMultiple("Estudiantes", is_stacked=False), required=True)
 
     class Media:
         css = {'all': ('/static/admin/css/widgets.css',),}
@@ -93,7 +93,7 @@ def index(request):
 
         else:
 
-            accounts = Account.objects.all().order_by("first_name", "last_name")
+            accounts = Account.objects.filter(is_admin=False).order_by("first_name", "last_name")
             account_paginator = Paginator(accounts, 13)
             page_num = request.GET.get("page")
             page = account_paginator.get_page(page_num)
@@ -666,7 +666,7 @@ def payment(request, attendance_id):
         else:
             attendance.cycle = False
         
-        # attendance.quota = request.POST["payment"]
+        attendance.quota = request.POST["payment"]
 
         if request.POST["amount"]:
             attendance.amount = request.POST["amount"]

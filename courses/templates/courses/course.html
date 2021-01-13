@@ -59,7 +59,7 @@
                                 {% endif %}
                                     <label for="cycle">CICLO</label><br>
                                 
-                                <!-- {% if attendance.quota == "SEPARADO" %}
+                                {% if attendance.quota == "SEPARADO" %}
                                     <input type="radio" id="def" name="payment" value="SEPARADO" checked>
                                 {% else %}
                                     <input type="radio" id="def" name="payment" value="SEPARADO">
@@ -78,7 +78,7 @@
                                 {% else %}
                                     <input type="radio" id="n_paid" name="payment" value="NO PAGO">
                                 {% endif %}
-                                    <label for="n_paid">NO PAGO</label> <br> -->
+                                    <label for="n_paid">NO PAGO</label> <br>
 
                                 💲: <input type="text" name="amount" placeholder="$" value="{{ attendance.amount }}" maxlength="100">
                                 <hr>
@@ -111,13 +111,31 @@
                                     </span>
                                     {% endif %}
 
-                                    <!-- {% if attendance.quota == "PAGO" %}
-                                        <span class="badge badge-success">CUPO {{ attendance.quota }}: ${{ attendance.amount }}</span>
-                                    {% elif attendance.quota == "NO PAGO" %}
-                                        <span class="badge badge-danger">CUPO {{ attendance.quota }}: ${{ attendance.amount }}</span>
-                                    {% else %}
-                                        <span class="badge badge-secondary">CUPO {{ attendance.quota }}</span> -->
-                                    <!-- {% endif %} -->
+                                    {% if attendance.quota == "PAGO" %}
+                                    <span class="badge badge-success">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% elif attendance.quota == "NO PAGO" %}
+                                    <span class="badge badge-danger">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-secondary">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
 
                                     <br>
                                     <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">

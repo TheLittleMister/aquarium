@@ -20,9 +20,10 @@ from django.views.static import serve
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', include("main.urls")),
     path('admin/', admin.site.urls),
     path('users/', include("users.urls")),
-    path('', include("courses.urls")),
+    path('courses/', include("courses.urls")),
 ] 
 
 if settings.DEBUG:

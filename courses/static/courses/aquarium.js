@@ -6,7 +6,7 @@ document.addEventListener("click", event => {
 
         id = element.id.slice(5,);
 
-        fetch(`/attendance/${id}`)
+        fetch(`/courses/attendance/${id}`)
         .then(response => response.json())
         .then(attendance => {
 

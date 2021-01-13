@@ -39,7 +39,7 @@ ALLOWED_HOSTS = ['localhost', '172.104.13.4', 'aquariumschool.co', 'www.aquarium
 INSTALLED_APPS = [
     'users',
     'courses',
-#    'djangosecure',
+    'main',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
