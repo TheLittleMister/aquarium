@@ -15,7 +15,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand mb-0 h1" href="{% url 'courses:index' %}">
+                <a class="navbar-brand mb-0 h1" href="{% url 'main:index' %}">
                     <img src="{% static 'courses/nav3.png' %}" alt="Aquarium" height="31" class="d-inline-block align-top">
                 </a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@
                   <a class="nav-link" href="{% url 'courses:assign' %}">Asignar</a>
                 </div>
                 <div class="navbar-nav ml-auto">
-                  <a class="nav-link" href="{% url 'courses:logout' %}">Salir</a>
+                  <a class="nav-link" href="{% url 'courses:logout' %}">CERRAR SESIÓN</a>
                 </div>
               
               {% else %}
