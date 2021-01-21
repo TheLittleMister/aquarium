@@ -3,6 +3,13 @@
 <main class="container-xl" style="text-align: center;">
 <br>
 <div style="text-align:center;">
+    {% if message %}
+        <p style="color: crimson;">{{ message }}
+            <a href="{% url 'courses:student' student.id %}">
+                {{ student.first_name }} {{ student.last_name }}
+            </a>
+        </p>
+    {% endif %}
     <form action="{% url 'courses:create_student' %}" method="POST" id="create" enctype="multipart/form-data">
         {% csrf_token %}
         <h6 style="color: #066DAF; font-size: large;">Foto:</h6>

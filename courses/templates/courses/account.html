@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block script %}
-    <script src="{% static 'courses/aquarium.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'courses/account.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -17,12 +18,12 @@
                             <tr style="text-align: center;">
                                 <th scope="col" style="text-align: center; background-color: #066DAF; color: white;">Información
                                     <!---->
-                                    <div id="student-edit" style="display: inline-block;">
-                                        <a onclick="student_edit();" class="badge badge-info" style="padding: 5px;color: white;">EDITAR</a>
-                                    </div>
-                                    <div id="student-edit-back" style="display: none;">
-                                        <a onclick="student_edit_back();" class="badge badge-info" style="padding: 5px;color: white;">ATRAS</a>
-                                    </div>
+                                    <a onclick="student_edit();" id="student-edit" style="display: inline-block; padding: 5px;" class="badge badge-info">
+                                        EDITAR
+                                    </a>
+                                    <a onclick="student_edit_back();" id="student-edit-back" style="display: none; padding: 5px;" class="badge badge-info">
+                                        ATRÁS
+                                    </a>
                                     <!---->
                                 </th>
                             </tr>
@@ -50,20 +51,79 @@
                                     </div>
                                     <hr>
                                     {% endif %}
+                                    {% if message %}
+                                        <p style="color: crimson;">{{ message }}</p>
+                                    {% endif %}
+                                    {% if message1 %}
+                                        <p style="color: crimson;">{{ message1 }}</p>
+                                    {% endif %}
                                     <h6 style="color: #066DAF; font-size: large;">Personal:</h6>
                                         <p class="info">Nombres:</p> {{ student.first_name }} <br>
-                                        <p class="info">Apellidos:</p> {{ student.last_name }} <br> <br>
+                                        {% if student.first_name_1 != None %}
+                                            {% if student.first_name_1 != "" %}
+                                                {% if student.first_name_1 != student.first_name %}
+                                                    <a href="{% url 'courses:update_first_name' student.id %}"><span id="rcheck" class="badge badge-warning">✓</span></a>
+                                                    <a href="{% url 'courses:reject_first_name' student.id %}"><span id="rxcheck" class="badge badge-warning">✗</span></a>
+                                                    
+                                                    <p class="info" style="color:darkorange;">Nombres: {{ student.first_name_1 }}</p>  <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+
+                                        <p class="info">Apellidos:</p> {{ student.last_name }} <br>
+                                        {% if student.last_name_1 != None %}
+                                            {% if student.last_name_1 != "" %}
+                                                {% if student.last_name_1 != student.last_name %}
+                                                    <a href="{% url 'courses:update_last_name' student.id %}"><span id="rcheck1" class="badge badge-warning">✓</span></a> 
+                                                    <a href="{% url 'courses:reject_last_name' student.id %}"><span id="rxcheck1" class="badge badge-warning">✗</span></a>
+                                                    <p class="info" style="color:darkorange;">Apellidos: {{ student.last_name_1 }}</p>  <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                        <br>
+
                                         <p class="info">Tipo Documento:</p> {{ student.id_type }} <br>
-                                        <p class="info">No. Documento:</p> {{ student.identity_document }} <br> <br>
+                                        <p class="info">No. Documento:</p> {{ student.identity_document }} <br> 
+                                        {% if student.identity_document_1 != None %}
+                                            {% if student.identity_document_1 != "" %}
+                                                {% if student.identity_document_1 != student.identity_document %}
+                                                    <a href="{% url 'courses:update_id' student.id %}"><span id="rcheck2" class="badge badge-warning">✓</span></a>
+                                                    <a href="{% url 'courses:reject_id' student.id %}"><span id="rxcheck2" class="badge badge-warning">✗</span></a>
+
+                                                    <p class="info" style="color:darkorange;">No. Documento: {{ student.identity_document_1 }}</p>  <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                        <br>
                                         <p class="info">Nacionalidad:</p> {{ student.nationality }} <br>
                                         <p class="info">Sexo:</p> {{ student.sex }} <br>
                                         <p class="info">Edad:</p> {{ age }} años<br>
                                         <p class="info">Fecha de Nacimiento:</p> {{ student.date_birth }}<br><hr>
-                                    <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
+                                        <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
                                         <p class="info">Correo:</p> {{ student.email }} <br>
                                         <p class="info">Dirección:</p> {{ student.address }} <br> <br>
                                         <p class="info">Teléfono/Celular(1):</p> {{ student.phone_1 }} <br>
+                                        {% if student.phone_1_1 != None %}
+                                            {% if student.phone_1_1 != "" %}
+                                                {% if student.phone_1_1 != student.phone_1 %}
+                                                    <a href="{% url 'courses:update_phone_1' student.id %}"><span id="rcheck3" class="badge badge-warning">✓</span></a>
+                                                    <a href="{% url 'courses:reject_phone_1' student.id %}"><span id="rxcheck3" class="badge badge-warning">✗</span></a>
+                                                    
+                                                    <p class="info" style="color:darkorange;">Teléfono/Celular(1): {{ student.phone_1_1 }}</p>  <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
                                         <p class="info">Teléfono/Celular(2):</p> {{ student.phone_2 }} <br>
+                                        {% if student.phone_2_1 != None %}
+                                            {% if student.phone_2_1 != "" %}
+                                                {% if student.phone_2_1 != student.phone_2 %}
+                                                    <a href="{% url 'courses:update_phone_2' student.id %}"><span id="rcheck4" class="badge badge-warning">✓</span></a> 
+                                                    <a href="{% url 'courses:reject_phone_2' student.id %}"><span id="rxcheck4" class="badge badge-warning">✗</span></a>
+
+                                                    <p class="info" style="color:darkorange;">Teléfono/Celular(2): {{ student.phone_2_1 }}</p>  <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
                                         <hr>
                                     {% if student.is_teacher == False %}
                                         <h6 style="text-align: center; color: darkblue;">Estudiante</h6>
@@ -204,7 +264,7 @@
                 </div>
                 <div id="student-form" style="text-align:left;  visibility: hidden;">
                     <button id="student-delete" onclick="student_secure_delete();" class="btn btn-danger" style="font-size: small; font-weight: bold;">ELIMINAR ESTUDIANTE</button> <br>
-                    <form action="{% url 'courses:edit_student' student.id %}" method="POST" id="create" enctype="multipart/form-data">
+                    <form action="{% url 'courses:student' student.id %}" method="POST" id="create" enctype="multipart/form-data">
                         {% csrf_token %}
                         <h6 style="color: #066DAF; font-size: large;">Foto:</h6>
                             {{ form }} <br><br>

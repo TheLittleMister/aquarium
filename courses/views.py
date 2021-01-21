@@ -106,7 +106,7 @@ def index(request):
             })
     
     else:
-        return HttpResponseRedirect(reverse("courses:login"))
+        return HttpResponseRedirect(reverse("login"))
 
 @staff_member_required
 def courses(request):
@@ -140,9 +140,283 @@ def courses(request):
         })
 
 @staff_member_required
+def create_student(request):
+
+    if request.method == "POST":
+
+        valid = False
+        i = 0
+
+        while valid == False: # DANGER - CAREFUL
+
+            try:
+                username = unidecode.unidecode(request.POST["first_name"]).upper() + " " + unidecode.unidecode(request.POST["last_name"]).upper() + " " + str(i)
+                student = Account.objects.create_user(username=username, password="AquariumSchool")
+                valid = True
+
+            except:
+                i += 1
+        
+        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper().strip()
+        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper().strip()
+        student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
+
+        if request.POST["email"]:
+
+            try:
+                already = Account.objects.get(email=request.POST["email"].lower())
+                student.delete()
+                message = "Correo ya está en uso por:"
+
+                return render(request, 'courses/create_student.html', {
+                    "student": already,
+                    "message": message,
+                    "ids": Id_Type.objects.all(),
+                    "nationalities": Nationality.objects.all(),
+                    "sex": Sex.objects.all(),
+                    "courses_form": Student_CourseForm(
+                        courses = None,
+                    ),
+                    "form": StudentForm(
+                        image = None,
+                    )
+                })
+
+            except:
+                student.email = request.POST["email"].lower()
+            
+        else:
+            student.email = None
+
+        
+        if request.POST["identity_document"].isdigit():
+
+            check = 0
+
+            try:
+                already = Account.objects.get(identity_document=request.POST["identity_document"])
+                check += 1
+
+            except:
+                pass
+
+            try:
+                already = Account.objects.get(identity_document_1=request.POST["identity_document"])
+                check += 1
+            
+            except:
+                pass
+            
+            
+            if check > 0:
+                student.delete()
+                message = " No. de Documento ya está en uso por:"
+
+                return render(request, 'courses/create_student.html', {
+                    "student": already,
+                    "message": message,
+                    "ids": Id_Type.objects.all(),
+                    "nationalities": Nationality.objects.all(),
+                    "sex": Sex.objects.all(),
+                    "courses_form": Student_CourseForm(
+                        courses = None,
+                    ),
+                    "form": StudentForm(
+                        image = None,
+                    )
+                })
+            
+            else:
+                student.identity_document = request.POST["identity_document"]
+                
+        else:
+            student.identity_document = None
+        
+        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
+        student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
+
+        courses = request.POST.getlist("courses")
+
+        for course_id in courses:
+            course = Course.objects.get(pk=int(course_id))
+            attendance = Attendance(course=course, student=student)
+            attendance.save()
+
+            student.courses.add(course)
+
+        if request.POST["date_birth"]:
+            student.date_birth = request.POST["date_birth"]
+
+        elif request.POST["age"]:
+            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
+
+        else:
+            student.date_birth = datetime.datetime.today()
+        
+        student.address = unidecode.unidecode(request.POST["address"]).upper()
+
+        if request.POST["phone_1"].isdigit():
+            student.phone_1 = request.POST["phone_1"]
+        
+        else:
+            student.phone_1 = None
+        
+        if request.POST["phone_2"].isdigit():
+            student.phone_2 = request.POST["phone_2"]
+        
+        else:
+            student.phone_2 = None
+
+        if 'image' in request.FILES:
+            student.image = request.FILES["image"]
+
+        student.save()
+
+        return HttpResponseRedirect(reverse('courses:student', args=(student.id,)))
+
+    else:
+        
+        return render(request, 'courses/create_student.html', {
+            "ids": Id_Type.objects.all(),
+            "nationalities": Nationality.objects.all(),
+            "sex": Sex.objects.all(),
+            "courses_form": Student_CourseForm(
+                courses = None,
+            ),
+            "form": StudentForm(
+                image = None,
+            )
+        })
+
+
+@staff_member_required
 def student(request, account_id):
 
     student = Account.objects.get(pk=account_id)
+    message = ""
+    message1 = ""
+    
+    #Edit Student
+    if request.method == "POST":
+
+        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper().strip()
+        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper().strip()
+        student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
+
+        if request.POST["identity_document"].isdigit():
+
+            check = 0
+
+            # First Check
+            try:
+                if int(request.POST["identity_document"]) != student.identity_document:
+
+                    try:
+                        Account.objects.get(identity_document=request.POST["identity_document"])
+                        check += 1
+
+                    except:
+                        pass
+            except:
+                pass
+
+            # Second Check (Try)
+            try:
+                if int(request.POST["identity_document"]) != student.identity_document_1:
+
+                    try:
+                        Account.objects.get(identity_document_1=request.POST["identity_document"])
+                        check += 1
+                    
+                    except:
+                        pass
+            
+            except:
+                pass         
+ 
+            if check > 0:
+                message = "No. de Documento ya está en uso."
+            
+            else:
+                student.identity_document = request.POST["identity_document"]
+                
+
+        else:
+            student.identity_document = None
+            
+  
+        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
+        student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
+
+        courses = request.POST.getlist("courses") # returns course.id(s)
+
+        for course in student.courses.all():
+
+            if str(course.id) not in courses:
+                Attendance.objects.get(student=student, course=course).delete()
+                student.courses.remove(course)
+
+        for course_id in courses:
+            course = Course.objects.get(pk=int(course_id))
+
+            if course not in student.courses.all():
+                attendance = Attendance(course=course, student=student)
+                attendance.save()
+                student.courses.add(course)
+
+        if request.POST["date_birth"]:
+            student.date_birth = request.POST["date_birth"]
+
+        elif request.POST["age"]:
+            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
+
+        else:
+            student.date_birth = datetime.datetime.today()
+
+        if request.POST["email"]:
+
+            if student.email.lower() != request.POST["email"].lower():
+
+                try:
+                    Account.objects.get(email=request.POST["email"].lower())
+                    message1 = "Correo ya está en uso."
+
+                except:
+                    student.email = request.POST["email"].lower()
+                
+        else:
+            student.email = None
+
+        student.address = unidecode.unidecode(request.POST["address"]).upper()
+
+        if request.POST["phone_1"].isdigit():
+            student.phone_1 = request.POST["phone_1"]
+        
+        else:
+            student.phone_1 = None
+        
+        if request.POST["phone_2"].isdigit():
+            student.phone_2 = request.POST["phone_2"]
+        
+        else:
+            student.phone_2 = None
+
+        if 'image' in request.FILES:
+
+            if student.image != 'default-profile.png':
+                student.image.delete()
+
+            student.image = request.FILES["image"]
+
+        elif request.POST.get("image-clear", False) == "on":
+
+            if student.image != 'default-profile.png':
+                student.image.delete()
+
+            student.image = 'default-profile.png'
+
+        student.save()
+
     courses = student.courses.filter(date__gte=datetime.datetime.now()).order_by('date','start_time')
     
     course_paginator = Paginator(courses, 8)
@@ -192,6 +466,8 @@ def student(request, account_id):
         email = student.email
 
     return render(request, 'courses/account.html', {
+        "message": message,
+        "message1": message1,
         "email": email,
         "date_birth": str(student.date_birth),
         "ids": Id_Type.objects.all(),
@@ -347,173 +623,6 @@ def edit_course(request, course_id):
         })
 
 @staff_member_required
-def edit_student(request, account_id):
-
-    student = Account.objects.get(pk=account_id)
-
-    if request.method == "POST":
-        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper()
-        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper()
-        student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
-
-        if request.POST["identity_document"].isdigit():
-            student.identity_document = request.POST["identity_document"]
-        else:
-            student.identity_document = None
-  
-        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
-        student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
-
-        courses = request.POST.getlist("courses") # returns course.id(s)
-
-        for course in student.courses.all():
-
-            if str(course.id) not in courses:
-                Attendance.objects.get(student=student, course=course).delete()
-                student.courses.remove(course)
-
-        for course_id in courses:
-            course = Course.objects.get(pk=int(course_id))
-
-            if course not in student.courses.all():
-                attendance = Attendance(course=course, student=student)
-                attendance.save()
-                student.courses.add(course)
-
-        if request.POST["date_birth"]:
-            student.date_birth = request.POST["date_birth"]
-
-        elif request.POST["age"]:
-            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
-
-        else:
-            student.date_birth = datetime.datetime.today()
-
-        if request.POST["email"]:
-            student.email = request.POST["email"]
-        else:
-            student.email = None
-
-        student.address = unidecode.unidecode(request.POST["address"]).upper()
-
-        if request.POST["phone_1"].isdigit():
-            student.phone_1 = request.POST["phone_1"]
-        
-        else:
-            student.phone_1 = None
-        
-        if request.POST["phone_2"].isdigit():
-            student.phone_2 = request.POST["phone_2"]
-        
-        else:
-            student.phone_2 = None
-
-        if 'image' in request.FILES:
-
-            if student.image != 'default-profile.png':
-                student.image.delete()
-
-            student.image = request.FILES["image"]
-
-        elif request.POST.get("image-clear", False) == "on":
-
-            if student.image != 'default-profile.png':
-                student.image.delete()
-
-            student.image = 'default-profile.png'
-
-        student.save()
-        return HttpResponseRedirect(reverse('courses:student', args=(student.id,)))
-
-@staff_member_required
-def create_student(request):
-
-    if request.method == "POST":
-
-        valid = False
-        i = 0
-
-        while valid == False: # DANGER - CAREFUL
-
-            try:
-                username = unidecode.unidecode(request.POST["first_name"]).upper() + " " + unidecode.unidecode(request.POST["last_name"]).upper() + " " + str(i)
-                student = Account.objects.create_user(username=username, password="AquariumSchool")
-                valid = True
-
-            except:
-                i += 1
-        
-        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper()
-        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper()
-        student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
-        
-        if request.POST["identity_document"].isdigit():
-            student.identity_document = request.POST["identity_document"]
-        else:
-            student.identity_document = None
-        
-        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
-        student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
-
-        courses = request.POST.getlist("courses")
-
-        for course_id in courses:
-            course = Course.objects.get(pk=int(course_id))
-            attendance = Attendance(course=course, student=student)
-            attendance.save()
-
-            student.courses.add(course)
-
-        if request.POST["date_birth"]:
-            student.date_birth = request.POST["date_birth"]
-
-        elif request.POST["age"]:
-            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
-
-        else:
-            student.date_birth = datetime.datetime.today()
-
-        if request.POST["email"]:
-            student.email = request.POST["email"]
-        else:
-            student.email = None
-        
-        student.address = unidecode.unidecode(request.POST["address"]).upper()
-
-        if request.POST["phone_1"].isdigit():
-            student.phone_1 = request.POST["phone_1"]
-        
-        else:
-            student.phone_1 = None
-        
-        if request.POST["phone_2"].isdigit():
-            student.phone_2 = request.POST["phone_2"]
-        
-        else:
-            student.phone_2 = None
-
-        if 'image' in request.FILES:
-            student.image = request.FILES["image"]
-
-        student.save()
-
-        return HttpResponseRedirect(reverse('courses:student', args=(student.id,)))
-
-    else:
-        
-        return render(request, 'courses/create_student.html', {
-            "ids": Id_Type.objects.all(),
-            "nationalities": Nationality.objects.all(),
-            "sex": Sex.objects.all(),
-            "courses_form": Student_CourseForm(
-                courses = None,
-            ),
-            "form": StudentForm(
-                image = None,
-            )
-        })
-
-@staff_member_required
 def create_course(request):
 
     if request.method == "POST":
@@ -635,7 +744,7 @@ def attendance_course(request, course_id):
         })
 
 @staff_member_required
-def attendance(request, attendance_id):
+def attendance(request, attendance_id): # FETCH
 
     the_attendance = Attendance.objects.get(pk=attendance_id)
     today = datetime.date.today()
@@ -654,6 +763,24 @@ def attendance(request, attendance_id):
 
     the_attendance.save()
     return JsonResponse(attendance, safe=False)
+
+@staff_member_required
+def notifications(request): # FETCH
+
+    count = Account.objects.filter(newrequest=True).count()
+    return JsonResponse(count, safe=False)
+
+@staff_member_required
+def getnotifications(request):
+
+    accounts = Account.objects.filter(newrequest=True).order_by("first_name", "last_name")
+    account_paginator = Paginator(accounts, 13)
+    page_num = request.GET.get("page")
+    page = account_paginator.get_page(page_num)
+
+    return render(request, "courses/notifications.html", {
+        "page": page,
+    })
 
 @staff_member_required
 def payment(request, attendance_id):
@@ -791,6 +918,121 @@ def quota(request, student_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student_id,)))
 
+def check(student):
+
+    if student.first_name_1 != None and student.first_name_1 != student.first_name:
+        return True
+
+    if student.last_name_1 != None and student.last_name_1 != student.last_name:
+        return True
+
+    if student.identity_document_1 != None and student.identity_document != None:
+        if student.identity_document_1 != None:
+            if int(student.identity_document_1) != int(student.identity_document):
+                return True
+    
+    if student.phone_1_1 != None and student.phone_1 != None:
+        if student.phone_1_1 != None:
+            if int(student.phone_1_1) != int(student.phone_1):
+                return True
+    
+    if student.phone_2_1 != None and student.phone_2 != None:
+        if student.phone_2_1 != None:
+            if int(student.phone_2_1) != int(student.phone_2):
+                return True
+    
+    return False
+
+@staff_member_required
+def update_first_name(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.first_name = student.first_name_1
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def reject_first_name(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.first_name_1 = None
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def update_last_name(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.last_name = student.last_name_1
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def reject_last_name(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.last_name_1 = None
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def update_id(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.identity_document = student.identity_document_1
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def reject_id(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.identity_document_1 = None
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def update_phone_1(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.phone_1 = student.phone_1_1
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def reject_phone_1(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.phone_1_1 = None
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def update_phone_2(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.phone_2 = student.phone_2_1
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
+def reject_phone_2(request, account_id):
+    
+    student = Account.objects.get(pk=account_id)
+    student.phone_2_1 = None
+    student.newrequest = check(student)
+    student.save()
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
 def login_view(request):
 
     if request.method == "POST":
@@ -835,4 +1077,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("courses:index"))
+    return HttpResponseRedirect(reverse("index"))

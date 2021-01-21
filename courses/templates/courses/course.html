@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block script %}
-    <script src="{% static 'courses/aquarium.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -100,42 +99,50 @@
                                         <span id="check{{ attendance.id }}" class="badge badge-secondary">PENDIENTE</span>
 
                                     {% endif %}
-
-                                    <span id="quota" class="badge badge-info">
-                                        Saldo: ${{ attendance.student.amount }}
-                                    </span>
-                                
+                                    
+                                    {% if attendance.student.amount != "" %}
+                                        {% if attendance.student.amount != "0" %}
+                                            <span id="quota" class="badge badge-info">
+                                                Saldo ${{ attendance.student.amount }}
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                                                
                                     {% if attendance.cycle == True %}
-                                    <span class="badge badge-warning">INICIA CICLO: 
-                                        ${{ attendance.amount }}
-                                    </span>
+                                        <span class="badge badge-warning">INICIA CICLO
+                                            {% if attendance.amount != "" %}
+                                                {% if attendance.amount != "0" %}
+                                                    ${{ attendance.amount }}
+                                                {% endif %}
+                                            {% endif %}
+                                        </span>
                                     {% endif %}
 
                                     {% if attendance.quota == "PAGO" %}
-                                    <span class="badge badge-success">CUPO {{ attendance.quota }}
-                                        {% if attendance.amount != "" %}
-                                            {% if attendance.amount != "0" %}
-                                                ${{ attendance.amount }}
+                                        <span class="badge badge-success">CUPO {{ attendance.quota }}
+                                            {% if attendance.amount != "" %}
+                                                {% if attendance.amount != "0" %}
+                                                    ${{ attendance.amount }}
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                    </span>
-                                {% elif attendance.quota == "NO PAGO" %}
-                                    <span class="badge badge-danger">CUPO {{ attendance.quota }}
-                                        {% if attendance.amount != "" %}
-                                            {% if attendance.amount != "0" %}
-                                                ${{ attendance.amount }}
+                                        </span>
+                                    {% elif attendance.quota == "NO PAGO" %}
+                                        <span class="badge badge-danger">CUPO {{ attendance.quota }}
+                                            {% if attendance.amount != "" %}
+                                                {% if attendance.amount != "0" %}
+                                                    ${{ attendance.amount }}
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                    </span>
-                                {% else %}
-                                    <span class="badge badge-secondary">CUPO {{ attendance.quota }}
-                                        {% if attendance.amount != "" %}
-                                            {% if attendance.amount != "0" %}
-                                                ${{ attendance.amount }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">CUPO {{ attendance.quota }}
+                                            {% if attendance.amount != "" %}
+                                                {% if attendance.amount != "0" %}
+                                                    ${{ attendance.amount }}
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                    </span>
-                                {% endif %}
+                                        </span>
+                                    {% endif %}
 
                                     <br>
                                     <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">

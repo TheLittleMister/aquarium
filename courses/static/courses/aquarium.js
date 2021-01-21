@@ -27,6 +27,21 @@ document.addEventListener("click", event => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    fetch(`/courses/notifications/`)
+    .then(response => response.json())
+    .then(count => {
+
+        var notielement = document.querySelector('#notifications');
+        notielement.innerHTML = `${count} 🔔`;
+
+        if (count == 0) {
+            notielement.className = "badge badge-success";
+        } else {
+            notielement.className = "badge badge-danger";
+        }
+    });
+    
     document.querySelector('#form-date').onsubmit = () => {
 
         console.log("Hello, World!")
@@ -63,8 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         option.value = date;
         option.selected = true;
-        option.innerHTML = weekday[js_date.getDay() + 1] + " " + date.slice(8,10) + " de " + month[date.slice(5,7)] + " del " + date.slice(0,4);
-        // "<span>❌ </span>" + 
+
+        if (js_date.getDay() === 6) {
+            var theweekday = 0;
+        } else {
+            var theweekday = js_date.getDay() + 1;
+        }
+
+        option.innerHTML = weekday[theweekday] + " " + date.slice(8,10) + " de " + month[date.slice(5,7)] + " del " + date.slice(0,4);
         document.querySelector("#dates").append(option);
     
         return false;

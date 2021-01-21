@@ -1,0 +1,376 @@
+{% extends 'users/layout.html' %}
+
+{% block body %}
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third">
+    
+      <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
+        <div class="w3-display-container" style="text-align: center;">
+          <span id="option" onclick="edit();" class="w3-tag w3-round" style="background-color: #066DAF; color: white; margin-top: 10px;">Editar Cuenta</span> <br>
+          <img src="{{ user.image.url }}" style="width: 300px; border-radius: 50%; margin-top: 20px; margin-bottom: 20px; max-width: 100%; " alt="Avatar">
+        </div>
+        <div class="w3-container" style="max-width: 100%;">
+          
+          <h4>
+
+            {% if not user.first_name_1 %}     
+              {{ user.first_name }}
+            {% else %}
+              {{ user.first_name_1 }}
+            {% endif %}
+
+            {% if not user.last_name_1 %}
+              {{ user.last_name }}
+            {% else %}
+              {{ user.last_name_1 }}
+            {% endif %}
+          
+          </h4>
+          <hr>
+
+          {% if message %}
+            <p style="color: crimson;">{{ message }}</p>
+          {% endif %}
+
+          <p class="w3-large"><b><i class="fa-fw w3-margin-right" style="color: #066DAF;"></i>Personal:</b></p>
+          <p><i class="fa fa-id-card fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.id_type }}:
+
+            {% if not user.identity_document_1 %}
+              {% if user.identity_document != None %}
+                {{ user.identity_document }}
+              {% endif %}
+            {% else %}
+              {{ user.identity_document_1 }}
+            {% endif %}
+            
+          </p>
+          <p><i class="fa fa-globe fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.nationality }}</p>
+          
+          {% if user.sex == "Masculino" %}
+            <p><i class="fa fa-mars fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.sex }}</p>
+          {% elif user.sex == "Femenino" %}
+            <p><i class="fa fa-venus fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.sex }}</p>
+          {% else %}
+            <p><i class="fa fa-genderless fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.sex }}</p>
+          {% endif %}
+
+          <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.date_birth }}</p>
+
+          <hr>
+          <p class="w3-large"><b><i class="fa-fw w3-margin-right" style="color: #066DAF;"></i>Contacto:</b></p>
+          {% if user.email != None %}
+          <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.email }}</p>
+          {% endif %}
+          <p><i class="fa fa-home fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.address }}</p> 
+
+          {% if not user.phone_1_1 %}
+            {% if user.phone_1 != None %}
+            <p><i class="fa fa-phone fa-fw w3-margin-right w3-large" style="color: #066DAF;">1</i>{{ user.phone_1 }}</p>
+            {% endif %}
+          {% else %}
+            <p><i class="fa fa-phone fa-fw w3-margin-right w3-large" style="color: #066DAF;">1</i>{{ user.phone_1_1 }}</p>
+          {% endif %}
+
+          {% if not user.phone_2_1 %}
+            {% if user.phone_2 != None %}
+            <p><i class="fa fa-phone fa-fw w3-margin-right w3-large" style="color: #066DAF;">1</i>{{ user.phone_2 }}</p>
+            {% endif%}
+          {% else %}
+            <p><i class="fa fa-phone fa-fw w3-margin-right w3-large" style="color: #066DAF;">1</i>{{ user.phone_2_1 }}</p>
+          {% endif %}
+
+          <br>
+        </div>
+      </div><br>
+
+    <!-- End Left Column -->
+    </div>
+
+    <!-- Right Top Column -->
+    <div class="w3-twothird" >
+
+      {% if user.email == None %}
+      <!-- Right Middle Column -->
+      <div id="noti" class="w3-container w3-card" style="background-color: #fffde8; display: block;">
+        <h2 style="color: rgb(218, 178, 0); margin-top: 15px;"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);"></i>
+          Recomendación:
+          <span id="reco" onclick="edit();" class="badge" style="color: steelblue; font-size: medium;">Editar Ahora</span>
+        </h2>
+        <div class="w3-container">
+          <div class="alert alert-warning" data-alert="warning" role="alert">
+           
+            Si tu contraseña es <strong>"AquariumSchool"</strong>
+            se recomienda cambiarla para mejorar la <strong>seguridad</strong> de tu cuenta. <br>
+
+            Se recomienda establecer un <strong>correo electrónico</strong> para recuperar tu contraseña en caso de olvidarla.        
+            
+          </div>
+        </div>
+      </div>
+      
+      <br>
+      {% endif %}
+      <div id="righttop" class="w3-container w3-card w3-margin-bottom" style="background-color: #e3f2fd; display: block;">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-calendar fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>Horario</h2>
+        <!-- <div class="w3-container"> -->
+          <div id="student-schedule" class="table-responsive" style="text-align: center; display: block;">
+            
+            <table class="table table-bordered" style="display: inline; width: 100%;">
+                <thead>
+                    <tr style="text-align: center;color: white; background-color: #066DAF;">
+                        <th id="sch" scope="col">Hora</th>
+                        <th id="sch" scope="col">Lunes</th>
+                        <th id="sch" scope="col">Martes</th>
+                        <th id="sch" scope="col">Miercoles</th>
+                        <th id="sch" scope="col">Jueves</th>
+                        <th id="sch" scope="col">Viernes</th>
+                        <th id="sch" scope="col">Sabado</th>
+                        <th id="sch" scope="col">Domingo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in schedule %}
+                    <tr style="text-align:center;">
+                        <td>
+                            {% for info in row|slice:":1" %}
+                                <h6 style="font-size: medium;">{{ info|date:"P" }}</h6>
+                            {% endfor %}
+                            {% for info in row|slice:"1:2" %}
+                                <h6 style="font-size: medium; display: inline;">{{ info|date:"P" }}</h6>
+                            {% endfor %}
+                        </td>
+                        {% for info in row|slice:"2:" %}
+                        <td style="color: #066DAF; font-weight: bold; font-size: large;">{{ info }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr class="table-borderless">
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col" style="text-align: center; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin</th>
+                        <th scope="col" style="text-align: center; margin-bottom: 30px; color: steelblue; font-weight: bold;">Horario</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        <br>
+      </div>
+
+      <!-- Right Middle Column -->
+      <div id="rightmiddle" class="w3-container w3-card" style="background-color: #f8d7da; display: block;">
+        <h2 style="color: crimson; margin-top: 15px;"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge" style="color: crimson;"></i>Importante</h2>
+        <div class="w3-container">
+          <div class="alert alert-danger" data-alert="danger" role="alert">
+           
+            Una vez asignado el horario, tu asistencia es 
+            <strong>fundamental</strong>.
+            Si no asistes, se da por vista la clase. 
+            <strong>No se puede cancelar la clase</strong>,
+            la única excepción es que traigas una 
+            <strong>excusa médica</strong> 
+            y la podrás reponer.
+            
+        </div>
+        </div>
+      </div>
+
+    <!-- End Right Column -->
+      <br>
+    <!-- Right Bottom Column -->
+        <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+          <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
+            Próximas Clases:
+            <a href="{% url 'users:courses' user.id %}" class="badge badge-info" style="margin-left: 50px; color: #066DAF;">Ver todos mis cursos y asistencias</a>
+          </h2>
+          <div class="w3-container">
+            <div id="student-next" style="color: black;">
+                  
+              <ul style="text-align: left; margin-top: 20px;">
+                  {% for course in page.object_list %}
+                  <li>
+                      {{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}
+                  </li>
+                  <br>
+
+                  {% empty %}
+
+                    <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin proximos cursos</li>
+
+                  {% endfor %}
+              </ul>
+          </div>
+          <div id="student-pag" style="text-align: center; padding: 10px;">
+            <nav aria-label="Page navigation">   
+                <ul class="pagination justify-content-center">
+                    {% if page.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">begin</span>
+                            </a>
+                        </li>   
+                    {% endif %}
+            
+                    {% for n in page.paginator.page_range %}
+                        {% if page.number == n %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                            </li>
+                        {% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% if page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">end</span>
+                        </a>
+                    </li>
+                    {% endif %}   
+                </ul> 
+            </nav>
+          </div>
+          </div>
+        </div>
+
+      <!-- End Right Column -->
+
+          <!-- Edit information FORM -->
+          <div id="editform" class="w3-container w3-card" style="background-color: #e3f2fd; display: none; margin-top: -20px;">
+            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-edit fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
+              Editar Cuenta:
+              <a href="{% url 'users:change-password' %}" style="font-size: medium; font-weight: bold;">Cambiar Contraseña</a>
+            </h2>
+            
+            <div class="w3-container">              
+              <div id="student-form" style="text-align:left;">
+                <form action="{% url 'users:index' user.id %}" method="POST" id="create" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h4 style="color: grey;">Foto</h4>
+                        {{ form }} <br><br>
+                        Tamaño máximo de la foto: <span style="color: crimson; font-weight: bold;">5 MB</span>
+                    <br> <hr>
+                    <h4 style="color: grey;">Personal</h4>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 93px;">Nombres: </h6>
+                    {% if not user.first_name_1 %}
+                      <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="text" name="first_name" placeholder="Nombres" value="{{ user.first_name }}" required>
+                    {% else %}
+                      <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="text" name="first_name" placeholder="Nombres" value="{{ user.first_name_1 }}" required>
+                    {% endif %}
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 93px;">Apellidos: </h6>
+                    {% if not user.last_name_1 %}
+                      <input style="width: 40%; display: inline;margin-bottom: 10px;" class="form-control" type="text" name="last_name" placeholder="Apellidos" value="{{ user.last_name }}" required>
+                    {% else %}
+                      <input style="width: 40%; display: inline;margin-bottom: 10px;" class="form-control" type="text" name="last_name" placeholder="Apellidos" value="{{ user.last_name_1 }}" required>
+                    {% endif %}
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 10px;">Tipo de Documento: </h6>
+                    <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="id_type" aria-label="Default select example">
+                        {% for id in ids %}
+                            {% if id == user.id_type %}
+                                <option value="{{id.id}}" selected>{{ id }}</option>
+                            {% else %}
+                                <option value="{{id.id}}">{{ id }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block; margin-right: 19px;">No. de Documento: </h6>
+                    {% if not user.identity_document_1 %}
+                      <input style="width: 40%; display: inline;margin-bottom: 10px;" class="form-control" type="number" name="identity_document" placeholder="No. Documento" value="{{ user.identity_document }}" required>
+                    {% else %}
+                      <input style="width: 40%; display: inline;margin-bottom: 10px;" class="form-control" type="number" name="identity_document" placeholder="No. Documento" value="{{ user.identity_document_1 }}" required>
+                    {% endif %}
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 63px;">Nacionalidad: </h6>
+                    <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="nationality" aria-label="Default select example">
+                        {% for nationality in nationalities %}
+                            {% if nationality == user.nationality %}
+                                <option value="{{nationality.id}}" selected>{{ nationality }}</option>
+                            {% else %}
+                                <option value="{{nationality.id}}">{{ nationality }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block; margin-right: 112px;">Género: </h6>
+                    <select style="width: 40%; display: inline; margin-bottom: 10px;" class="form-control" name="sex" aria-label="Default select example">
+                        {% for gender in sex %}
+                            {% if gender == user.sex %}
+                                <option value="{{gender.id}}" selected>{{ gender }}</option>
+                            {% else %}
+                                <option value="{{gender.id}}">{{ gender }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;">Fecha de Nacimiento: </h6>
+                    <input style="width: 40%; display: inline; margin-right: 10px;" class="form-control" type="date" name="date_birth" placeholder="Fecha de Nacimiento" value="{{ date_birth }}">
+                    <br> <hr>
+
+                    <h4 style="color: grey;">Contacto</h4>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 115px;">Correo: </h6>
+                    {% if user.email == None %}
+                      <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px; background-color: #fff9bb;" class="form-control" type="email" name="email" placeholder="Correo Electrónico" required>
+                    {% else %}
+                      <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="email" name="email" placeholder="Correo Electrónico" value="{{ user.email }}" required>
+                    {% endif %}
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block; margin-right: 95px;">Dirección: </h6>
+                    <input style="width: 40%; display: inline; margin-bottom: 10px;" class="form-control" type="text" name="address" placeholder="Dirección" value="{{ user.address }}">
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 10px;">Teléfono/Celular (1): </h6>
+                    {% if not user.phone_1_1 %}
+                      {% if user.phone_1 == None %}
+                        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)" required>
+                      {% else %}
+                        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)" value="{{ user.phone_1 }}" required>
+                      {% endif %}
+                    {% else %}
+                      <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)" value="{{ user.phone_1_1 }}" required>
+                    {% endif %}
+                    <br>
+                    <h6 style="color: #066DAF; font-size: large; display: inline-block;margin-right: 10px;">Teléfono/Celular (2): </h6>
+                    {% if not user.phone_2_1 %}
+                      {% if user.phone_2 == None %}
+                        <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)"> <br>
+                      {% else %}
+                        <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)" value="{{ user.phone_2 }}"> <br>
+                      {% endif %}
+                    {% else %}
+                      <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)" value="{{ user.phone_2_1 }}"> <br>
+                    {% endif %}
+                    <br>
+                    <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Guardar Información">
+                    <br><br>
+                </form>
+            </div>
+                    
+            </div>
+          </div>
+  
+        <!-- End Right Column -->
+    </div>
+  <!-- End Grid -->
+  </div>
+  <!-- End Page Container -->
+</div>
+
+{% endblock %}

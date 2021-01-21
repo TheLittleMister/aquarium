@@ -4,13 +4,6 @@
    Description: Custom JS file
 */
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector()
-    
-    }
-
-);
-
 (function($) {
     "use strict"; 
 	

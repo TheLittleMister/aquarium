@@ -54,7 +54,6 @@ class Account(AbstractBaseUser):
     phone_2 = models.BigIntegerField(null=True)
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, related_name="users", null=True)
     date_birth = models.DateField(null=True)
-    is_teacher = models.BooleanField(default=False)
     amount = models.CharField(max_length=100)
 
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -63,6 +62,16 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
+
+    # User's request to change information
+    newrequest = models.BooleanField(default=False)
+
+    first_name_1 = models.CharField(max_length=30, default="", null=True)
+    last_name_1 = models.CharField(max_length=30, default="", null=True)
+    identity_document_1 = models.BigIntegerField(unique=True, null=True) # ID
+    phone_1_1 = models.BigIntegerField(null=True)
+    phone_2_1 = models.BigIntegerField(null=True)
 
     objects = Manager()
 

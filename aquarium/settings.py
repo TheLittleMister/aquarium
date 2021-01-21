@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'courses',
     'main',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -157,3 +158,21 @@ SESSION_SAVE_EVERY_REQUEST = True          # Will prrevent from logging you out 
 GOOGLE_RECAPTCHA_SECRET_KEY = "6LfvUi4aAAAAAMNeZ1Uaradte3Rcg8V9F66bNpCH"
 RECAPTCHA_SITE_KEY = "6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"
 RECAPTCHA_SECRET_KEY = "6LfvUi4aAAAAAMNeZ1Uaradte3Rcg8V9F66bNpCH"
+
+# AUTHENTICATION (LOGIN)
+
+AUTHENTICATION_BACKENDS = ('users.backends.AuthBackend',)
+
+
+# EMAIL STMP
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'aquariumschool@gmail.com'
+EMAIL_HOST_PASSWORD = config.get('GPASS')
+EMAIL_USE_TLS = True
+
+# CRISPY
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
