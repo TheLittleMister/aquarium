@@ -428,7 +428,23 @@ def student(request, account_id):
         age = int(str((datetime.date.today() - student.date_birth) / 365)[:2])
 
     except:
-        age = 0
+
+        try:
+            crage = ""
+            year = str(student.date_birth)[0:4]
+            month = str(student.date_birth)[5:7]
+            day = str(student.date_birth)[8:10]
+
+            for i in str(datetime.datetime.today() - datetime.datetime(int(year), int(month), int(day))):
+                if i.isdigit():
+                    crage += i
+                else:
+                    break
+
+            age = int(crage) // 365
+
+        except:
+            age = 0
 
     for course in courses:
         
