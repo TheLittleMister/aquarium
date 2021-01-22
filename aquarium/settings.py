@@ -172,6 +172,10 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aquariumschool@gmail.com'
 EMAIL_HOST_PASSWORD = config.get('GPASS')
 EMAIL_USE_TLS = True
+SERVER_EMAIL = 'aquariumschool@gmail.com'
+DEFAULT_FROM_EMAIL = 'aquariumschool@gmail.com'
+
+
 
 # CRISPY
 
