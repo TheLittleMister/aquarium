@@ -18,6 +18,62 @@
 
     <!-- Main CSS-->
     <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+
+    <style>
+        table {
+            /* border: 1px solid #ccc; */
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+    
+        table tr {
+            /* background: #f8f8f8; */
+            /* border: 1px solid #ddd; */
+            padding: .35em;
+        }
+    
+        table th, table td {
+            padding: .625em;
+            text-align: center;
+        }
+    
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        @media screen and (max-width: 639px) {
+    
+        table { border: 0; }
+    
+        table thead { display: none; }
+    
+        table tr {
+        /* border-bottom: 3px solid #ddd; */
+        display: block;
+        margin-bottom: .625em;
+        }
+    
+        table td {
+        /* border-bottom: 1px solid #ddd; */
+        display: block;
+        font-size: .8em;
+        text-align: right;
+        }
+    
+        table td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+        }
+    
+        table td:last-child { border-bottom: 0; }
+    
+        }
+    </style>
 {% endblock %}
 
 {% block script %}
@@ -108,26 +164,43 @@
                         </form>
 
                 {% else %}
-                <table class="table table-bordered" style="text-align: left;">
-                    {% for attendance in attendances %}
+                <table>
+                    
+                    <thead>
                         <tr>
-                            <td>
+                            <th scope="col">Estudiante</th>
+                            <th scope="col">Asistencia</th>
+                            <th scope="col">Etiquetas</th>
+                            <th scope="col">Pago</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for attendance in attendances %}
+                        <tr>                            
+                            <td scope="row" data-label="Estudiante">
+                                <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">
+                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }}
+                                </a>
+                            </td>
+                            <td data-label="Asistencia">
                                 {% if attendance.attendance == True %}
-                                    <span id="check{{ attendance.id }}" class="badge badge-success">ASISTIO</span>
+                                    <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                 
                                 {% elif attendance.attendance == False and past == True %}
-                                    <span id="check{{ attendance.id }}" class="badge badge-danger">NO ASISTIO</span>
+                                    <span id="check{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">NO ASISTIO</span>
                                 
                                 {% elif attendance.attendance == False and past == False %}
-                                    <span id="check{{ attendance.id }}" class="badge badge-secondary">PENDIENTE</span>
-
+                                    <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
                                 {% endif %}
-                                
+                            </td>
+                            <td data-label="Etiquetas">
                                 {% if attendance.student.amount != "" %}
                                     {% if attendance.student.amount != "0" %}
                                         <span id="quota" class="badge badge-info">
                                             Saldo ${{ attendance.student.amount }}
                                         </span>
+                                        <br>
                                     {% endif %}
                                 {% endif %}
                                                             
@@ -139,6 +212,7 @@
                                             {% endif %}
                                         {% endif %}
                                     </span>
+                                    <br>
                                 {% endif %}
 
                                 {% if attendance.quota == "PAGO" %}
@@ -149,6 +223,7 @@
                                             {% endif %}
                                         {% endif %}
                                     </span>
+                                    <br>
                                 {% elif attendance.quota == "NO PAGO" %}
                                     <span class="badge badge-danger">CUPO {{ attendance.quota }}
                                         {% if attendance.amount != "" %}
@@ -157,6 +232,7 @@
                                             {% endif %}
                                         {% endif %}
                                     </span>
+                                    <br>
                                 {% else %}
                                     <span class="badge badge-secondary">CUPO {{ attendance.quota }}
                                         {% if attendance.amount != "" %}
@@ -165,21 +241,18 @@
                                             {% endif %}
                                         {% endif %}
                                     </span>
+                                    <br>
                                 {% endif %}
-
-                                <br>
-                                <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">
-                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }}
-                                </a>
                             </td>
-
-                            <td style="width: 5%; text-align: center;">
-                                <h5>
+                            <td data-label="Pago">
+                                <h4>
                                     <a href="{% url 'courses:payment' attendance.id %}">💲</a>
-                                </h5>
-                            </td>                      
-                        <tr>
-                    {% endfor %}
+                                </h4>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
                 </table>
                 {% endif %}
             </div>
