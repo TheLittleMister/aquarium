@@ -139,7 +139,7 @@
                                             <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                         
                                         {% else %}
-                                            <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                            <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">NO ASISTIO</span>
                                         
                                         {% endif %}
                                         </td>
@@ -248,72 +248,83 @@
                     </h2>
                     <div class="w3-container">
                         <div id="student-next" style="color: black;">
-                                
-                            <ul style="text-align: left; margin-top: 20px;">
-                                {% for course in results %}
-                                <li>
-                                    {% for attendance in course.attendance.all %}
-                                        {% if attendance.student == student %}
-                                            {% if attendance.attendance == True %}
-                                                <span id="check{{ attendance.id }}" class="badge badge-success">ASISTIO</span>
-                                            
-                                            {% elif attendance.attendance == False and past == True %}
-                                                <span id="check{{ attendance.id }}" class="badge badge-danger">NO ASISTIO</span>
-                                            
-                                            {% elif attendance.attendance == False and past == False %}
-                                                <span id="check{{ attendance.id }}" class="badge badge-secondary">PENDIENTE</span>
-            
-                                            {% endif %}
-                                                                        
-                                            {% if attendance.cycle == True %}
-                                                <span class="badge badge-warning">INICIA CICLO
-                                                    {% if attendance.amount != "" %}
-                                                        {% if attendance.amount != "0" %}
-                                                            ${{ attendance.amount }}
-                                                        {% endif %}
-                                                    {% endif %}
-                                                </span>
-                                            {% endif %}
 
-                                            {% if attendance.quota == "PAGO" %}
-                                                <span class="badge badge-success">CUPO {{ attendance.quota }}
-                                                    {% if attendance.amount != "" %}
-                                                        {% if attendance.amount != "0" %}
-                                                            ${{ attendance.amount }}
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Clase</th>
+                                        <th scope="col">Asistencia</th>
+                                        <th scope="col">Etiquetas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                {% for course in old_page.object_list %}
+                                    <tr>
+                                    <td data-label="Clase">
+                                        <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                                        <a href="{% url 'courses:course' course.id %}" style="font-size: small;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
+                                    </td> 
+                                    {% for attendance in course.attendance.all %}
+                                            {% if attendance.student == student %}
+                                                <td scope="row" data-label="Asistencia">
+                                                {% if attendance.attendance == True %}
+                                                    <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
+                                                
+                                                {% elif attendance.attendance == False and past == True %}
+                                                    <span id="check{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">NO ASISTIO</span>
+                                                
+                                                {% elif attendance.attendance == False and past == False %}
+                                                    <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                                </td>
+                                                <td data-label="Etiquetas">       
+                                                {% if attendance.cycle == True %}
+                                                    <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
+                                                        {% if attendance.amount != "" %}
+                                                            {% if attendance.amount != "0" %}
+                                                                ${{ attendance.amount }}
+                                                            {% endif %}
                                                         {% endif %}
-                                                    {% endif %}
-                                                </span>
-                                            {% elif attendance.quota == "NO PAGO" %}
-                                                <span class="badge badge-danger">CUPO {{ attendance.quota }}
-                                                    {% if attendance.amount != "" %}
-                                                        {% if attendance.amount != "0" %}
-                                                            ${{ attendance.amount }}
+                                                    </span>
+                                                    <br>
+                                                {% endif %}
+            
+                                                {% if attendance.quota == "PAGO" %}
+                                                    <span class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
+                                                        {% if attendance.amount != "" %}
+                                                            {% if attendance.amount != "0" %}
+                                                                ${{ attendance.amount }}
+                                                            {% endif %}
                                                         {% endif %}
-                                                    {% endif %}
-                                                </span>
-                                            {% else %}
-                                                <span class="badge badge-secondary">CUPO {{ attendance.quota }}
-                                                    {% if attendance.amount != "" %}
-                                                        {% if attendance.amount != "0" %}
-                                                            ${{ attendance.amount }}
+                                                    </span>
+                                                    <br>
+                                                {% elif attendance.quota == "NO PAGO" %}
+                                                    <span class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
+                                                        {% if attendance.amount != "" %}
+                                                            {% if attendance.amount != "0" %}
+                                                                ${{ attendance.amount }}
+                                                            {% endif %}
                                                         {% endif %}
-                                                    {% endif %}
-                                                </span>
+                                                    </span>
+                                                    <br>
+                                                {% else %}
+                                                    <span class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
+                                                        {% if attendance.amount != "" %}
+                                                            {% if attendance.amount != "0" %}
+                                                                ${{ attendance.amount }}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </span>
+                                                    <br>
+                                                {% endif %}
+                                                </td>
                                             {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    <br>
-                                    <span class="badge badge-info">{{ course.students.all.count }}</span>
-                                    <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                                </li>
-                                <br>
-            
-                                {% empty %}
-            
-                                <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin Resultados</li>
-            
+                                        {% endfor %}
+                                    </tr>
                                 {% endfor %}
-                            </ul>
+                                
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
