@@ -75,8 +75,9 @@
           {% if user.email != None %}
           <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.email }}</p>
           {% endif %}
+          {% if user.addess != None %}
           <p><i class="fa fa-home fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.address }}</p> 
-
+          {% endif %}
           {% if not user.phone_1_1 %}
             {% if user.phone_1 != None %}
             <p><i class="fa fa-phone fa-fw w3-margin-right w3-large" style="color: #066DAF;">1</i>{{ user.phone_1 }}</p>

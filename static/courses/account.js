@@ -119,3 +119,74 @@ $(document).ready(function(){
       $("#rxcheck4").addClass("badge badge-warning");
     });
 });
+
+function edit() {
+
+  if (document.querySelector("#righttop").style.display === "block") {
+      
+      document.querySelector("#righttop").style.display = "none";
+      document.querySelector("#rightbottom").style.display = "none";
+      document.querySelector("#editform").style.visibility = "visible";
+      document.querySelector("#option").innerHTML = "Atrás";
+
+  } else {
+
+      document.querySelector("#righttop").style.display = "block";
+      document.querySelector("#rightbottom").style.display = "block";
+      document.querySelector("#editform").style.visibility = "hidden";
+      document.querySelector("#option").innerHTML = "Editar Cuenta";
+      
+  }
+  
+}
+
+function editcourse() {
+
+  if (document.querySelector("#righttop").style.display === "block") {
+      
+      document.querySelector("#righttop").style.display = "none";
+      document.querySelector("#editform").style.visibility = "visible";
+      document.querySelector("#option").innerHTML = "Atrás";
+
+  } else {
+
+      document.querySelector("#righttop").style.display = "block";
+      document.querySelector("#editform").style.visibility = "hidden";
+      document.querySelector("#option").innerHTML = "Editar Cuenta";
+      
+  }
+  
+}
+
+function student_secure_delete() {
+
+  document.querySelector("#editform").style.display = "none";
+  document.querySelector("#option").style.visibility = "hidden";
+  document.querySelector("#student_secure_delete").style.display = "block";
+
+}
+
+function student_secure_delete_back() {
+
+  document.querySelector("#editform").style.display = "block";
+  document.querySelector("#option").style.visibility = "visible";
+  document.querySelector("#student_secure_delete").style.display = "none";
+
+}
+
+function course_secure_delete() {
+
+  document.querySelector("#editform").style.display = "none";
+  document.querySelector("#option").style.visibility = "hidden";
+  document.querySelector("#course_secure_delete").style.display = "block";
+
+
+}
+
+function course_secure_delete_back() {
+
+  document.querySelector("#editform").style.display = "block";
+  document.querySelector("#option").style.visibility = "visible";
+  document.querySelector("#course_secure_delete").style.display = "none";
+
+}
