@@ -209,8 +209,8 @@
                 <ul style="text-align: left; margin-top: 20px;">
                     {% for course in page.object_list %}
                     <li>
-                        <span class="badge badge-info">{{ course.students.all.count }}</span>
-                        <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                        <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                        <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
                     </li>
                     <br>
   
