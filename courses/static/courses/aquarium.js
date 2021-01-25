@@ -33,11 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(count => {
 
         var notielement = document.querySelector('#notifications');
-        notielement.innerHTML = `${count} 🔔`;
+        notielement.innerHTML = `${count}`;
 
-        if (count == 0) {
-            notielement.className = "badge badge-success";
-        } else {
+        if (count > 0) {
             notielement.className = "badge badge-danger";
         }
     });
@@ -93,34 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 });
-
-function course_secure_delete() {
-
-    document.querySelector("#course-form").style.display = "none";
-    document.querySelector("#course_secure_delete").style.display = "block";
-
-}
-
-function course_secure_delete_back() {
-
-    document.querySelector("#course-form").style.display = "block";
-    document.querySelector("#course_secure_delete").style.display = "none";
-
-}
-
-function student_secure_delete() {
-
-    document.querySelector("#student-form").style.display = "none";
-    document.querySelector("#student_secure_delete").style.display = "block";
-
-}
-
-function student_secure_delete_back() {
-
-    document.querySelector("#student-form").style.display = "block";
-    document.querySelector("#student_secure_delete").style.display = "none";
-
-}
 
 function quota() {
 

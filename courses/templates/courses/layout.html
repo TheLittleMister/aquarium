@@ -10,10 +10,15 @@
         <link href="{% static 'courses/logo.png' %}" rel="icon">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
         <script src="{% static 'courses/aquarium.js' %}"></script>
+      
+        {% block head %}
+        {% endblock %}
+        
         {% block script %}
         {% endblock %}
 
         <style>
+          
             span {
                 cursor: pointer;
             }
@@ -27,11 +32,40 @@
                 opacity: 1;
             }
 
+            .newselector {
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: x-large;
+            }
+
+            #sch {
+                width: 200px;
+            }
+
+            #image-clear_id {
+              width: auto;
+            }
+            
+            #id_image {
+              width: 200px;
+
+            }
+
+            label {
+              width: auto;
+            }
+
+            #div_id_image {
+              width: 500px;
+            }
+
         </style>
         
     </head>
     <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: steelblue;font-family: Arial, Helvetica, sans-serif; font-size: medium;">
           <div class="container-fluid">
               <a class="navbar-brand mb-0 h1" href="{% url 'index' %}">
                   <img src="{% static 'courses/nav3.png' %}" alt="Aquarium" height="31" class="d-inline-block align-top">
@@ -39,7 +73,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            {% if user.is_authenticated and user.is_admin %}
+            {% if request.user.is_authenticated and request.user.is_admin %}
             <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
               <ul class="navbar-nav">
                 <li class="nav-item dropdown">
@@ -78,7 +112,7 @@
               </div>
               <div class="navbar-nav ml-auto">
                 <a class="nav-link" href="{% url 'courses:getnotifications' %}">
-                  <span style="font-size: small; display: inline;" id="notifications" class="badge badge-success">0 🔔</span>
+                  <span style="font-size: medium; display: inline; font-weight: bold;" id="notifications">0</span>🔔
                 </a>
                 
                 <div id="logg">

@@ -1,60 +1,184 @@
 {% extends 'courses/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <!-- Icons font CSS-->
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="{% static 'vendor/select2/select21.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/datepicker/daterangepicker1.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+
+{% endblock %}
+
 {% block body %}
-<main class="container-xl" style="text-align: center;">
-<br>
-<div style="text-align:center;">
-    {% if message %}
-        <p style="color: crimson;">{{ message }}
-            <a href="{% url 'courses:student' student.id %}">
-                {{ student.first_name }} {{ student.last_name }}
-            </a>
-        </p>
-    {% endif %}
-    <form action="{% url 'courses:create_student' %}" method="POST" id="create" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h6 style="color: #066DAF; font-size: large;">Foto:</h6>
-            <p style="margin-left: auto; margin-right: auto;">{{ form }}</p>
-            Tamaño máximo de la foto: <span style="color: crimson; font-weight: bold;">5 MB</span>
-        <br> <hr>
-        <h6 style="color: #066DAF; font-size: large;">Personal:</h6>
-        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="text" name="first_name" placeholder="Nombres" required>
-        <input style="width: 40%; display: inline;" class="form-control" type="text" name="last_name" placeholder="Apellidos" required>
-        <br>
-        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="id_type" aria-label="Default select example">
-            {% for id in ids %}
-                <option value="{{id.id}}">{{ id }}</option>
-            {% endfor %}
-        </select>
-        <input style="width: 40%; display: inline;" class="form-control" type="number" name="identity_document" placeholder="No. Documento">
-        <select style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" name="nationality" aria-label="Default select example">
-            {% for nationality in nationalities %}
-                <option value="{{nationality.id}}">{{ nationality }}</option>
-            {% endfor %}
-        </select>
-        <select style="width: 40%; display: inline;" class="form-control" name="sex" aria-label="Default select example">
-            {% for gender in sex %}
-                <option value="{{gender.id}}" selected>{{ gender }}</option>
-            {% endfor %}
-        </select>
-        <input style="width: 40%; display: inline; margin-right: 10px;" class="form-control" type="date" name="date_birth" placeholder="Fecha de Nacimiento">
-        <input style="width: 40%; display: inline;" class="form-control" type="number" name="age" placeholder="Edad">
-        <br> <hr>
-        <h6 style="color: #066DAF; font-size: large;">Contacto:</h6>
-        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="email" name="email" placeholder="Email">
-        <input style="width: 40%; display: inline;" class="form-control" type="text" name="address" placeholder="Dirección">
-        <input style="width: 40%; display: inline; margin-bottom: 10px; margin-right: 10px;" class="form-control" type="tel" name="phone_1" placeholder="Teléfono/Celular (1)">
-        <input style="width: 40%; display: inline;" class="form-control" type="tel" name="phone_2" placeholder="Teléfono/Celular (2)"> <br>
-        <hr>
-        <table style="text-align:center; margin-right: auto; margin-left: auto;">
-            {{ courses_form.media }}
-            {{ courses_form.as_table }}
-            <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
-        </table>
-        <br>
-        <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Crear Estudiante"> <!--CREATE-->
-    </form>
-</div>
-<hr>
-</main>
+
+    <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-4">
+                <div class="card-body">
+                    {% if message %}
+                        <h6 style="color: crimson;">
+                            {{ message }} <a href="{% url 'courses:student' student.id %}">{{ student }}</a>
+                        </h6>
+                        <br>
+                    {% endif %}
+                    <h2 class="title">Crear Estudiante</h2>
+                    <form action="{% url 'courses:create_student' %}" method="POST" id="create" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row row-space">
+                            <div style="width: 285px;">
+                                <div class="input-group">
+                                    <label class="label">Foto:</label>
+                                    {{ form }}
+                                    Tamaño máximo de la foto: <span style="color: crimson; font-weight: bold;">5 MB</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Nombres</label>
+                                    <input class="input--style-4" type="text" name="first_name" required>
+                                </div>
+                            </div>
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Apellidos</label>
+                                    <input class="input--style-4" type="text" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Tipo de documento</label>
+                                    <div class="rs-select2 js-select-simple select--no-search">
+                                        <select name="id_type">
+                                            {% for id in ids %}
+                                                <option value="{{id.id}}">{{ id }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Número de documento</label>
+                                    <input class="input--style-4" type="number" name="identity_document">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label style="width: 285px;" class="label">Nacionalidad</label>
+                                    <div class="rs-select2 js-select-simple select--no-search">
+                                        <select name="nationality">
+                                            {% for nationality in nationalities %}
+                                                <option value="{{nationality.id}}">{{ nationality }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Género</label>
+                                    <div class="p-t-10">
+                                        {% for gender in sex %}
+                                            <label class="radio-container m-r-45">{{ gender }}
+                                                <input type="radio" checked="checked" name="sex" value="{{gender.id}}">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label style="width: 385px;" class="label">Fecha de Nacimiento</label>
+                                    <div class="input-group-icon">
+                                        <input style="height: 50px;"class="input--style-4" type="date" name="date_birth">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Edad</label>
+                                    <input class="input--style-4" type="number" name="age">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Correo Electrónico</label>
+                                    <input class="input--style-4" type="email" name="email">
+                                </div>
+                            </div>
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Dirección</label>
+                                    <input class="input--style-4" type="text" name="address">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Teléfono / Celular (1)</label>
+                                    <input class="input--style-4" type="tel" name="phone_1">
+                                </div>
+                            </div>
+                            <div style="width: 385px;">
+                                <div class="input-group">
+                                    <label class="label">Teléfono / Celular (2)</label>
+                                    <input class="input--style-4" type="tel" name="phone_2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="max-width: 100%;">
+                                <table style="max-width: 100%;">
+                                    {{ courses_form.media }}
+                                    {{ courses_form.as_table }}
+                                    <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+                                </table>
+                            </div>
+                        </div>
+                        
+
+                        <div class="p-t-15">
+                            <button class="btn btn--radius-2" style="background-color: steelblue;" type="submit">Crear Estudiante</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery1.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select21.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment1.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker1.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'js/global1.js' %}"></script>
+    
 
 {% endblock %}

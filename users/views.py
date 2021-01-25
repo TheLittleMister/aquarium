@@ -219,12 +219,25 @@ def index(request, account_id):
 
         schedule.sort(key=lambda course:course[0])
 
+        try:
+            year = str(student.date_birth)[0:4]
+            month = str(student.date_birth)[5:7]
+            day = str(student.date_birth)[8:10]
+
+            date_birth = datetime.date(int(year), int(month), int(day))
+    
+        except:
+            date_birth = str(student.date_birth)
+        
+        date_birth_form = str(student.date_birth)
+
         return render(request, "users/profile.html", {
             "message": message,
             "user": student,
             "schedule": schedule,
             "page": page,
-            "date_birth": str(student.date_birth),
+            "date_birth": date_birth,
+            "date_birth_form": date_birth_form,
             "nationalities": Nationality.objects.all(),
             "ids": Id_Type.objects.all(),
             "sex": Sex.objects.all(),
@@ -252,6 +265,12 @@ def courses(request, account_id):
             date_search = request.POST["date"]
             results = student.courses.filter(date=date_search).order_by('date','start_time')
 
+        try: 
+            past = datetime.date.today() > results.first().date 
+        
+        except: 
+            past = False
+
 
         old_courses = student.courses.filter(date__lt=datetime.datetime.now()).order_by('-date','-start_time')
         next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
@@ -270,6 +289,7 @@ def courses(request, account_id):
         today_page = today_course_paginator.get_page(today_page_num)
         
         return render(request, "users/courses.html", {
+            "past": past,
             "results": results,
             "student": student,
             "old_page": old_page,

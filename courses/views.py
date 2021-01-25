@@ -111,33 +111,38 @@ def index(request):
 @staff_member_required
 def courses(request):
 
+    results = "Hi"
+
     if request.method == "POST":
         
         search = request.POST["date"]
         results = Course.objects.filter(date=search).order_by('date','start_time')
 
-        return render(request, 'courses/courses.html', {
-            "results": results,
-            "message": "Busqueda",
-        })
 
-    else:
+    old_courses = Course.objects.filter(date__lt=datetime.datetime.now()).order_by('-date','-start_time')
+    next_courses = Course.objects.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
+    today_courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
 
-        old_courses = Course.objects.filter(date__lt=datetime.datetime.now()).order_by('date','start_time')
-        next_courses = Course.objects.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
-        
-        today_courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
-        today_course_paginator = Paginator(today_courses, 10)
-        page_num = request.GET.get("page")
-        today_page = today_course_paginator.get_page(page_num)
+    old_course_paginator = Paginator(old_courses, 10)
+    old_page_num = request.GET.get("old_page")
+    old_page = old_course_paginator.get_page(old_page_num)
 
+    next_course_paginator = Paginator(next_courses, 10)
+    next_page_num = request.GET.get("next_page")
+    next_page = next_course_paginator.get_page(next_page_num)
 
-        return render(request, 'courses/courses.html', {
-            "old_courses": old_courses,
-            "next_courses": next_courses,
-            "today_page": today_page,
-            "message": "Todos los",
-        })
+    today_course_paginator = Paginator(today_courses, 10)
+    today_page_num = request.GET.get("today_page")
+    today_page = today_course_paginator.get_page(today_page_num)
+    
+    return render(request, "courses/courses.html", {
+        "results": results,
+        "student": student,
+        "old_page": old_page,
+        "next_page": next_page,
+        "today_page": today_page,
+
+    })
 
 @staff_member_required
 def create_student(request):
@@ -295,6 +300,8 @@ def student(request, account_id):
     student = Account.objects.get(pk=account_id)
     message = ""
     message1 = ""
+    already = None
+    already1 = None
     
     #Edit Student
     if request.method == "POST":
@@ -312,7 +319,7 @@ def student(request, account_id):
                 if int(request.POST["identity_document"]) != student.identity_document:
 
                     try:
-                        Account.objects.get(identity_document=request.POST["identity_document"])
+                        already = Account.objects.get(identity_document=request.POST["identity_document"])
                         check += 1
 
                     except:
@@ -325,7 +332,7 @@ def student(request, account_id):
                 if int(request.POST["identity_document"]) != student.identity_document_1:
 
                     try:
-                        Account.objects.get(identity_document_1=request.POST["identity_document"])
+                        already = Account.objects.get(identity_document_1=request.POST["identity_document"])
                         check += 1
                     
                     except:
@@ -335,7 +342,7 @@ def student(request, account_id):
                 pass         
  
             if check > 0:
-                message = "No. de Documento ya está en uso."
+                message = "No. de Documento ya está en uso por: "
             
             else:
                 student.identity_document = request.POST["identity_document"]
@@ -378,8 +385,8 @@ def student(request, account_id):
             if student.email != request.POST["email"].lower():
 
                 try:
-                    Account.objects.get(email=request.POST["email"].lower())
-                    message1 = "Correo ya está en uso."
+                    already1 = Account.objects.get(email=request.POST["email"].lower())
+                    message1 = "Correo ya está en uso por: "
 
                 except:
                     student.email = request.POST["email"].lower()
@@ -481,15 +488,30 @@ def student(request, account_id):
     else:
         email = student.email
 
+    try:
+        year = str(student.date_birth)[0:4]
+        month = str(student.date_birth)[5:7]
+        day = str(student.date_birth)[8:10]
+
+        date_birth = datetime.date(int(year), int(month), int(day))
+    
+    except:
+        date_birth = str(student.date_birth)
+    
+    date_birth_form = str(student.date_birth)
+
     return render(request, 'courses/account.html', {
+        "already": already,
+        "already1": already1,
         "message": message,
         "message1": message1,
         "email": email,
-        "date_birth": str(student.date_birth),
+        "date_birth": date_birth,
+        "date_birth_form": date_birth_form,
         "ids": Id_Type.objects.all(),
         "nationalities": Nationality.objects.all(),
         "sex": Sex.objects.all(),
-        "student": student,
+        "user": student,
         "page": page,
         "courses": courses,
         "schedule": schedule,
@@ -507,40 +529,43 @@ def student_history(request, account_id):
 
     student = Account.objects.get(pk=account_id)
 
-    if request.method == "POST":
+    results = "Hi"
 
+    if request.method == "POST":
         date_search = request.POST["date"]
         results = student.courses.filter(date=date_search).order_by('date','start_time')
 
-        try: 
-            past = datetime.date.today() > results.first().date 
-        
-        except: 
-            past = False
+    try: 
+        past = datetime.date.today() > results.first().date 
+    
+    except: 
+        past = False
 
-        return render(request, 'courses/history.html', {
-            "student": student,
-            "past": past,
-            "results": results,
-            "message": "Busqueda",
-        })
+    old_courses = student.courses.filter(date__lt=datetime.datetime.now()).order_by('-date','-start_time')
+    next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
+    today_courses = student.courses.filter(date=datetime.datetime.now()).order_by('date','start_time')
 
-    else:
+    old_course_paginator = Paginator(old_courses, 10)
+    old_page_num = request.GET.get("old_page")
+    old_page = old_course_paginator.get_page(old_page_num)
 
-        old_courses = student.courses.filter(date__lt=datetime.datetime.now()).order_by('date','start_time')
-        next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
-        
-        today_courses = student.courses.filter(date=datetime.datetime.now()).order_by('date','start_time')
-        today_course_paginator = Paginator(today_courses, 10)
-        page_num = request.GET.get("page")
-        today_page = today_course_paginator.get_page(page_num)
+    next_course_paginator = Paginator(next_courses, 10)
+    next_page_num = request.GET.get("next_page")
+    next_page = next_course_paginator.get_page(next_page_num)
 
-        return render(request, 'courses/history.html', {
-            "old_courses": old_courses,
-            "next_courses": next_courses,
-            "today_page": today_page,
-            "student": student,
-        })
+    today_course_paginator = Paginator(today_courses, 10)
+    today_page_num = request.GET.get("today_page")
+    today_page = today_course_paginator.get_page(today_page_num)
+    
+    return render(request, "courses/history.html", {
+        "past": past,
+        "results": results,
+        "student": student,
+        "old_page": old_page,
+        "next_page": next_page,
+        "today_page": today_page,
+
+    })
 
 @staff_member_required
 def course(request, course_id):

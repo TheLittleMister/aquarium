@@ -10,6 +10,21 @@
     
       <!-- Left Column -->
       <div class="w3-third">
+        <div class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
+                Buscar Mis Clases
+            </h2>
+            <div class="w3-container">
+                <form action="{% url 'users:courses' user.id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="form-control" type="date" name="date" style="display: inline; width: 200px;" required>
+                    <br><br>
+                    <input class="btn btn-primary" style="display: inline; width: 250px;" type="submit" value="Buscar Fecha">
+                </form>
+                <br>
+            </div>
+        </div>
+        <br>
       
         <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
             <div id="righttop" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
@@ -107,11 +122,14 @@
                                     {% for attendance in course.attendance.all %}
                                             {% if attendance.student == student %}
                                                 {% if attendance.attendance == True %}
-                                                    <span class="badge badge-success" style="color: green;">ASISTIO</span>
+                                                    <span id="check{{ attendance.id }}" class="badge badge-success" style="color: green;">ASISTIO</span>
                                                 
-                                                {% else %}
-                                                    <span class="badge badge-danger" style="color: gray;">PENDIENTE</span>
+                                                {% elif attendance.attendance == False and past == True %}
+                                                    <span id="check{{ attendance.id }}" class="badge badge-danger" style="color: red;">NO ASISTIO</span>
                                                 
+                                                {% elif attendance.attendance == False and past == False %}
+                                                    <span id="check{{ attendance.id }}" class="badge badge-secondary" style="color: grey;">PENDIENTE</span>
+                
                                                 {% endif %}
                                             {% endif %}
                                     {% endfor %}

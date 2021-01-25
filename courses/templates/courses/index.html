@@ -1,87 +1,120 @@
 {%  extends "courses/layout.html" %}
+{% load static %}
+
+{% block head %}
+    <!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+{% endblock %}
+
 {% block body %}
-    <br>
-    <div style="width:500px; text-align:center; margin-right: auto; margin-left:auto;">
-        <form action="{% url 'courses:index' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form }}
-            <input class="btn btn-primary" style="display: inline;" type="submit" value="Buscar">
-        </form>
-    </div>
-    <br>
-    <main class="container">
-        <div class="table-responsive">
-            <table class="table"style="margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr style="text-align: center;">
-                        <th scope="col">Documento</th>
-                        <th scope="col">Nombres</th>
-                        <th scope="col">Apellidos</th>
-                        <th scope="col">Telefono/Celular (1)</th>
-                        <th scope="col">Telefono/Celular (2)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if page %}
-                        {% for student in page.object_list %}
-                        <tr style="text-align:center;">
-                            <td>{{ student.identity_document }}</td>
-                            <td><a href="{% url 'courses:student' student.id %}">{{ student.first_name }}</a></td>
-                            <td><a href="{% url 'courses:student' student.id %}">{{ student.last_name }}</a></td>
-                            <td>{{ student.phone_1 }}</td>
-                            <td>{{ student.phone_2 }}</td>
-                        </tr>
-                        {% empty %}
-                        <div style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</div>
-                        {% endfor %}
-                    {% else %}
-                        {% for student in students %}
-                        <tr style="text-align:center;">
-                            <td>{{ student.identity_document }}</td>
-                            <td><a href="{% url 'courses:student' student.id %}">{{ student.first_name }}</a></td>
-                            <td><a href="{% url 'courses:student' student.id %}">{{ student.last_name }}</a></td>
-                            <td>{{ student.phone_1 }}</td>
-                            <td>{{ student.phone_2 }}</td>
-                        </tr>
-                        {% empty %}
-                        <div style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</div>
-                        {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
-            <nav aria-label="Page navigation">   
-                <ul class="pagination justify-content-center">
-                    {% if page.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">begin</span>
-                            </a>
-                        </li>   
-                    {% endif %}
-            
-                    {% for n in page.paginator.page_range %}
-                        {% if page.number == n %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
-                            </li>
-                        {% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-            
-                    {% if page.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="sr-only">end</span>
-                        </a>
-                    </li>
-                    {% endif %}   
-                </ul> 
-            </nav>
-        </div>
-    </main>
+
+	<div class="limiter">
+		<div class="container-table100">
+            <div style="width:1000px; text-align:center; margin-right: auto; margin-left:auto; display: block;">
+                <form action="{% url 'courses:index' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input class="btn btn-primary" style="display: inline; width: 200px; margin-top: 5px;" type="submit" value="Buscar">
+                </form>
+            </div>
+			<div class="wrap-table100">
+				<div class="table100">
+					<table style="margin-top: 45px;">
+						<thead>
+							<tr class="table100-head">
+								<th class="first_column">Documento</th>
+								<th class="column">Nombres</th>
+								<th class="column">Apellidos</th>
+								<th class="column">Teléfono/Celular(1)</th>
+								<th class="last_column">Teléfono/Celular(2)</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% if page %}
+								{% for student in page.object_list %}
+								<tr style="text-align:center;" onclick="window.location='{% url 'courses:student' student.id %}';">
+									<td class="first_column">{{ student.identity_document }}</td>
+									<td class="column">{{ student.first_name }}</td>
+									<td class="column">{{ student.last_name }}</td>
+									<td class="column">{{ student.phone_1 }}</td>
+									<td class="last_column">{{ student.phone_2 }}</td>
+								</tr>
+								{% empty %}
+								<div style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</div>
+								{% endfor %}
+							{% else %}
+								{% for student in students %}
+								<tr style="text-align:center;" onclick="window.location='{% url 'courses:student' student.id %}';">
+									<td class="first_column">{{ student.identity_document }}</td>
+									<td class="column">{{ student.first_name }}</td>
+									<td class="column">{{ student.last_name }}</td>
+									<td class="column">{{ student.phone_1 }}</td>
+									<td class="last_column">{{ student.phone_2 }}</td>
+								</tr>
+								{% empty %}
+								<div style="text-align: center; margin-bottom: 30px; color: crimson; font-weight: bold;">Sin resultados</div>
+								{% endfor %}
+							{% endif %}
+						</tbody>
+                    </table>
+                    <br>
+					<nav aria-label="Page navigation">   
+						<ul class="pagination justify-content-center">
+							{% if page.has_previous %}
+								<li class="page-item">
+									<a class="page-link" href="?page=1" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+										<span class="sr-only">begin</span>
+									</a>
+								</li>   
+							{% endif %}
+					
+							{% for n in page.paginator.page_range %}
+								{% if page.number == n %}
+									<li class="page-item active">
+										<span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+									</li>
+								{% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
+									<li class="page-item">
+										<a class="page-link" href="?page={{ n }}">{{ n }}</a>
+									</li>
+								{% endif %}
+							{% endfor %}
+					
+							{% if page.has_next %}
+							<li class="page-item">
+								<a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+									<span class="sr-only">end</span>
+								</a>
+							</li>
+							{% endif %}   
+						</ul> 
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!--===============================================================================================-->	
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

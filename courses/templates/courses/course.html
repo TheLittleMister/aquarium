@@ -1,194 +1,262 @@
-{% extends "courses/layout.html" %}
+{% extends 'courses/layout.html' %}
 {% load static %}
 
+{% block head %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Icons font CSS-->
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="{% static 'vendor/select2/select21.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/datepicker/daterangepicker1.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+{% endblock %}
+
 {% block script %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'courses/account.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-<br>
-    <main class="container-xl" style="text-align: center;">
-        <div>
-            <div style="width: 40%; float: left;">
-                <div class="table-responsive" style="text-align: center; display: inline-block;">
-                    <table class="table table-bordered"style="display: inline;">
-                        <thead>
-                            <tr style="text-align: center;">
-                                <th scope="col" style="text-align: center; background-color: #066DAF; color: white;">Información del Curso
-                                    <a id="course-edit" onclick="course_edit();" class="badge badge-info" style="padding: 5px;color: white;display: inline-block;">EDITAR</a>
-                                    <a id="course-edit-back" onclick="course_edit_back();" class="badge badge-info" style="padding: 5px;color: white; display: none;">ATRAS</a>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr style="text-align:left;">
-                                <td style="background-color: #e3f2fd;">
-                                    <p class="info">Fecha:</p> {{ course.date|date:"l"}} {{ course.date }} <br> <hr>
-                                    <p class="info">Hora Inicio:</p> {{ course.start_time|date:"P" }} <br>
-                                    <p class="info">Hora Final:</p> {{ course.end_time|date:"P" }} <br> <hr>
-                                    <p class="info">No. Estudiantes:</p> <span class="badge badge-primary" style="padding: 5px; font-size: medium;">{{ course.students.count }}</span> <br> <hr>
-                                    <a href="{% url 'courses:print_course' course.id %}" class="badge badge-secondary" style="display: block; margin-top: 10px;">IMPRIMIR CURSO</a>
-                                    
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div style="width: 60%; float: right;">
-                <div id="course-students" class="table-responsive" style="text-align: center; display: inline-block;">
-                    <h5 style="background-color: #066DAF; color: white; padding: 10px;">
-                        Estudiantes:
-                    </h5>
-                    {% if attendance_form %}
-                        <form action="{% url 'courses:attendance_course' course.id %}" style="text-align: left;" method="POST" id="create" enctype="multipart/form-data">
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+    
+      <!-- Left Column -->
+      <div class="w3-third">
+      
+        <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
+          <div class="w3-display-container" style="text-align: center;">
+            {% if not payment %}
+            <span id="option" onclick="editcourse();" class="w3-tag w3-round" style="background-color: #066DAF; color: white; margin-top: 10px;">Editar Clase</span> <br>
+            {% endif %}
+        </div>
+          <br>
+          <div class="w3-container" style="max-width: 100%; text-align: center;">
+            <p class="info">Fecha:</p> {{ course.date|date:"l"}} {{ course.date }} <br> <hr>
+            <p class="info">Hora Inicio:</p> {{ course.start_time|date:"P" }} <br>
+            <p class="info">Hora Final:</p> {{ course.end_time|date:"P" }} <br> <hr>
+            <p class="info">No. Estudiantes:</p> <span class="badge badge-primary" style="padding: 5px; font-size: medium;">{{ course.students.count }}</span> <br> <br>
+            <a href="{% url 'courses:print_course' course.id %}" class="btn btn-secondary" style="margin-top: 10px; width: auto; max-width: 100%;">IMPRIMIR CLASE</a>
+            <br><br>
+          </div>
+        </div><br>
+  
+      <!-- End Left Column -->
+      </div>
+  
+      <!-- Right Top Column -->
+    <div class="w3-twothird" >
+  
+        <div id="righttop" class="w3-container w3-card w3-margin-bottom" style="background-color: #e3f2fd; display: block;">
+          <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-users fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>Estudiantes</h2>
+          <!-- <div class="w3-container"> -->
+            <div id="course-students" class="table-responsive" style="text-align: center; display: inline-block;">
+                {% if attendance_form %}
+                    <form action="{% url 'courses:attendance_course' course.id %}" style="text-align: left;" method="POST" id="create" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ attendance_form }}
+                        <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Marcar Asistencias">
+                    </form>
+                {% elif payment %}
+                        
+                        <form action="{% url 'courses:payment' attendance.id %}" style="text-align: left;" method="POST" id="create" enctype="multipart/form-data">
                             {% csrf_token %}
-                            {{ attendance_form }}
-                            <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Marcar Asistencias">
-                        </form>
-                    {% elif payment %}
+                            <h5 style="font-weight: bold;">{{ attendance.student }}</h5> <br>
+                            {% if attendance.cycle == True %}
+                                <input style="width: auto;" type="checkbox" name="cycle" checked> 
+                            {% else %}
+                                <input style="width: auto;" type="checkbox" name="cycle"> 
+                            {% endif %}
+                                <label style="width: auto;" for="cycle">CICLO</label><br>
                             
-                            <form action="{% url 'courses:payment' attendance.id %}" style="text-align: left;" method="POST" id="create" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <h5>{{ attendance.student }}</h5>
-                                {% if attendance.cycle == True %}
-                                    <input type="checkbox" name="cycle" checked> 
-                                {% else %}
-                                    <input type="checkbox" name="cycle"> 
-                                {% endif %}
-                                    <label for="cycle">CICLO</label><br>
+                            {% if attendance.quota == "SEPARADO" %}
+                                <input style="width: auto;" type="radio" id="def" name="payment" value="SEPARADO" checked>
+                            {% else %}
+                                <input style="width: auto;" type="radio" id="def" name="payment" value="SEPARADO">
+                            {% endif %}
+                                <label style="width: auto;" for="def">SEPARADO</label>
+
+                            {% if attendance.quota == "PAGO" %}
+                                <input style="width: auto;" type="radio" id="paid" name="payment" value="PAGO" checked>
+                            {% else %}
+                                <input style="width: auto;" type="radio" id="paid" name="payment" value="PAGO">
+                            {% endif %}
+                                <label style="width: auto;" for="paid">PAGO</label>
+
+                            {% if attendance.quota == "NO PAGO" %}
+                                <input style="width: auto;" type="radio" id="n_paid" name="payment" value="NO PAGO" checked>
+                            {% else %}
+                                <input style="width: auto;" type="radio" id="n_paid" name="payment" value="NO PAGO">
+                            {% endif %}
+                                <label style="width: auto;" for="n_paid">NO PAGO</label> <br>
+
+                            💲: <input style="width: auto;" type="text" name="amount" placeholder="$" value="{{ attendance.amount }}" maxlength="100">
+                            <hr> <br>
+                            <input style="width: auto;" style="margin-left: auto; margin-right: auto; font-weight: bold;" class="btn btn-success" type="submit" value="Guardar">
+                        </form>
+
+                {% else %}
+                <table class="table table-bordered" style="text-align: left;">
+                    {% for attendance in attendances %}
+                        <tr>
+                            <td>
+                                {% if attendance.attendance == True %}
+                                    <span id="check{{ attendance.id }}" class="badge badge-success">ASISTIO</span>
                                 
-                                {% if attendance.quota == "SEPARADO" %}
-                                    <input type="radio" id="def" name="payment" value="SEPARADO" checked>
-                                {% else %}
-                                    <input type="radio" id="def" name="payment" value="SEPARADO">
+                                {% elif attendance.attendance == False and past == True %}
+                                    <span id="check{{ attendance.id }}" class="badge badge-danger">NO ASISTIO</span>
+                                
+                                {% elif attendance.attendance == False and past == False %}
+                                    <span id="check{{ attendance.id }}" class="badge badge-secondary">PENDIENTE</span>
+
                                 {% endif %}
-                                    <label for="def">SEPARADO</label>
+                                
+                                {% if attendance.student.amount != "" %}
+                                    {% if attendance.student.amount != "0" %}
+                                        <span id="quota" class="badge badge-info">
+                                            Saldo ${{ attendance.student.amount }}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                                                            
+                                {% if attendance.cycle == True %}
+                                    <span class="badge badge-warning">INICIA CICLO
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
 
                                 {% if attendance.quota == "PAGO" %}
-                                    <input type="radio" id="paid" name="payment" value="PAGO" checked>
-                                {% else %}
-                                    <input type="radio" id="paid" name="payment" value="PAGO">
-                                {% endif %}
-                                    <label for="paid">PAGO</label>
-
-                                {% if attendance.quota == "NO PAGO" %}
-                                    <input type="radio" id="n_paid" name="payment" value="NO PAGO"checked>
-                                {% else %}
-                                    <input type="radio" id="n_paid" name="payment" value="NO PAGO">
-                                {% endif %}
-                                    <label for="n_paid">NO PAGO</label> <br>
-
-                                💲: <input type="text" name="amount" placeholder="$" value="{{ attendance.amount }}" maxlength="100">
-                                <hr>
-                                <input style="margin-left: auto; margin-right: auto; font-weight: bold;" class="btn btn-success" type="submit" value="Guardar">
-                            </form>
-
-                    {% else %}
-                    <table class="table table-bordered" style="text-align: left;">
-                        {% for attendance in attendances %}
-                            <tr>
-                                <td>
-                                    {% if attendance.attendance == True %}
-                                        <span id="check{{ attendance.id }}" class="badge badge-success">ASISTIO</span>
-                                    
-                                    {% elif attendance.attendance == False and past == True %}
-                                        <span id="check{{ attendance.id }}" class="badge badge-danger">NO ASISTIO</span>
-                                    
-                                    {% elif attendance.attendance == False and past == False %}
-                                        <span id="check{{ attendance.id }}" class="badge badge-secondary">PENDIENTE</span>
-
-                                    {% endif %}
-                                    
-                                    {% if attendance.student.amount != "" %}
-                                        {% if attendance.student.amount != "0" %}
-                                            <span id="quota" class="badge badge-info">
-                                                Saldo ${{ attendance.student.amount }}
-                                            </span>
+                                    <span class="badge badge-success">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
-                                                                
-                                    {% if attendance.cycle == True %}
-                                        <span class="badge badge-warning">INICIA CICLO
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
+                                    </span>
+                                {% elif attendance.quota == "NO PAGO" %}
+                                    <span class="badge badge-danger">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
                                             {% endif %}
-                                        </span>
-                                    {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-secondary">CUPO {{ attendance.quota }}
+                                        {% if attendance.amount != "" %}
+                                            {% if attendance.amount != "0" %}
+                                                ${{ attendance.amount }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
 
-                                    {% if attendance.quota == "PAGO" %}
-                                        <span class="badge badge-success">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                    {% elif attendance.quota == "NO PAGO" %}
-                                        <span class="badge badge-danger">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                    {% else %}
-                                        <span class="badge badge-secondary">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                    {% endif %}
+                                <br>
+                                <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">
+                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }}
+                                </a>
+                            </td>
 
-                                    <br>
-                                    <a style="color: black;" href="{% url 'courses:student' attendance.student.id %}">
-                                        {{ attendance.student.first_name }} {{ attendance.student.last_name }}
-                                    </a>
-                                </td>
-
-                                <td style="width: 5%; text-align: center;">
-                                    <h5>
-                                        <a href="{% url 'courses:payment' attendance.id %}">💲</a>
-                                    </h5>
-                                </td>                      
-                            <tr>
-                        {% endfor %}
-                    </table>
-                    {% endif %}
-                </div>
-                <div id="course-form" style="width:300px; text-align:left; visibility: hidden;">
-                    <h5 style="color: crimson;">{{ message }}</h5>
-                    <button id="course-delete" onclick="course_secure_delete();" class="btn btn-danger" style="font-size: small; font-weight: bold;">ELIMINAR CURSO</button> <br>
-                    <form action="{% url 'courses:edit_course' course.id %}" method="POST" id="create" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <h5>Fecha:</h5>
-                        <input class="form-control" type="date" name="date" style="display: inline; width: 300px;" value="{{date}}" required> <hr>
-                        <h5>Hora Inicio:</h5>
-                        <input class="form-control" type="time" name="start_time" style="display: inline; width: 300px;" value="{{start_time}}" required> <hr>
-                        <h5>Hora Final:</h5>
-                        <input class="form-control" type="time" name="end_time" style="display: inline; width: 300px;" value="{{end_time}}" required> <hr>
-                        <table style="text-align:center;">
-                            {{ form.media }}
-                            {{ form.as_table }}
-                            <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
-                        </table>
-                        <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Guardar Curso"> <!--CREATE-->
-                    </form>
-                </div>
-                <div id="course_secure_delete" style="display: none;">
-                    <h6>¿Estas seguro/a que quieres <span style="color: crimson; font-weight: bold;">eliminar</span> el curso?:</h6>
-                    <h6>{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h6>
-                    <a class="btn btn-danger" href="{% url 'courses:delete_course' course.id %}">Si</a>
-                    <button onclick="course_secure_delete_back();" class="btn btn-success">No</button>
-                </div>  
+                            <td style="width: 5%; text-align: center;">
+                                <h5>
+                                    <a href="{% url 'courses:payment' attendance.id %}">💲</a>
+                                </h5>
+                            </td>                      
+                        <tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
             </div>
         </div>
-    </main>
-<br>
+        <div id="editform" class="w3-container w3-card" style="background-color: #e3f2fd; display: block; visibility: hidden;"> 
 
+            <div class="card-body">
+                    <br>
+                    <h2 class="title w3-text-grey w3-padding-16">
+                        <i class="fa fa-edit fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
+                            Editar Clase
+                        <a href="#" id="student-delete" onclick="course_secure_delete();" style="font-size: small; font-weight: bold; color: crimson;">ELIMINAR CLASE</a> <br>
+                    </h2>
+                    <form action="{% url 'courses:edit_course' course.id %}" method="POST" id="create" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row row-space" style="width: 320px; flex-wrap: wrap;">
+                            <div class="input-group" style="width: 395px;">
+                                <label class="label">Fecha</label>
+                                <input id="add-date" class="form-control" type="date" name="date" style="display: inline; width: 300px;" value="{{date}}" required> <br> <br>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div style="width: 400px;">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <label style="width: 400px;" class="label">Hora Inicio</label>
+                                        <input class="form-control" type="time" name="start_time" style="display: inline; width: 300px;" value="{{start_time}}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 400px;">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <label style="width: 400px;" class="label">Hora Final</label>
+                                        <input class="form-control" type="time" name="end_time" style="display: inline; width: 300px;" value="{{end_time}}" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div>
+                                <table>
+                                    {{ form.media }}
+                                    {{ form.as_table }}
+                                    <script type="text/javascript" src="{% url 'courses:jsi18n' %}"></script>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="p-t-15">
+                            <button class="btn btn--radius-2" style="background-color: steelblue;" type="submit">Guardar Curso</button>
+                        </div>
+                    </form>
+                </div>
+
+                
+        </div>
+        <div id="course_secure_delete" style="display: none;">
+            <div class="w3-container w3-card" style="background-color: #e3f2fd; display: block; text-align: center; padding: 15px;">
+                <h3>¿Estas seguro/a que quieres <span style="color: crimson; font-weight: bold;">eliminar</span> el curso?:</h3>
+                <h3>{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
+                <a class="btn btn-danger" href="{% url 'courses:delete_course' course.id %}">Si</a>
+                <button onclick="course_secure_delete_back();" class="btn btn-success">No</button>
+            </div>
+        </div>
+        <!-- End Grid -->
+    </div>
+    <!-- End Page Container -->
+  </div>
+  
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery1.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select21.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment1.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker1.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'js/global1.js' %}"></script>
 
 {% endblock %}
