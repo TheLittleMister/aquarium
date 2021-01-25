@@ -119,7 +119,7 @@ def index(request, account_id):
 
             if request.POST["email"]:
 
-                if student.email.lower() != request.POST["email"].lower():
+                if student.email != request.POST["email"].lower():
 
                     try:
                         Account.objects.get(email=request.POST["email"].lower())
