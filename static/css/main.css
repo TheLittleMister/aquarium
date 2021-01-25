@@ -245,10 +245,10 @@ tbody tr:hover {
     content: "Apellidos";
   }
   table tbody tr td:nth-child(4):before {
-    content: "Teléfono/Celular (1)";
+    content: "Tel/Cel (1)";
   }
   table tbody tr td:nth-child(5):before {
-    content: "Teléfono/Celular (2)";
+    content: "Tel/Cel (2)";
   }
 
 
