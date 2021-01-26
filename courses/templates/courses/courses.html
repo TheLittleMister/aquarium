@@ -59,8 +59,8 @@
                     <ul style="text-align: left; margin-top: 20px;">
                         {% for course in old_page.object_list %}
                         <li>
-                            <span class="badge badge-info">{{ course.students.all.count }}</span>
-                            <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                            <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                            <a href="{% url 'courses:course' course.id %}" style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
                         </li>
                         <br>
       
@@ -132,19 +132,8 @@
                             <ul style="text-align: left; margin-top: 20px;">
                                 {% for course in results %}
                                 <li>
-                                    {% for attendance in course.attendance.all %}
-                                        {% if attendance.student == student %}
-                                            {% if attendance.attendance == True %}
-                                                <span class="badge badge-success" style="color: green;">ASISTIO</span>
-                                            
-                                            {% else %}
-                                                <span class="badge badge-danger" style="color: gray;">PENDIENTE</span>
-                                            
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    <span class="badge badge-info">{{ course.students.all.count }}</span>
-                                    <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                                    <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                                    <a href="{% url 'courses:course' course.id %}" style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
                                 </li>
                                 <br>
             
@@ -196,8 +185,8 @@
                 <ul style="text-align: left; margin-top: 20px;">
                     {% for course in today_page.object_list %}
                     <li>
-                        <span class="badge badge-info">{{ course.students.all.count }}</span>
-                        <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                        <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                        <a href="{% url 'courses:course' course.id %}" style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
                     </li>
                     <br>
   
@@ -258,8 +247,8 @@
                 <ul style="text-align: left; margin-top: 20px;">
                     {% for course in next_page.object_list %}
                     <li>
-                        <span class="badge badge-info">{{ course.students.all.count }}</span>
-                        <a href="{% url 'courses:course' course.id %}" style="color: black;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
+                        <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                        <a href="{% url 'courses:course' course.id %}" style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
                     </li>
                     <br>
   

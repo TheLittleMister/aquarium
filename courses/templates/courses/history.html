@@ -259,7 +259,7 @@
                                 </thead>
                                 <tbody>
                                     
-                                {% for course in old_page.object_list %}
+                                {% for course in results %}
                                     <tr>
                                     <td data-label="Clase">
                                         <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
@@ -276,6 +276,7 @@
                                                 
                                                 {% elif attendance.attendance == False and past == False %}
                                                     <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                                {% endif %}
                                                 </td>
                                                 <td data-label="Etiquetas">       
                                                 {% if attendance.cycle == True %}
