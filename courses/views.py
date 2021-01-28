@@ -836,6 +836,16 @@ def getnotifications(request):
     })
 
 @staff_member_required
+def ignore(request, account_id):
+
+    student = Account.objects.get(pk=account_id)
+
+    student.newrequest = False
+    student.save()
+
+    return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required
 def payment(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=attendance_id)

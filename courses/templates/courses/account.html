@@ -40,7 +40,7 @@
       
         <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
           <div class="w3-display-container" style="text-align: center;">
-            <span id="option" onclick="edit();" class="w3-tag w3-round" style="background-color: #066DAF; color: white; margin-top: 10px;">Editar Cuenta</span> <br>
+            <span id="option" onclick="edit();" class="w3-tag w3-round" style="background-color: #066DAF; margin-top: 10px;">Editar Cuenta</span> <br>
             <img src="{{ user.image.url }}" style="width: 300px; border-radius: 50%; margin-top: 20px; margin-bottom: 20px; max-width: 100%; " alt="Avatar">
           </div>
           <div class="w3-display-container" style="text-align: center;">
@@ -53,6 +53,7 @@
                         <input type="submit" style="color: black; display: inline; width: 200px;" class="btn btn-warning" value="Saldo" >
                     </form>
             </div>  
+            <br>
           <div class="w3-container" style="max-width: 100%;">
             {% if message %}
               <p style="color: crimson;">{{ message }}
@@ -66,7 +67,8 @@
               </p>
               
             {% endif %}
-            <p class="w3-large" style="color: #066DAF;"><b><i class="fa-fw" style="color: #066DAF;"></i>Personal:</b></p>
+            <p class="w3-large" style="color: #066DAF; width: 50%; float: left;"><b><i class="fa-fw" style="color: #066DAF;"></i>Personal:</b></p>
+            <a href="{% url 'courses:ignore' user.id %}" class="w3-tag w3-round" style="background-color: #17a2b8; width: 50%; float: right; font-size: medium;">Ignorar Peticiones</a> <br> <br>
             <p class="info">Nombres:</p> 
                 {{ user.first_name }} 
                 {% if user.first_name_1 != None %}
@@ -109,7 +111,7 @@
             <p class="info">Sexo:</p> {{ user.sex }} <br>
             <p class="info">Edad:</p> {{ age }} años<br>
             <p class="info">Fecha de Nacimiento:</p> {{ date_birth|slice:18 }}<br> <hr> <br>
-            <p class="w3-large" style="color: #066DAF;"><b><i class="fa-fw" style="color: #066DAF;"></i>Contacto:</b></p>
+            <p class="w3-large" style="color: #066DAF;"><b><i class="fa-fw" style="color: #066DAF;"></i>Contacto:</b></p> <br>
             <p class="info">Correo:</p> {{ user.email }} <br>
             <p class="info">Dirección:</p> {{ user.address }} <br> <br>
             <p class="info">Teléfono/Celular(1):</p> {{ user.phone_1 }} <br>
