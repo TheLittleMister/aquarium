@@ -587,15 +587,16 @@ def course(request, course_id):
 
             if course.id != course_id:
                 Course.objects.get(pk=course_id).delete()
-        
-            course.date = request.POST["date"]
-            course.start_time = request.POST["start_time"]
-            course.end_time = request.POST["end_time"]           
 
-            for student in course.students.all():
-                if str(student.id) not in students:
-                    Attendance.objects.get(student=student, course=course).delete()
-                    course.students.remove(student)
+            else:
+                course.date = request.POST["date"]
+                course.start_time = request.POST["start_time"]
+                course.end_time = request.POST["end_time"]           
+
+                for student in course.students.all():
+                    if str(student.id) not in students:
+                        Attendance.objects.get(student=student, course=course).delete()
+                        course.students.remove(student)
 
             for student_id in students:
                 student = Account.objects.get(pk=int(student_id))
@@ -606,7 +607,6 @@ def course(request, course_id):
                     course.students.add(student)
 
             course.save()
-
             return HttpResponseRedirect(reverse("courses:course", args=(course.id,)))
 
         else:
