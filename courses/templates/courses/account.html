@@ -345,7 +345,7 @@
                                     <div class="input-group">
                                         <label class="label">Género</label>
                                         <div class="p-t-10">
-                                            {% for gender in sex %}
+                                            {% for gender in sex reversed %}
                                                 <label class="radio-container m-r-45">{{ gender }}
                                                     {% if gender == user.sex %}
                                                     <input type="radio" checked="checked" name="sex" value="{{gender.id}}">
