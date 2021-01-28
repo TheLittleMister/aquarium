@@ -357,7 +357,7 @@ def student(request, account_id):
 
         courses = request.POST.getlist("courses") # returns course.id(s)
 
-        for course in student.courses.all():
+        for course in student.courses.filter(date__gte=datetime.datetime.now()):
 
             if str(course.id) not in courses:
                 Attendance.objects.get(student=student, course=course).delete()
@@ -620,19 +620,29 @@ def edit_course(request, course_id):
 
     if request.method == "POST":
 
-        course = Course.objects.get(pk=course_id)
-
         if request.POST["start_time"] < request.POST["end_time"]:
 
-            course.date = request.POST["date"]
-            course.start_time = request.POST["start_time"]
-            course.end_time = request.POST["end_time"]
+            date = request.POST["date"]
+            start_time = request.POST["start_time"]
+            end_time = request.POST["end_time"]
             students = request.POST.getlist("students")  # returns student.id(s)
 
-            for student in course.students.all():
-                if str(student.id) not in students:
-                    Attendance.objects.get(student=student, course=course).delete()
-                    course.students.remove(student)
+            try:
+                course = Course.objects.get(start_time=start_time, end_time=end_time, date=date)
+
+                if course.id != course_id:
+                    Course.objects.get(pk=course_id).delete()
+
+            except:
+                course = Course.objects.get(pk=course_id)
+                course.date = request.POST["date"]
+                course.start_time = request.POST["start_time"]
+                course.end_time = request.POST["end_time"]           
+
+                for student in course.students.all():
+                    if str(student.id) not in students:
+                        Attendance.objects.get(student=student, course=course).delete()
+                        course.students.remove(student)
 
             for student_id in students:
                 student = Account.objects.get(pk=int(student_id))
