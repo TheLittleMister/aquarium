@@ -570,23 +570,83 @@ def student_history(request, account_id):
 @staff_member_required
 def course(request, course_id):
 
-    course = Course.objects.get(pk=course_id)
+    if request.method == "POST":
 
-    date = str(course.date)
-    start_time = str(course.start_time)
-    end_time = str(course.end_time)
+        date = request.POST["date"]
+        start_time = request.POST["start_time"]
+        end_time = request.POST["end_time"]
+        students = request.POST.getlist("students")  # returns student.id(s)
 
-    return render(request, 'courses/course.html', {
-        "date": date,
-        "past": datetime.date.today() > course.date,
-        "course": course,
-        "attendances": Attendance.objects.filter(course=course).order_by('student'),
-        "start_time": start_time,
-        "end_time": end_time,
-        "form": CourseForm(
-            students=course.students.all(),
-        )
-    })
+        try:
+            course = Course.objects.get(start_time=start_time, end_time=end_time, date=date)
+        
+        except:
+            course = Course.objects.get(pk=course_id)
+
+        if start_time < end_time:
+
+            if course.id != course_id:
+                Course.objects.get(pk=course_id).delete()
+        
+            course.date = request.POST["date"]
+            course.start_time = request.POST["start_time"]
+            course.end_time = request.POST["end_time"]           
+
+            for student in course.students.all():
+                if str(student.id) not in students:
+                    Attendance.objects.get(student=student, course=course).delete()
+                    course.students.remove(student)
+
+            for student_id in students:
+                student = Account.objects.get(pk=int(student_id))
+
+                if student not in course.students.all():
+                    attendance = Attendance(course=course, student=student)
+                    attendance.save()
+                    course.students.add(student)
+
+            course.save()
+
+            return HttpResponseRedirect(reverse("courses:course", args=(course.id,)))
+
+        else:
+
+            date = str(course.date)
+            start_time = str(course.start_time)
+            end_time = str(course.end_time)
+
+            return render(request, 'courses/course.html', {
+            "past": datetime.date.today() > course.date,
+            "attendances": Attendance.objects.filter(course=course).order_by('student'),
+            "course": course,
+            "date": date,
+            "start_time": start_time,
+            "end_time": end_time,
+            "form": CourseForm(
+                students=request.POST.getlist("students"),
+            ),
+            "message": "Hora Inicial debe ser menor a la Final",
+        })
+
+    else:
+
+        course = Course.objects.get(pk=course_id)
+
+        date = str(course.date)
+        start_time = str(course.start_time)
+        end_time = str(course.end_time)
+
+        return render(request, 'courses/course.html', {
+            "date": date,
+            "past": datetime.date.today() > course.date,
+            "course": course,
+            "attendances": Attendance.objects.filter(course=course).order_by('student'),
+            "start_time": start_time,
+            "end_time": end_time,
+            "form": CourseForm(
+                students=course.students.all(),
+            )
+        })
 
 @staff_member_required
 def print_course(request, course_id):
@@ -614,70 +674,6 @@ def print_search(request, course_id):
     return render(request, 'courses/print_course.html', {
         "courses": courses,
     })
-
-@staff_member_required
-def edit_course(request, course_id):
-
-    if request.method == "POST":
-
-        if request.POST["start_time"] < request.POST["end_time"]:
-
-            date = request.POST["date"]
-            start_time = request.POST["start_time"]
-            end_time = request.POST["end_time"]
-            students = request.POST.getlist("students")  # returns student.id(s)
-
-            try:
-                course = Course.objects.get(start_time=start_time, end_time=end_time, date=date)
-
-                if course.id != course_id:
-                    Course.objects.get(pk=course_id).delete()
-
-                else:
-                    for student in course.students.all():
-                        if str(student.id) not in students:
-                            Attendance.objects.get(student=student, course=course).delete()
-                            course.students.remove(student)
-
-            except:
-                course = Course.objects.get(pk=course_id)
-                course.date = request.POST["date"]
-                course.start_time = request.POST["start_time"]
-                course.end_time = request.POST["end_time"]           
-
-                for student in course.students.all():
-                    if str(student.id) not in students:
-                        Attendance.objects.get(student=student, course=course).delete()
-                        course.students.remove(student)
-
-            for student_id in students:
-                student = Account.objects.get(pk=int(student_id))
-
-                if student not in course.students.all():
-                    attendance = Attendance(course=course, student=student)
-                    attendance.save()
-                    course.students.add(student)
-
-            course.save()
-
-            return HttpResponseRedirect(reverse("courses:course", args=(course.id,)))
-
-        else:
-
-            date = str(course.date)
-            start_time = str(course.start_time)
-            end_time = str(course.end_time)
-
-            return render(request, 'courses/course.html', {
-            "course": course,
-            "date": date,
-            "start_time": start_time,
-            "end_time": end_time,
-            "form": CourseForm(
-                students=request.POST.getlist("students"),
-            ),
-            "message": "Hora Inicial debe ser menor a la Final",
-        })
 
 @staff_member_required
 def create_course(request):

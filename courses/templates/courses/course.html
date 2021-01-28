@@ -100,6 +100,9 @@
         </div>
           <br>
           <div class="w3-container" style="max-width: 100%; text-align: center;">
+            {% if message %}
+                <p class="info" style="color: crimson;">{{ message }}</p> <br>
+            {% endif %}
             <p class="info">Fecha:</p> {{ course.date|date:"l"}} {{ course.date }} <br> <hr>
             <p class="info">Hora Inicio:</p> {{ course.start_time|date:"P" }} <br>
             <p class="info">Hora Final:</p> {{ course.end_time|date:"P" }} <br> <hr>
@@ -266,7 +269,7 @@
                             Editar Clase
                         <a href="#" id="student-delete" onclick="course_secure_delete();" style="font-size: small; font-weight: bold; color: crimson;">ELIMINAR CLASE</a> <br>
                     </h2>
-                    <form action="{% url 'courses:edit_course' course.id %}" method="POST" id="create" enctype="multipart/form-data">
+                    <form action="{% url 'courses:course' course.id %}" method="POST" id="create" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="row row-space" style="width: 320px; flex-wrap: wrap;">
                             <div class="input-group" style="width: 395px;">
