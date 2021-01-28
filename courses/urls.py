@@ -20,8 +20,11 @@ urlpatterns = [
     path("course/delete/<int:course_id>", views.delete_course, name="delete_course"),
     path("course/attendance/<int:course_id>", views.attendance_course, name="attendance_course"),
     path("attendance/<int:attendance_id>", views.attendance, name="attendance"), # FETCH
+
     path("notifications/", views.notifications, name="notifications"), #FETCH
     path("getnotifications/", views.getnotifications, name="getnotifications"),
+    path("ignore/<int:account_id>", views.ignore, name="ignore"),
+
     path("course/payment/<int:attendance_id>", views.payment, name="payment"),
     path("courses", views.courses, name="courses"),
     path("courses/all/past", views.past_courses, name="past_courses"),
