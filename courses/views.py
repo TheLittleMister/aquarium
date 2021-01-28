@@ -633,6 +633,12 @@ def edit_course(request, course_id):
                 if course.id != course_id:
                     Course.objects.get(pk=course_id).delete()
 
+                else:
+                    for student in course.students.all():
+                        if str(student.id) not in students:
+                            Attendance.objects.get(student=student, course=course).delete()
+                            course.students.remove(student)
+
             except:
                 course = Course.objects.get(pk=course_id)
                 course.date = request.POST["date"]
