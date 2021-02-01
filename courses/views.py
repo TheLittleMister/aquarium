@@ -818,6 +818,25 @@ def attendance(request, attendance_id): # FETCH
     return JsonResponse(attendance, safe=False)
 
 @staff_member_required
+def pay(request, attendance_id): # FETCH
+
+    the_attendance = Attendance.objects.get(pk=attendance_id)
+
+    if the_attendance.quota == "PAGO":
+        the_attendance.quota = "SEPARADO"
+    
+    elif the_attendance.quota == "SEPARADO":
+        the_attendance.quota = "NO PAGO"
+
+    else:
+        the_attendance.quota = "PAGO"
+    
+    the_attendance.save()
+
+    return JsonResponse(the_attendance.quota, safe=False)
+
+
+@staff_member_required
 def notifications(request): # FETCH
 
     count = Account.objects.filter(newrequest=True).count()

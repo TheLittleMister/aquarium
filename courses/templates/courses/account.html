@@ -226,7 +226,7 @@
                                         {% endif %}
     
                                         {% if attendance.quota == "PAGO" %}
-                                            <span class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
@@ -234,7 +234,7 @@
                                                 {% endif %}
                                             </span>
                                         {% elif attendance.quota == "NO PAGO" %}
-                                            <span class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
@@ -242,7 +242,7 @@
                                                 {% endif %}
                                             </span>
                                         {% else %}
-                                            <span class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
