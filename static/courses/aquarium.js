@@ -23,7 +23,30 @@ document.addEventListener("click", event => {
             }
             
         });
-    } 
+
+    } else if (element.id.slice(0,3) === "pay") {
+
+        id = element.id.slice(3,);
+
+        fetch(`/courses/pay/${id}`)
+        .then(response => response.json())
+        .then(pay => {
+
+            element.innerHTML = `CUPO ${pay}`;
+
+            if (pay === "PAGO") {
+                element.className = "badge badge-success";
+
+            } else if (pay === "NO PAGO") {
+                element.className = "badge badge-danger";
+
+            } else {
+                element.className = "badge badge-secondary";
+            }
+
+        });
+
+    }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
