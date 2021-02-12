@@ -44,7 +44,7 @@
             <img src="{{ user.image.url }}" style="width: 300px; border-radius: 50%; margin-top: 20px; margin-bottom: 20px; max-width: 100%; " alt="Avatar">
           </div>
           <div class="w3-display-container" style="text-align: center;">
-                    <span id="quota" onclick="quota();" class="w3-tag w3-round bg-warning" style="color: black; overflow-x: auto">
+                    <span id="quota" onclick="quota();" class="w3-tag w3-round bg-warning" style="color: black; overflow-x: auto; max-width: 100%;">
                         Saldo: ${{ user.amount }}
                     </span>
                     <form id="quota-form" style="display: none;" action="{% url 'courses:quota' user.id %}" method="POST" enctype="multipart/form-data">
