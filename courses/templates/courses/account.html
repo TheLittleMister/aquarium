@@ -216,7 +216,7 @@
                         {% for attendance in course.attendance.all %}
                                     {% if attendance.student == user %}
                                         {% if attendance.cycle == True %}
-                                            <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
+                                            <span class="badge badge-warning" style="font-size: small; max-width: 100%; overflow-x: auto;">INICIA CICLO
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
@@ -226,7 +226,7 @@
                                         {% endif %}
     
                                         {% if attendance.quota == "PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
@@ -234,7 +234,7 @@
                                                 {% endif %}
                                             </span>
                                         {% elif attendance.quota == "NO PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
@@ -242,7 +242,7 @@
                                                 {% endif %}
                                             </span>
                                         {% else %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
                                                 {% if attendance.amount != "" %}
                                                     {% if attendance.amount != "0" %}
                                                         ${{ attendance.amount }}
