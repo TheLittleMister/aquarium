@@ -272,7 +272,7 @@ def create_student(request):
         else:
             student.phone_2 = None
 
-        if 'image' in request.FILES["image"].content_type:
+        if request.FILES.get("image", False) != False and 'image' in request.FILES["image"].content_type:
             student.image = request.FILES["image"]
 
         student.save()
@@ -415,7 +415,7 @@ def student(request, account_id):
 
             student.image = 'default-profile.png'
 
-        elif 'image' in request.FILES["image"].content_type:
+        elif request.FILES.get("image", False) != False and 'image' in request.FILES["image"].content_type:
 
             if student.image != 'default-profile.png':
                 student.image.delete()

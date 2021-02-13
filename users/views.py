@@ -173,7 +173,7 @@ def index(request, account_id):
 
                 student.image = 'default-profile.png'
             
-            elif 'image' in request.FILES["image"].content_type:
+            elif request.FILES.get("image", False) != False and 'image' in request.FILES["image"].content_type:
 
                 if student.image != 'default-profile.png':
                     student.image.delete()

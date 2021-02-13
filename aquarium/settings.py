@@ -29,7 +29,7 @@ MEDIA_URL = '/media/'
 SECRET_KEY = config.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '172.104.13.4', 'aquariumschool.co', 'www.aquariumschool.co']
 
