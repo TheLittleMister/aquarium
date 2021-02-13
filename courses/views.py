@@ -407,20 +407,20 @@ def student(request, account_id):
         
         else:
             student.phone_2 = None
-
-        if 'image' in request.FILES["image"].content_type:
-
-            if student.image != 'default-profile.png':
-                student.image.delete()
-
-            student.image = request.FILES["image"]
-
-        elif request.POST.get("image-clear", False) == "on":
+        
+        if request.POST.get("image-clear", False) == "on":
 
             if student.image != 'default-profile.png':
                 student.image.delete()
 
             student.image = 'default-profile.png'
+
+        elif 'image' in request.FILES["image"].content_type:
+
+            if student.image != 'default-profile.png':
+                student.image.delete()
+
+            student.image = request.FILES["image"]
 
         student.save()
 
