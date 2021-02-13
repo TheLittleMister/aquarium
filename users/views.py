@@ -166,7 +166,7 @@ def index(request, account_id):
             else:
                 student.phone_2_1 = None
             
-            if 'image' in request.FILES:
+            if 'image' in request.FILES["image"].content_type:
 
                 if student.image != 'default-profile.png':
                     student.image.delete()
