@@ -9,6 +9,8 @@ class Course(models.Model):
     date = models.DateField(null=True)
     students = models.ManyToManyField(Account, blank=True, related_name="courses") # Students(Account.student) M2M
 
+    class Meta:
+        ordering = ['date']
     
     def __str__(self):
         start_time = datetime.datetime.strptime(f'{str(self.start_time)[:-3]}','%H:%M').strftime('%I:%M %p')

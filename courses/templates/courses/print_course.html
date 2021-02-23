@@ -66,11 +66,16 @@
                                 <li style="margin-bottom: 20px;">
                                     <h4>
                                         <input type="checkbox" style="margin-left: 10px;"> {{ student }}
+                                        {% if student.courses.last == course %}
+                                            <span style="color:crimson; font-weight: bold;">• Última Clase</span>
+                                        {% endif %}
+
                                         {% if student.amount != "" %}
                                             {% if student.amount != "0" %}
-                                                - Saldo ${{ student.amount }}
+                                                - Saldo: ${{ student.amount }}
                                             {% endif %}
                                         {% endif %}
+                                        
                                     </h4>
                                 </li> 
                             {% endfor %}

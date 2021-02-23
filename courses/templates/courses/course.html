@@ -183,7 +183,10 @@
                         <tr>                            
                             <td scope="row" data-label="Estudiante">
                                 <a style="font-size: medium;" href="{% url 'courses:student' attendance.student.id %}">
-                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }}
+                                    {% if course == attendance.student.courses.last %}
+                                        <span style="color:crimson; font-weight: bold;">• Última Clase de</span> 
+                                    {% endif %}
+                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }} 
                                 </a>
                             </td>
                             <td data-label="Asistencia">
