@@ -181,10 +181,11 @@
                     <tbody>
                         {% for attendance in attendances %}
                         <tr>                            
-                            <td scope="row" data-label="Estudiante">
+                            <td scope="row" data-label="Estudiante" style="text-align: left; width: 450px;">
                                 <a style="font-size: medium;" href="{% url 'courses:student' attendance.student.id %}">
+                                    • 
                                     {% if course == attendance.student.courses.last %}
-                                        <span style="color:crimson; font-weight: bold;">• Última Clase de</span> 
+                                        <span style="color:crimson; font-weight: bold;">Última Clase de</span>     
                                     {% endif %}
                                     {{ attendance.student.first_name }} {{ attendance.student.last_name }} 
                                 </a>
