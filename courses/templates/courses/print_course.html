@@ -62,20 +62,20 @@
                         {% for course in courses %}
                         <h3> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
                         <ol style="margin-top: 30px; font-size: x-large;">
-                            {% for student in course.students.all %}
+                            {% for attendance in course.attendance.all %}
                                 <li style="margin-bottom: 20px;">
                                     <h4>
-                                        <input type="checkbox" style="margin-left: 10px;"> {{ student }}
-                                        {% if student.attendance.recover == true %}
+                                        <input type="checkbox" style="margin-left: 10px;"> {{ attendance.student }}
+                                        {% if attendance.recover == True %}
                                             <span style="color: blue; font-weight: bold;">• Recuperación</span>
                                         {% endif %}
 
-                                        {% if student.courses.last == course %}
+                                        {% if attendance.student.courses.last == course %}
                                             <span style="color:crimson; font-weight: bold;">• Última Clase</span>
                                         {% endif %}
 
-                                        {% if student.note %}
-                                        • {{ student.note }}
+                                        {% if attendance.student.note %}
+                                        • {{ attendance.student.note }}
                                         {% endif %}
                                     </h4>
                                 </li> 
