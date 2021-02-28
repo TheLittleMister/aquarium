@@ -20,6 +20,63 @@
 
     <!-- Main CSS-->
     <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+
+    <style>
+        table {
+            /* border: 1px solid #ccc; */
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+    
+        table tr {
+            /* background: #f8f8f8; */
+            /* border: 1px solid #ddd; */
+            padding: .35em;
+        }
+    
+        table th, table td {
+            padding: .625em;
+            text-align: left;
+        }
+    
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        
+        @media screen and (max-width: 1090px) {
+    
+        table { border: 0; }
+    
+        table thead { display: none; }
+    
+        table tr {
+        /* border-bottom: 3px solid #ddd; */
+        display: block;
+        margin-bottom: .625em;
+        }
+    
+        table td {
+        /* border-bottom: 1px solid #ddd; */
+        display: block;
+        font-size: .8em;
+        text-align: right;
+        }
+    
+        table td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+        }
+    
+        table td:last-child { border-bottom: 0; }
+    
+        }
+    </style>
 {% endblock %}
 
 {% block script %}
@@ -43,14 +100,17 @@
             <span id="option" onclick="edit();" class="w3-tag w3-round" style="background-color: #066DAF; margin-top: 10px;">Editar Cuenta</span> <br>
             <img src="{{ user.image.url }}" style="width: 300px; border-radius: 50%; margin-top: 20px; margin-bottom: 20px; max-width: 100%; " alt="Avatar">
           </div>
-          <div class="w3-display-container" style="text-align: center;">
-                    <span id="quota" onclick="quota();" class="w3-tag w3-round bg-warning" style="color: black; overflow-x: auto; max-width: 100%;">
-                        Saldo: ${{ user.amount }}
-                    </span>
+          <div class="w3-container" style="text-align: left;">
+            <p onclick="quota();" class="w3-large" style="color: #066DAF; width: 50%; float: left; cursor: pointer;"><b><i class="fa-fw" style="color: #066DAF;"></i>✏️ Nota:</b></p> 
+                    <br><br>
+                    <div id="quota">
+                        {{ user.note }}
+                    </div>
+                    
                     <form id="quota-form" style="display: none;" action="{% url 'courses:quota' user.id %}" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="text" name="quota" class="form-control" style="display: inline; width: auto;" placeholder="$" value="{{ user.amount }}" maxlength="100">
-                        <input type="submit" style="color: black; display: inline; width: 200px;" class="btn btn-warning" value="Saldo" >
+                        <textarea class="form-control" name="quota" rows="6" maxlength="280">{{ user.note }}</textarea> <br>
+                        <input type="submit" style="display: inline; width: 200px; color: white; background-color: steelblue;" class="form-control" value="Anotar">
                     </form>
             </div>  
             <br>
@@ -68,7 +128,7 @@
               
             {% endif %}
             <p class="w3-large" style="color: #066DAF; width: 50%; float: left;"><b><i class="fa-fw" style="color: #066DAF;"></i>Personal:</b></p>
-            <a href="{% url 'courses:ignore' user.id %}" class="w3-tag w3-round" style="background-color: #17a2b8; width: 50%; float: right; font-size: medium;">Ignorar Peticiones</a> <br> <br>
+            <br><br>
             <p class="info">Nombres:</p> 
                 {{ user.first_name }} 
                 {% if user.first_name_1 != None %}
@@ -138,6 +198,7 @@
             {% endif %}
             
             <br>
+            <a href="{% url 'courses:ignore' user.id %}" class="w3-tag w3-round" style="background-color: #17a2b8; width: 50%;font-size: medium; text-align: center;">Ignorar Peticiones</a> <br> <br>
           </div>
         </div><br>
   
@@ -152,47 +213,36 @@
           <!-- <div class="w3-container"> -->
             <div id="student-schedule" class="table-responsive" style="text-align: center; display: block;">
               
-              <table class="table table-bordered" style="display: inline; width: 100%;">
-                  <thead>
-                      <tr style="text-align: center;color: white; background-color: #066DAF;">
-                          <th id="sch" scope="col">Hora</th>
-                          <th id="sch" scope="col">Lunes</th>
-                          <th id="sch" scope="col">Martes</th>
-                          <th id="sch" scope="col">Miercoles</th>
-                          <th id="sch" scope="col">Jueves</th>
-                          <th id="sch" scope="col">Viernes</th>
-                          <th id="sch" scope="col">Sabado</th>
-                          <th id="sch" scope="col">Domingo</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for row in schedule %}
-                      <tr style="text-align:center;">
-                          <td>
-                              {% for info in row|slice:":1" %}
-                                  <h6 style="font-size: medium;">{{ info|date:"P" }}</h6>
-                              {% endfor %}
-                              {% for info in row|slice:"1:2" %}
-                                  <h6 style="font-size: medium; display: inline;">{{ info|date:"P" }}</h6>
-                              {% endfor %}
-                          </td>
-                          {% for info in row|slice:"2:" %}
-                          <td style="color: #066DAF; font-weight: bold; font-size: large;">{{ info }}</td>
-                          {% endfor %}
-                      </tr>
-                      {% empty %}
-                      <tr class="table-borderless">
-                          <th scope="col"></th>
-                          <th scope="col"></th>
-                          <th scope="col"></th>
-                          <th scope="col" style="text-align: center; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin</th>
-                          <th scope="col" style="text-align: center; margin-bottom: 30px; color: steelblue; font-weight: bold;">Horario</th>
-                          <th scope="col"></th>
-                          <th scope="col"></th>
-                          <th scope="col"></th>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
+              <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Lunes</th>
+                            <th scope="col">Martes</th>
+                            <th scope="col">Miercoles</th>
+                            <th scope="col">Jueves</th>
+                            <th scope="col">Viernes</th>
+                            <th scope="col">Sabado</th>
+                            <th scope="col">Domingo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in schedule %}
+                        <tr>
+                            <td data-label="Hora">
+                                {% for info in row|slice:":1" %}
+                                    {{ info|date:"P" }} -
+                                {% endfor %}
+                                {% for info in row|slice:"1:2" %}
+                                    {{ info|date:"P" }}
+                                {% endfor %}
+                            </td>
+                            {% for info in row|slice:"2:" %}
+                            <td scope="row" data-label="{% cycle 'Lunes' 'Martes' 'Miercoles' 'Jueves' 'Viernes' 'Sabado' 'Domingo' %}">{{ info }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
               </table>
             </div>
           <br>
@@ -200,108 +250,124 @@
   
 
       <!-- Right Bottom Column -->
-          <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
-            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
-              Próximas Clases:
-              <a href="{% url 'courses:history' user.id %}" class="badge badge-info" style="color: white;">Cursos del Estudiante</a>
-            </h2>
-            <div class="w3-container">
-              <div id="student-next" style="color: black;">
+      <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
+          Próximas Clases:
+          <a href="{% url 'courses:history' user.id %}" class="badge badge-info" style="color: white;">Cursos del Estudiante</a>
+        </h2>
+        <div class="w3-container">
+          <div id="student-next" style="color: black;">
+                
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Clase</th>
+                        <th scope="col">Asistencia</th>
+                        <th scope="col">Cupo</th>
+                        <th scope="col">Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
                     
-                <ul style="text-align: left; margin-top: 20px;">
-                    {% for course in page.object_list %}
-                    <li>
+                {% for course in page.object_list %}
+                    <tr>
+                    <td data-label="Clase">
                         <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
-                        <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                        {% for attendance in course.attendance.all %}
-                                    {% if attendance.student == user %}
-                                        {% if attendance.cycle == True %}
-                                            <span class="badge badge-warning" style="font-size: small; max-width: 100%; overflow-x: auto;">INICIA CICLO
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                        {% endif %}
-    
-                                        {% if attendance.quota == "PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                        {% elif attendance.quota == "NO PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                        {% else %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small; max-width: 100%; overflow-x: auto;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                    </li>
-                    <br>
-  
-                    {% empty %}
-  
-                      <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin proximos cursos</li>
-  
+                        <a href="{% url 'courses:course' course.id %}" style="font-size: small;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
+                    </td> 
+                    {% for attendance in course.attendance.all %}
+                        {% if attendance.student == user %}
+                            <td scope="row" data-label="Asistencia">
+                            {% if attendance.recover == True %}
+                                <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                <br>
+                            {% endif %}
+                            {% if attendance.attendance == True %}
+                                <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
+                            
+                            {% else %}
+                                <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                            
+                            {% endif %}
+                            </td>
+                            <td data-label="Cupo">
+
+                                {% if attendance.cycle == True %}
+                                    <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                        Inicia Ciclo
+                                    </span>
+                                    <br>
+                                {% endif %}
+
+                                {% if attendance.quota == "PAGO" %}
+                                    <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                    </span>
+                                {% elif attendance.quota == "NO PAGO" %}
+                                    <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                    </span>
+                                {% else %}
+                                    <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                    </span>
+                                {% endif %}
+                            
+                            </td>
+                            <td data-label="Nota">
+
+                                {% if attendance.note %}
+                                    <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                        📃
+                                    </span>
+                                {% endif %}
+                                                            
+                            </td>
+                        {% endif %}
                     {% endfor %}
-                </ul>
-            </div>
-            <div id="student-pag" style="text-align: center; padding: 10px;">
-              <nav aria-label="Page navigation">   
-                  <ul class="pagination justify-content-center">
-                      {% if page.has_previous %}
-                          <li class="page-item">
-                              <a class="page-link" href="?page=1" aria-label="Previous">
-                                  <span aria-hidden="true">&laquo;</span>
-                                  <span class="sr-only">begin</span>
-                              </a>
-                          </li>   
-                      {% endif %}
-              
-                      {% for n in page.paginator.page_range %}
-                          {% if page.number == n %}
-                              <li class="page-item active">
-                                  <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
-                              </li>
-                          {% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
-                              <li class="page-item">
-                                  <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                              </li>
-                          {% endif %}
-                      {% endfor %}
-              
-                      {% if page.has_next %}
+                    </tr>
+                {% endfor %}
+                
+                </tbody>
+            </table>
+        </div>
+        <div id="student-pag" style="text-align: center; padding: 10px;">
+          <nav aria-label="Page navigation">   
+              <ul class="pagination justify-content-center">
+                  {% if page.has_previous %}
                       <li class="page-item">
-                          <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
-                              <span aria-hidden="true">&raquo;</span>
-                              <span class="sr-only">end</span>
+                          <a class="page-link" href="?page=1" aria-label="Previous">
+                              <span aria-hidden="true">&laquo;</span>
+                              <span class="sr-only">begin</span>
                           </a>
-                      </li>
-                      {% endif %}   
-                  </ul> 
-              </nav>
-            </div>
-            </div>
-          </div>
-  
-        <!-- End Right Column -->
-  
+                      </li>   
+                  {% endif %}
+          
+                  {% for n in page.paginator.page_range %}
+                      {% if page.number == n %}
+                          <li class="page-item active">
+                              <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+                          </li>
+                      {% elif n > page.number|add:'-3' and n < page.number|add:'3' %}
+                          <li class="page-item">
+                              <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                          </li>
+                      {% endif %}
+                  {% endfor %}
+          
+                  {% if page.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">end</span>
+                      </a>
+                  </li>
+                  {% endif %}   
+              </ul> 
+          </nav>
+        </div>
+        </div>
+      </div>
+
+    <!-- End Right Column -->
+
             <!-- Edit information FORM -->
             <div id="editform" class="w3-container w3-card" style="background-color: #e3f2fd; display: block; visibility: hidden;">
                     <div class="card-body">
@@ -484,5 +550,15 @@
 
     <!-- Main JS-->
     <script src="{% static 'js/global1.js' %}"></script>
+
+    <!-- Tooltips -->
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    
 
 {% endblock %}

@@ -32,7 +32,7 @@ document.addEventListener("click", event => {
         .then(response => response.json())
         .then(pay => {
 
-            element.innerHTML = `CUPO ${pay}`;
+            element.innerHTML = `${pay}`;
 
             if (pay === "PAGO") {
                 element.className = "badge badge-success";
@@ -117,9 +117,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function quota() {
 
-    document.querySelector("#quota").style.display = "none";
-    document.querySelector("#quota-form").style.display = "block"
-    
+    if (document.querySelector("#quota").style.display === "none"){
+
+        document.querySelector("#quota").style.display = "block";
+        document.querySelector("#quota-form").style.display = "none";
+
+    } else {
+
+        document.querySelector("#quota").style.display = "none";
+        document.querySelector("#quota-form").style.display = "block";
+
+    }
 }
 
 function student_edit() {

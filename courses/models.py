@@ -42,6 +42,7 @@ class Attendance(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="attendance")
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
+    recover = models.BooleanField(default=False)
 
     PAID = "PAGO"
     N_PAID = "NO PAGO"
@@ -59,7 +60,7 @@ class Attendance(models.Model):
         default=PAID,
     ) # SEPARADO / PAGO / NO PAGO
 
-    amount = models.CharField(max_length=100)
+    note = models.CharField(max_length=280)
 
     def __str__(self):
         return f"{self.student}"

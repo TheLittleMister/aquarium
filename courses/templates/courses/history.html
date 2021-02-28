@@ -36,7 +36,7 @@
     
         table th, table td {
             padding: .625em;
-            text-align: center;
+            text-align: left;
         }
     
         table th {
@@ -87,13 +87,20 @@
     <div class="w3-row-padding">
     
       <!-- Left Column -->
-      <div class="w3-third">
+      <div class="w3-third" style="width: 45%;">
         <div class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
                 Buscar Clase de 
                 <a href="{% url 'courses:student' student.id %}">
                     {{ student.first_name }}
                 </a>
+
+                {% if student.note %}
+                    <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ student.note }}">
+                        📓
+                    </span>
+                    <br>
+                {% endif %}
             </h2>
             <div class="w3-container">
                 <form action="{% url 'courses:history' student.id %}" method="POST" enctype="multipart/form-data">
@@ -121,7 +128,8 @@
                             <tr>
                                 <th scope="col">Clase</th>
                                 <th scope="col">Asistencia</th>
-                                <th scope="col">Etiquetas</th>
+                                <th scope="col">Cupo</th>
+                                <th scope="col">Nota</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,60 +141,53 @@
                                 <a href="{% url 'courses:course' course.id %}" style="font-size: small;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
                             </td> 
                             {% for attendance in course.attendance.all %}
-                                    {% if attendance.student == student %}
-                                        <td scope="row" data-label="Asistencia">
-                                        {% if attendance.attendance == True %}
-                                            <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
-                                        
-                                        {% else %}
-                                            <span id="check{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">NO ASISTIO</span>
-                                        
-                                        {% endif %}
-                                        </td>
-                                        <td data-label="Etiquetas" style="max-width: 200px;">       
-                                        {% if attendance.cycle == True %}
-                                            <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                            <br>
-                                        {% endif %}
-    
-                                        {% if attendance.quota == "PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                            <br>
-                                        {% elif attendance.quota == "NO PAGO" %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                            <br>
-                                        {% else %}
-                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                {% if attendance.amount != "" %}
-                                                    {% if attendance.amount != "0" %}
-                                                        ${{ attendance.amount }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
-                                            <br>
-                                        {% endif %}
-                                        </td>
+                                {% if attendance.student == student %}
+                                    <td scope="row" data-label="Asistencia">
+                                    {% if attendance.recover == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                        <br>
                                     {% endif %}
+                                    {% if attendance.attendance == True %}
+                                        <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
+                                    
+                                    {% else %}
+                                        <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                    
+                                    {% endif %}
+                                    </td>
+                                    <td data-label="Cupo">
+
+                                        {% if attendance.cycle == True %}
+                                            <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                                Inicia Ciclo
+                                            </span>
+                                            <br>
+                                        {% endif %}
+
+                                        {% if attendance.quota == "PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% elif attendance.quota == "NO PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% else %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% endif %}
+                                    
+                                    </td>
+                                    <td data-label="Nota">
+
+                                        {% if attendance.note %}
+                                            <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                                📃
+                                            </span>
+                                        {% endif %}
+
+                                    </td>
+                                {% endif %}
                             {% endfor %}
-                            </tr>
+                        </tr>
                         {% endfor %}
                         
                         </tbody>
@@ -237,7 +238,7 @@
       </div>
   
       <!-- Right Top Column -->
-      <div class="w3-twothird" >
+      <div class="w3-twothird" style="width: 55%;">
         {% if results != "Hi" %}
 
             {% if results %}
@@ -254,7 +255,8 @@
                                     <tr>
                                         <th scope="col">Clase</th>
                                         <th scope="col">Asistencia</th>
-                                        <th scope="col">Etiquetas</th>
+                                        <th scope="col">Cupo</th>
+                                        <th scope="col">Nota</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -266,66 +268,58 @@
                                         <a href="{% url 'courses:course' course.id %}" style="font-size: small;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
                                     </td> 
                                     {% for attendance in course.attendance.all %}
-                                            {% if attendance.student == student %}
-                                                <td scope="row" data-label="Asistencia">
-                                                {% if attendance.attendance == True %}
-                                                    <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
-                                                
-                                                {% elif attendance.attendance == False and past == True %}
-                                                    <span id="check{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">NO ASISTIO</span>
-                                                
-                                                {% elif attendance.attendance == False and past == False %}
-                                                    <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
-                                                {% endif %}
-                                                </td>
-                                                <td data-label="Etiquetas" style="max-width: 300px;">       
-                                                {% if attendance.cycle == True %}
-                                                    <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
-                                                        {% if attendance.amount != "" %}
-                                                            {% if attendance.amount != "0" %}
-                                                                ${{ attendance.amount }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </span>
-                                                    <br>
-                                                {% endif %}
-            
-                                                {% if attendance.quota == "PAGO" %}
-                                                    <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                        {% if attendance.amount != "" %}
-                                                            {% if attendance.amount != "0" %}
-                                                                ${{ attendance.amount }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </span>
-                                                    <br>
-                                                {% elif attendance.quota == "NO PAGO" %}
-                                                    <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                        {% if attendance.amount != "" %}
-                                                            {% if attendance.amount != "0" %}
-                                                                ${{ attendance.amount }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </span>
-                                                    <br>
-                                                {% else %}
-                                                    <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
-                                                        {% if attendance.amount != "" %}
-                                                            {% if attendance.amount != "0" %}
-                                                                ${{ attendance.amount }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </span>
-                                                    <br>
-                                                {% endif %}
-                                                </td>
+                                        {% if attendance.student == student %}
+                                            <td scope="row" data-label="Asistencia">
+                                            {% if attendance.recover == True %}
+                                                <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                                <br>
                                             {% endif %}
-                                        {% endfor %}
-                                    </tr>
+                                            {% if attendance.attendance == True %}
+                                                <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
+                                            
+                                            {% else %}
+                                                <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                            
+                                            {% endif %}
+                                            </td>
+                                            <td data-label="Cupo">
+
+                                                {% if attendance.cycle == True %}
+                                                    <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                                        Inicia Ciclo
+                                                    </span>
+                                                    <br>
+                                                {% endif %}
+        
+                                                {% if attendance.quota == "PAGO" %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% elif attendance.quota == "NO PAGO" %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% else %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% endif %}
+                                            
+                                            </td>
+                                            <td data-label="Nota">
+        
+                                                {% if attendance.note %}
+                                                    <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                                        📃
+                                                    </span>
+                                                {% endif %}
+        
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
                                 {% endfor %}
-                                
+                                        
                                 </tbody>
                             </table>
+                            <br>
                         </div>
                     </div>
                 </div>
@@ -369,7 +363,8 @@
                         <tr>
                             <th scope="col">Clase</th>
                             <th scope="col">Asistencia</th>
-                            <th scope="col">Etiquetas</th>
+                            <th scope="col">Cupo</th>
+                            <th scope="col">Nota</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -383,6 +378,10 @@
                         {% for attendance in course.attendance.all %}
                                 {% if attendance.student == student %}
                                     <td scope="row" data-label="Asistencia">
+                                    {% if attendance.recover == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                        <br>
+                                    {% endif %}
                                     {% if attendance.attendance == True %}
                                         <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                     
@@ -391,46 +390,35 @@
                                     
                                     {% endif %}
                                     </td>
-                                    <td data-label="Etiquetas" style="max-width: 300px;">       
-                                    {% if attendance.cycle == True %}
-                                        <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% endif %}
+                                    <td data-label="Cupo">
 
-                                    {% if attendance.quota == "PAGO" %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% elif attendance.quota == "NO PAGO" %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% else %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% endif %}
+                                        {% if attendance.cycle == True %}
+                                            <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                                Inicia Ciclo
+                                            </span>
+                                            <br>
+                                        {% endif %}
+
+                                        {% if attendance.quota == "PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% elif attendance.quota == "NO PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% else %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% endif %}
+                                    
+                                    </td>
+                                    <td data-label="Nota">
+
+                                        {% if attendance.note %}
+                                            <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                                📃
+                                            </span>
+                                        {% endif %}
+
                                     </td>
                                 {% endif %}
                             {% endfor %}
@@ -493,7 +481,8 @@
                         <tr>
                             <th scope="col">Clase</th>
                             <th scope="col">Asistencia</th>
-                            <th scope="col">Etiquetas</th>
+                            <th scope="col">Cupo</th>
+                            <th scope="col">Nota</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -507,6 +496,10 @@
                         {% for attendance in course.attendance.all %}
                                 {% if attendance.student == student %}
                                     <td scope="row" data-label="Asistencia">
+                                    {% if attendance.recover == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                        <br>
+                                    {% endif %}
                                     {% if attendance.attendance == True %}
                                         <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                     
@@ -515,49 +508,38 @@
                                     
                                     {% endif %}
                                     </td>
-                                    <td data-label="Etiquetas" style="max-width: 300px;">       
-                                    {% if attendance.cycle == True %}
-                                        <span class="badge badge-warning" style="font-size: small;">INICIA CICLO
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% endif %}
+                                    <td data-label="Cupo">
 
-                                    {% if attendance.quota == "PAGO" %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% elif attendance.quota == "NO PAGO" %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% else %}
-                                        <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: small;">CUPO {{ attendance.quota }}
-                                            {% if attendance.amount != "" %}
-                                                {% if attendance.amount != "0" %}
-                                                    ${{ attendance.amount }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </span>
-                                        <br>
-                                    {% endif %}
+                                        {% if attendance.cycle == True %}
+                                            <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                                Inicia Ciclo
+                                            </span>
+                                            <br>
+                                        {% endif %}
+
+                                        {% if attendance.quota == "PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% elif attendance.quota == "NO PAGO" %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% else %}
+                                            <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                            </span>
+                                        {% endif %}
+                                    
+                                    </td>
+                                    <td data-label="Nota">
+
+                                        {% if attendance.note %}
+                                            <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                                📃
+                                            </span>
+                                        {% endif %}
+
                                     </td>
                                 {% endif %}
-                            {% endfor %}
+                        {% endfor %}
                         </tr>
                     {% endfor %}
                     
@@ -621,6 +603,15 @@
 
     <!-- Main JS-->
     <script src="{% static 'js/global1.js' %}"></script>
+
+    <!-- Tooltips -->
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
   
 
 {% endblock %}

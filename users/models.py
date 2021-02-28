@@ -54,7 +54,7 @@ class Account(AbstractBaseUser):
     phone_2 = models.BigIntegerField(null=True)
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, related_name="users", null=True)
     date_birth = models.DateField(null=True)
-    amount = models.CharField(max_length=100)
+    note = models.CharField(max_length=280)
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)

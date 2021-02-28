@@ -455,7 +455,7 @@ def student(request, account_id):
 
     for course in courses:
         
-        week = {0: [""], 1: [""], 2: [""], 3: [""], 4: [""], 5: [""], 6: [""]}
+        week = {0: ["-"], 1: ["-"], 2: ["-"], 3: ["-"], 4: ["-"], 5: ["-"], 6: ["-"]}
         weekday = course.date.weekday()
         the_course = []
 
@@ -877,12 +877,18 @@ def payment(request, attendance_id):
         else:
             attendance.cycle = False
         
+        if request.POST.get("recover", False) == "on":
+            attendance.recover = True
+        
+        else:
+            attendance.recover = False
+        
         attendance.quota = request.POST["payment"]
 
-        if request.POST["amount"]:
-            attendance.amount = request.POST["amount"]
+        if request.POST["note"]:
+            attendance.note = request.POST["note"].strip()
         else:
-            attendance.amount = "0"
+            attendance.note = ""
 
         attendance.save()
 
@@ -992,10 +998,10 @@ def quota(request, student_id):
     student = Account.objects.get(pk=student_id)
 
     if request.POST["quota"]:
-        student.amount = request.POST["quota"]
+        student.note = request.POST["quota"].strip()
     
     else:
-        student.amount = "0"
+        student.note = ""
     
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student_id,)))
