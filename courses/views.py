@@ -500,7 +500,61 @@ def student(request, account_id):
     
     date_birth_form = str(student.date_birth)
 
+    # Number of paid courses
+    paid_courses = student.attendance.filter(quota="PAGO").count()
+
+    # Number of attended courses
+    attended = student.attendance.filter(course__date__lte=datetime.datetime.now(), attendance=True).count()
+
+    # Number of failed courses
+    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO").count()
+
+    # Number of recovered courses
+    recovered = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=True, recover=True).count()
+
+    # Get the Number of courses that can be recovered
+    
+    N = 4 # N represents the number of courses required to recover 1 course.
+
+    available = ((paid_courses // N) - recovered) # This equation gets the available courses to be recovered
+
+    # If by any chance the available courses to be recovered are less or equal to 0 then 0 can be recovered.
+    if available <= 0:
+        can_recover = 0
+
+    # If the available courses to be recovered are more or equal to the courses failed 
+    # then the number of courses failed can be recovered.
+    elif available >= failed:
+        can_recover = failed
+    
+    # If the available courses to be recovered are less than the failed
+    # then the available courses to be recovered can be recovered.
+    else:
+        can_recover = available
+
+    # ----------
+
+    # Get number of PAID quotas:
+    paid = student.attendance.filter(quota="PAGO").count()
+
+    # Get number of quotas that were not paid:
+    n_paid = student.attendance.filter(quota="NO PAGO").count()
+
+    # Get number of reserved quotas:
+    sep = student.attendance.filter(quota="SEPARADO").count()
+
+
     return render(request, 'courses/account.html', {
+
+        "datetoday": datetime.date.today(),
+        "attended": attended,
+        "failed": failed,
+        "recovered": recovered,
+        "can_recover": can_recover,
+        "paid": paid,
+        "n_paid": n_paid,
+        "sep": sep,
+
         "already": already,
         "already1": already1,
         "message": message,

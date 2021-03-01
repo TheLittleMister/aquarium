@@ -44,33 +44,33 @@
             letter-spacing: .1em;
             text-transform: uppercase;
         }
-        @media screen and (max-width: 639px) {
+        @media screen and (max-width: 960px) {
     
-        table { border: 0; }
-    
-        table thead { display: none; }
-    
-        table tr {
-        /* border-bottom: 3px solid #ddd; */
-        display: block;
-        margin-bottom: .625em;
-        }
-    
-        table td {
-        /* border-bottom: 1px solid #ddd; */
-        display: block;
-        font-size: .8em;
-        text-align: right;
-        }
-    
-        table td:before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-        text-transform: uppercase;
-        }
-    
-        table td:last-child { border-bottom: 0; }
+            table { border: 0; }
+        
+            table thead { display: none; }
+        
+            table tr {
+            /* border-bottom: 3px solid #ddd; */
+            display: block;
+            margin-bottom: .625em;
+            }
+        
+            table td {
+            /* border-bottom: 1px solid #ddd; */
+            display: block;
+            font-size: .8em;
+            text-align: right;
+            }
+        
+            table td:before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            }
+        
+            table td:last-child { border-bottom: 0; }
     
         }
     </style>
@@ -254,6 +254,8 @@
                                 <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
                                     📃
                                 </span>
+                            {% else %}
+                                -
                             {% endif %}
                             </td>
                             <td data-label="Editar">

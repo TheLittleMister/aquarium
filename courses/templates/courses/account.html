@@ -49,31 +49,31 @@
         
         @media screen and (max-width: 1090px) {
     
-        table { border: 0; }
-    
-        table thead { display: none; }
-    
-        table tr {
-        /* border-bottom: 3px solid #ddd; */
-        display: block;
-        margin-bottom: .625em;
-        }
-    
-        table td {
-        /* border-bottom: 1px solid #ddd; */
-        display: block;
-        font-size: .8em;
-        text-align: right;
-        }
-    
-        table td:before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-        text-transform: uppercase;
-        }
-    
-        table td:last-child { border-bottom: 0; }
+            table { border: 0; }
+        
+            table thead { display: none; }
+        
+            table tr {
+            /* border-bottom: 3px solid #ddd; */
+            display: block;
+            margin-bottom: .625em;
+            }
+        
+            table td {
+            /* border-bottom: 1px solid #ddd; */
+            display: block;
+            font-size: .8em;
+            text-align: right;
+            }
+        
+            table td:before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            }
+        
+            table td:last-child { border-bottom: 0; }
     
         }
     </style>
@@ -130,7 +130,7 @@
             <p class="w3-large" style="color: #066DAF; width: 50%; float: left;"><b><i class="fa-fw" style="color: #066DAF;"></i>Personal:</b></p>
             <br><br>
             <p class="info">Nombres:</p> 
-                {{ user.first_name }} 
+                {{ user.first_name }}
                 {% if user.first_name_1 != None %}
                     {% if user.first_name_1 != "" %}
                         {% if user.first_name_1 != user.first_name %}
@@ -231,8 +231,9 @@
                         <tr>
                             <td data-label="Hora">
                                 {% for info in row|slice:":1" %}
-                                    {{ info|date:"P" }} -
+                                    {{ info|date:"P" }}
                                 {% endfor %}
+                                <br>
                                 {% for info in row|slice:"1:2" %}
                                     {{ info|date:"P" }}
                                 {% endfor %}
@@ -247,7 +248,68 @@
             </div>
           <br>
         </div>
-  
+
+        <div id="rightmiddle" class="w3-container w3-card w3-margin-bottom" style="background-color: #e3f2fd; display: block;">
+            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-bar-chart fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>Estadisticas de clases</h2>
+            <!-- <div class="w3-container"> -->
+              <div id="chart" class="table-responsive" style="text-align: center; display: block;">
+                <div id="counter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Asistió</th>
+                                <th scope="col">Faltó</th>
+                                <th scope="col">Recuperó</th>
+                                <th scope="col">Puede Recuperar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Asistió">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ attended }}">0</div>
+                                </td>
+                                <td scope="row" data-label="Faltó">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ failed }}">0</div>
+                                </td>
+                                <td scope="row" data-label="Recuperó">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ recovered }}">0</div>
+                                </td>
+                                <td scope="row" data-label="Puede Recuperar">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ can_recover }}">0</div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br><hr style="border-top: 1px dashed steelblue;"> <br>
+                <div id="counter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Pago</th>
+                                <th scope="col">No pago</th>
+                                <th scope="col">Separado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Pago">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ paid }}">0</div>
+                                </td>
+                                <td scope="row" data-label="No pago">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ n_paid }}">0</div>
+                                </td>
+                                <td scope="row" data-label="Separado">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ sep }}">0</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            <br>
+        </div>
 
       <!-- Right Bottom Column -->
       <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
@@ -273,7 +335,10 @@
                     <tr>
                     <td data-label="Clase">
                         <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
-                        <a href="{% url 'courses:course' course.id %}" style="font-size: small;">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
+                        {% if course.date == datetoday %}
+                            <span class="badge badge-success">HOY</span>
+                        {% endif %}
+                        <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
                     </td> 
                     {% for attendance in course.attendance.all %}
                         {% if attendance.student == user %}
@@ -317,8 +382,10 @@
                                     <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
                                         📃
                                     </span>
+                                {% else %}
+                                    -
                                 {% endif %}
-                                                            
+
                             </td>
                         {% endif %}
                     {% endfor %}
@@ -554,6 +621,41 @@
     <!-- Tooltips -->
 
     <script>
+
+(function($) {
+
+        /* Counter - CountTo */
+        var a = 0;
+        $(window).show(function() {
+            if ($('#counter').length) { // checking if CountTo section exists in the page, if not it will not run the script and avoid errors	
+                var oTop = $('#counter').offset().top - window.innerHeight;
+                if (a == 0 && $(window).scrollTop() > oTop) {
+                $('.counter-value').each(function() {
+                    var $this = $(this),
+                    countTo = $this.attr('data-count');
+                    $({
+                    countNum: $this.text()
+                    }).animate({
+                        countNum: countTo
+                    },
+                    {
+                        duration: 2000,
+                        easing: 'swing',
+                        step: function() {
+                        $this.text(Math.floor(this.countNum));
+                        },
+                        complete: function() {
+                        $this.text(this.countNum);
+                        //alert('finished');
+                        }
+                    });
+                });
+                a = 1;
+                }
+            }
+        });
+        })(jQuery);
+
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)

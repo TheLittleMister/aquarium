@@ -24,6 +24,9 @@
             <div class="card card-4">
                 <div class="card-body">
                     <br>
+                    {% if message %}
+                        <h5 style="color: crimson; font-weight: bold;">{{ message }}</h5>
+                    {% endif %}
                     {% if assign_only_list or new_courses_list %}
                     <div style="height: 100px; overflow-y: auto;">
                         <div style="width: 45%; float: left; text-align: left;">
