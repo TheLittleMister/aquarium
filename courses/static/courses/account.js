@@ -125,6 +125,7 @@ function edit() {
   if (document.querySelector("#righttop").style.display === "block") {
       
       document.querySelector("#righttop").style.display = "none";
+      document.querySelector("#rightmiddle").style.display = "none";
       document.querySelector("#rightbottom").style.display = "none";
       document.querySelector("#editform").style.visibility = "visible";
       document.querySelector("#option").innerHTML = "Atrás";
@@ -132,6 +133,7 @@ function edit() {
   } else {
 
       document.querySelector("#righttop").style.display = "block";
+      document.querySelector("#rightmiddle").style.display = "block";
       document.querySelector("#rightbottom").style.display = "block";
       document.querySelector("#editform").style.visibility = "hidden";
       document.querySelector("#option").innerHTML = "Editar Cuenta";
