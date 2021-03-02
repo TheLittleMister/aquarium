@@ -517,6 +517,10 @@ def student(request, account_id):
     N = 4 # N represents the number of courses required to recover 1 course.
 
     available = ((paid_courses // N) - recovered) # This equation gets the available courses to be recovered
+    rfailed = failed - recovered # Get the number of courses that were failed and never recovered.
+
+    if rfailed < 0:
+        rfailed = 0
 
     # If by any chance the available courses to be recovered are less or equal to 0 then 0 can be recovered.
     if available <= 0:
@@ -524,8 +528,8 @@ def student(request, account_id):
 
     # If the available courses to be recovered are more or equal to the courses failed 
     # then the number of courses failed can be recovered.
-    elif available >= failed:
-        can_recover = failed
+    elif available >= rfailed:
+        can_recover = rfailed
     
     # If the available courses to be recovered are less than the failed
     # then the available courses to be recovered can be recovered.
