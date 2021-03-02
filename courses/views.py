@@ -108,7 +108,7 @@ def index(request):
     else:
         return HttpResponseRedirect(reverse("login"))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def courses(request):
 
     results = "Hi"
@@ -144,7 +144,7 @@ def courses(request):
 
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def create_student(request):
 
     if request.method == "POST":
@@ -294,7 +294,7 @@ def create_student(request):
         })
 
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def student(request, account_id):
 
     student = Account.objects.get(pk=account_id)
@@ -579,7 +579,7 @@ def student(request, account_id):
         ),
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def student_history(request, account_id):
 
     student = Account.objects.get(pk=account_id)
@@ -622,7 +622,7 @@ def student_history(request, account_id):
 
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def course(request, course_id):
 
     if request.method == "POST":
@@ -703,7 +703,7 @@ def course(request, course_id):
             )
         })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def print_course(request, course_id):
 
     courses = [Course.objects.get(pk=course_id)]
@@ -712,7 +712,7 @@ def print_course(request, course_id):
         "courses": courses,
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def print_courses(request):
 
     today_courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
@@ -721,7 +721,7 @@ def print_courses(request):
         "courses": today_courses,
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def print_search(request, course_id):
 
     courses = Course.objects.filter(date=Course.objects.get(pk=course_id).date).order_by('date','start_time')
@@ -730,7 +730,7 @@ def print_search(request, course_id):
         "courses": courses,
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def create_course(request):
 
     if request.method == "POST":
@@ -798,21 +798,21 @@ def create_course(request):
             )
         })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def delete_student(request, account_id):
 
     student = Account.objects.get(pk=account_id)
     student.delete()
     return HttpResponseRedirect(reverse("courses:index",))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def delete_course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
     course.delete()
     return HttpResponseRedirect(reverse("courses:courses",))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def attendance_course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
@@ -851,7 +851,7 @@ def attendance_course(request, course_id):
             "course": course,
         })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def attendance(request, attendance_id): # FETCH
 
     the_attendance = Attendance.objects.get(pk=attendance_id)
@@ -872,7 +872,7 @@ def attendance(request, attendance_id): # FETCH
     the_attendance.save()
     return JsonResponse(attendance, safe=False)
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def pay(request, attendance_id): # FETCH
 
     the_attendance = Attendance.objects.get(pk=attendance_id)
@@ -891,13 +891,13 @@ def pay(request, attendance_id): # FETCH
     return JsonResponse(the_attendance.quota, safe=False)
 
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def notifications(request): # FETCH
 
     count = Account.objects.filter(newrequest=True).count()
     return JsonResponse(count, safe=False)
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def getnotifications(request):
 
     accounts = Account.objects.filter(newrequest=True).order_by("first_name", "last_name")
@@ -909,7 +909,7 @@ def getnotifications(request):
         "page": page,
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def ignore(request, account_id):
 
     student = Account.objects.get(pk=account_id)
@@ -919,7 +919,7 @@ def ignore(request, account_id):
 
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def payment(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=attendance_id)
@@ -956,7 +956,7 @@ def payment(request, attendance_id):
             "course": attendance.course,
         })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def past_student_courses(request, account_id):
 
     student = Account.objects.get(pk=account_id)
@@ -971,7 +971,7 @@ def past_student_courses(request, account_id):
         "message": "Anteriores",
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def next_student_courses(request, account_id):
 
     student = Account.objects.get(pk=account_id)
@@ -986,7 +986,7 @@ def next_student_courses(request, account_id):
         "message": "Proximos",
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def past_courses(request):
 
     old_courses = Course.objects.filter(date__lt=datetime.datetime.now()).order_by('date','start_time')
@@ -999,7 +999,7 @@ def past_courses(request):
         "message": "Anteriores",
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def next_courses(request):
 
     next_courses = Course.objects.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
@@ -1012,7 +1012,7 @@ def next_courses(request):
         "message": "Proximos",
     })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def assign(request):
 
     if request.method == "POST":
@@ -1047,7 +1047,7 @@ def assign(request):
             
         })
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def quota(request, student_id):
 
     student = Account.objects.get(pk=student_id)
@@ -1086,7 +1086,7 @@ def check(student):
     
     return False
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def update_first_name(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1095,7 +1095,7 @@ def update_first_name(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def reject_first_name(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1104,7 +1104,7 @@ def reject_first_name(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def update_last_name(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1113,7 +1113,7 @@ def update_last_name(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def reject_last_name(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1122,7 +1122,7 @@ def reject_last_name(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def update_id(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1131,7 +1131,7 @@ def update_id(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def reject_id(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1140,7 +1140,7 @@ def reject_id(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def update_phone_1(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1149,7 +1149,7 @@ def update_phone_1(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def reject_phone_1(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1158,7 +1158,7 @@ def reject_phone_1(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def update_phone_2(request, account_id):
     
     student = Account.objects.get(pk=account_id)
@@ -1167,7 +1167,7 @@ def update_phone_2(request, account_id):
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
-@staff_member_required(login_url=HttpResponseRedirect(reverse("login")))
+@staff_member_required(login_url=HttpResponseRedirect("main/login.html"))
 def reject_phone_2(request, account_id):
     
     student = Account.objects.get(pk=account_id)
