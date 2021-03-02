@@ -74,6 +74,7 @@
             table td:last-child { border-bottom: 0; }
     
         }
+
     </style>
 {% endblock %}
 
@@ -113,6 +114,120 @@
             </div>
         </div>
         <br>
+
+        {% if results != "Hi" %}
+
+            {% if results %}
+
+                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
+                        Resultados Busqueda:
+                    </h2>
+                    <div class="w3-container">
+                        <div id="student-next" style="color: black;">
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Clase</th>
+                                        <th scope="col">Asistencia</th>
+                                        <th scope="col">Cupo</th>
+                                        <th scope="col">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                {% for course in results %}
+                                    <tr>
+                                    <td data-label="Clase">
+                                        <span class="badge badge-info" style="font-size: small;">{{ course.students.all.count }}</span>
+                                        <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}} {{course.date}} de {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>    
+                                    </td> 
+                                    {% for attendance in course.attendance.all %}
+                                        {% if attendance.student == student %}
+                                            <td scope="row" data-label="Asistencia">
+                                            {% if attendance.recover == True %}
+                                                <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
+                                                <br>
+                                            {% endif %}
+                                            {% if attendance.attendance == True %}
+                                                <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
+                                            
+                                            {% else %}
+                                                <span id="check{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">PENDIENTE</span>
+                                            
+                                            {% endif %}
+                                            </td>
+                                            <td data-label="Cupo">
+
+                                                {% if attendance.cycle == True %}
+                                                    <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                                        Inicia Ciclo
+                                                    </span>
+                                                    <br>
+                                                {% endif %}
+        
+                                                {% if attendance.quota == "PAGO" %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-success" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% elif attendance.quota == "NO PAGO" %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-danger" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% else %}
+                                                    <span id="pay{{ attendance.id }}" class="badge badge-secondary" style="font-size: large;">{{ attendance.quota }}
+                                                    </span>
+                                                {% endif %}
+                                            
+                                            </td>
+                                            <td data-label="Nota">
+        
+                                                {% if attendance.note %}
+                                                    <span id="quota" style="font-size: x-large;" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ attendance.note }}">
+                                                        📃
+                                                    </span>
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+        
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                                        
+                                </tbody>
+                            </table>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+            
+            {% else %}
+
+                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);"></i>
+                        Resultados Busqueda:
+                    </h2>
+                    <div class="w3-container">
+                        <div id="student-next" style="color: black;">
+                                
+                            <ul style="text-align: left; margin-top: 20px;">
+                                
+                                <li>
+                                    Sin resultados.
+                                </li>
+                                <br>                            
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <br>
+        
+            {% endif %}
+        
+        {% endif %}
       
         <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
             
@@ -245,7 +360,7 @@
 
             {% if results %}
 
-                <div class="w3-container w3-card" style="background-color: #fffde8; display: block;">
+                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                     </h2>
@@ -332,7 +447,7 @@
             
             {% else %}
 
-                <div class="w3-container w3-card" style="background-color: #fffde8; display: block;">
+                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);"></i>
                         Resultados Busqueda:
                     </h2>

@@ -30,7 +30,6 @@ SECRET_KEY = config.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ADMIN_ENABLED = False
 
 ALLOWED_HOSTS = ['localhost', '172.104.13.4', 'aquariumschool.co', 'www.aquariumschool.co']
 
@@ -42,7 +41,7 @@ INSTALLED_APPS = [
     'courses',
     'main',
     'crispy_forms',
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

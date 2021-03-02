@@ -266,13 +266,13 @@
                         <tbody>
                             <tr>
                                 <td data-label="Asistió">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ attended }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: green;font-size: xx-large; font-weight: bold;" data-count="{{ attended }}">0</div>
                                 </td>
                                 <td scope="row" data-label="Faltó">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ failed }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: crimson;font-size: xx-large; font-weight: bold;" data-count="{{ failed }}">0</div>
                                 </td>
                                 <td scope="row" data-label="Recuperó">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ recovered }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: darkorange;font-size: xx-large; font-weight: bold;" data-count="{{ recovered }}">0</div>
                                 </td>
                                 <td scope="row" data-label="Puede Recuperar">
                                     <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ can_recover }}">0</div>
@@ -290,18 +290,22 @@
                                 <th scope="col">Pago</th>
                                 <th scope="col">No pago</th>
                                 <th scope="col">Separado</th>
+                                <th scope="col">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td data-label="Pago">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ paid }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: green;font-size: xx-large; font-weight: bold;" data-count="{{ paid }}">0</div>
                                 </td>
                                 <td scope="row" data-label="No pago">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ n_paid }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: crimson;font-size: xx-large; font-weight: bold;" data-count="{{ n_paid }}">0</div>
                                 </td>
                                 <td scope="row" data-label="Separado">
-                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ sep }}">0</div>
+                                    <div class="counter-value" style="display: inline; color: darkorange;font-size: xx-large; font-weight: bold;" data-count="{{ sep }}">0</div>
+                                </td>
+                                <td scope="row" data-label="Total">
+                                    <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="{{ total }}">0</div>
                                 </td>
                             </tr>
                         </tbody>
