@@ -501,7 +501,7 @@ def student(request, account_id):
     date_birth_form = str(student.date_birth)
 
     # Number of paid courses
-    paid_courses = student.attendance.filter(quota="PAGO").count()
+    paid_courses = student.attendance.filter(quota="PAGO", recover=False).count()
 
     # Number of attended courses
     attended = student.attendance.filter(course__date__lte=datetime.datetime.now(), attendance=True).count()
