@@ -1188,7 +1188,7 @@ def inconsistency(request):
     for i in Account.objects.filter(
         attendance__quota="PAGO", 
         attendance__recover=False, 
-        attendance__course__date__gte=datetime.datetime.now()
+        #attendance__course__date__gte=datetime.datetime.now()
     ).values("id").annotate(num=Count('id')):
      
      # FOR CODE
