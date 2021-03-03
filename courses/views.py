@@ -501,13 +501,13 @@ def student(request, account_id):
     date_birth_form = str(student.date_birth)
 
     # Number of paid courses
-    paid_courses = student.attendance.filter(quota="PAGO", recover=False).count()
+    paid_courses = student.attendance.filter(quota="PAGO", recover=False, onlyday=False).count()
 
     # Number of attended courses
     attended = student.attendance.filter(course__date__lte=datetime.datetime.now(), attendance=True).count()
 
     # Number of failed courses
-    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO", recover=False).count()
+    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO", recover=False, onlyday=False).count()
 
     # Number of recovered courses
     recovered = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=True, recover=True).count()
@@ -941,6 +941,12 @@ def payment(request, attendance_id):
         
         else:
             attendance.recover = False
+
+        if request.POST.get("onlyday", False) == "on":
+            attendance.onlyday = True
+        
+        else:
+            attendance.onlyday = False
         
         attendance.quota = request.POST["payment"]
 
@@ -1200,7 +1206,7 @@ def inconsistency(request):
     '''
 
     for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
-        if student.attendance.filter(quota="PAGO", recover=False).count() % 4 != 0:
+        if student.attendance.filter(quota="PAGO", recover=False, onlyday=False).count() % 4 != 0:
             people.append(student)
 
     return render(request, "courses/inconsistency.html", {

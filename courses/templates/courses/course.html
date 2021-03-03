@@ -149,6 +149,13 @@
                             {% endif %}
                                 <label style="width: auto;" for="recover">RECUPERACION</label><br>
                             
+                            {% if attendance.onlyday == True %}
+                                <input style="width: auto;" type="checkbox" name="onlyday" checked> 
+                            {% else %}
+                                <input style="width: auto;" type="checkbox" name="onlyday"> 
+                            {% endif %}
+                                <label style="width: auto;" for="onlyday">SOLO EL DÍA</label><br>
+                            
                             <div style="display: none;">
 
                                 {% if attendance.quota == "SEPARADO" %}

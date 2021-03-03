@@ -43,6 +43,7 @@ class Attendance(models.Model):
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
     recover = models.BooleanField(default=False)
+    onlyday = models.BooleanField(default=False)
 
     PAID = "PAGO"
     N_PAID = "NO PAGO"
