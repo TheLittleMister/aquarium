@@ -53,4 +53,6 @@ urlpatterns = [
     path("update_phone_2/<int:account_id>", views.update_phone_2, name="update_phone_2"),
     path("reject_phone_2/<int:account_id>", views.reject_phone_2, name="reject_phone_2"),
 
+    path("inconsistency/", views.inconsistency, name="inconsistency")
+
 ] 

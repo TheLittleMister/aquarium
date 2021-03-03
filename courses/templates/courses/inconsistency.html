@@ -1,0 +1,20 @@
+{%  extends "courses/layout.html" %}
+{% block body %}
+    <br>
+    <main class="container">
+        <div class="alert alert-primary" role="alert">
+            <ul>
+                {% for student in people %}
+                    <li>
+                        <a href="{% url 'courses:student' student.id %}">
+                            {{ student.first_name }} {{ student.last_name }} tiene inconsistencia.
+                        </a>
+                    </li>
+                {% empty %}
+                    <li> Sin Inconsistencias </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+
+{% endblock %}
