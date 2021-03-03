@@ -507,7 +507,7 @@ def student(request, account_id):
     attended = student.attendance.filter(course__date__lte=datetime.datetime.now(), attendance=True).count()
 
     # Number of failed courses
-    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO").count()
+    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO", recover=False).count()
 
     # Number of recovered courses
     recovered = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=True, recover=True).count()
