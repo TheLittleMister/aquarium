@@ -288,6 +288,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Pago</th>
+                                <th scope="col">Pago dia</th>
                                 <th scope="col">No pago</th>
                                 <th scope="col">Separado</th>
                                 <th scope="col">Total</th>
@@ -297,6 +298,9 @@
                             <tr>
                                 <td data-label="Pago">
                                     <div class="counter-value" style="display: inline; color: green;font-size: xx-large; font-weight: bold;" data-count="{{ paid }}">0</div>
+                                </td>
+                                <td data-label="Pago dia">
+                                    <div class="counter-value" style="display: inline; color: green;font-size: xx-large; font-weight: bold;" data-count="{{ onlyday }}">0</div>
                                 </td>
                                 <td scope="row" data-label="No pago">
                                     <div class="counter-value" style="display: inline; color: crimson;font-size: xx-large; font-weight: bold;" data-count="{{ n_paid }}">0</div>

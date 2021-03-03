@@ -547,6 +547,11 @@ def student(request, account_id):
     # Get TOTAL number of student's courses
     total = paid_courses + n_paid + sep
 
+    # ----------
+
+    # Get only-day paid courses that were attended
+    onlyday = student.attendance.filter(attendance=True, onlyday=True).count()
+
 
     return render(request, 'courses/account.html', {
 
@@ -559,6 +564,7 @@ def student(request, account_id):
         "n_paid": n_paid,
         "sep": sep,
         "total": total,
+        "onlyday": onlyday,
 
         "already": already,
         "already1": already1,
