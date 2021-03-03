@@ -1185,6 +1185,7 @@ def inconsistency(request):
 
     people = []
 
+    '''
     for i in Account.objects.filter(
         attendance__quota="PAGO", 
         attendance__recover=False, 
@@ -1196,6 +1197,11 @@ def inconsistency(request):
          people.append(Account.objects.get(pk=i["id"]))
 
      # END FOR CODE
+    '''
+
+    for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
+        if student.attendance.filter(quota="PAGO", recover=False).count() % 4 != 0:
+            people.append(student)
 
     return render(request, "courses/inconsistency.html", {
         "people": people,
