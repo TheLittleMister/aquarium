@@ -70,6 +70,10 @@
                                             <span style="color: blue; font-weight: bold;">• Recuperación</span>
                                         {% endif %}
 
+                                        {% if attendance.onlyday == True %}
+                                            <span style="color: blue; font-weight: bold;">• Solo el día</span>
+                                        {% endif %}
+
                                         {% if attendance.student.courses.last == course %}
                                             <span style="color:crimson; font-weight: bold;">• Última Clase</span>
                                         {% endif %}

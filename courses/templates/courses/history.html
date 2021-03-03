@@ -150,6 +150,12 @@
                                                 <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
                                                 <br>
                                             {% endif %}
+
+                                            {% if attendance.onlyday == True %}
+                                                <span class="badge badge-primary" style="font-size: small;">SOLO EL DIA</span>
+                                                <br>
+                                            {% endif %}
+                                            
                                             {% if attendance.attendance == True %}
                                                 <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                             
@@ -262,6 +268,12 @@
                                         <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
                                         <br>
                                     {% endif %}
+
+                                    {% if attendance.onlyday == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">SOLO EL DIA</span>
+                                        <br>
+                                    {% endif %}
+
                                     {% if attendance.attendance == True %}
                                         <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                     
@@ -391,6 +403,12 @@
                                                 <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
                                                 <br>
                                             {% endif %}
+
+                                            {% if attendance.onlyday == True %}
+                                                <span class="badge badge-primary" style="font-size: small;">SOLO EL DIA</span>
+                                                <br>
+                                            {% endif %}
+
                                             {% if attendance.attendance == True %}
                                                 <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                             
@@ -501,6 +519,12 @@
                                         <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
                                         <br>
                                     {% endif %}
+
+                                    {% if attendance.onlyday == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">SOLO EL DIA</span>
+                                        <br>
+                                    {% endif %}
+
                                     {% if attendance.attendance == True %}
                                         <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                     
@@ -621,6 +645,12 @@
                                         <span class="badge badge-primary" style="font-size: small;">RECUPERACION</span>
                                         <br>
                                     {% endif %}
+
+                                    {% if attendance.onlyday == True %}
+                                        <span class="badge badge-primary" style="font-size: small;">SOLO EL DIA</span>
+                                        <br>
+                                    {% endif %}
+
                                     {% if attendance.attendance == True %}
                                         <span id="check{{ attendance.id }}" class="badge badge-success" style="font-size: large;">ASISTIO</span>
                                     
