@@ -9,6 +9,10 @@ from django.urls import reverse
 def index(request):
     return render(request, 'main/index.html')
 
+def ads(request):
+    content = "google.com, pub-9848347625525796, DIRECT, f08c47fec0942fa0"
+    return HttpResponse(content, content_type='text/plain')
+    
 def login_view(request):
 
     if request.method == "POST":
