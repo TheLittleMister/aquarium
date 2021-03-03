@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.conf import settings
 import requests
-from django.db.models import Q
+from django.db.models import Q, Count
 from django import forms
 from PIL import Image
 import unidecode
@@ -1179,6 +1179,27 @@ def reject_phone_2(request, account_id):
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
+@staff_member_required(login_url="https://www.aquariumschool.co/login")
+def inconsistency(request):
+
+    people = []
+
+    for i in Account.objects.filter(
+        attendance__quota="PAGO", 
+        attendance__recover=False, 
+        attendance__course__date__gte=datetime.datetime.now()
+    ).values("id").annotate(num=Count('id')):
+     
+     # FOR CODE
+     if i["num"] % 4 != 0:
+         people.append(Account.objects.get(pk=i["id"]))
+
+     # END FOR CODE
+
+    return render(request, "courses/inconsistency.html", {
+        "people": people,
+    })
 
 def login_view(request):
 

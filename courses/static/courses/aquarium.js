@@ -65,8 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     document.querySelector('#form-date').onsubmit = () => {
 
-        console.log("Hello, World!")
-
         const date = document.querySelector("#add-date").value;
         const js_date = new Date(date);
 
