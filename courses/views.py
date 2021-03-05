@@ -544,14 +544,11 @@ def student(request, account_id):
     # Get number of reserved quotas:
     sep = student.attendance.filter(quota="SEPARADO").count()
 
-    # Get TOTAL number of student's courses
-    total = paid_courses + n_paid + sep
-
-    # ----------
-
     # Get only-day paid courses that were attended
     onlyday = student.attendance.filter(attendance=True, onlyday=True).count()
 
+    # Get TOTAL number of student's courses
+    total = paid_courses + n_paid + sep + onlyday
 
     return render(request, 'courses/account.html', {
 
