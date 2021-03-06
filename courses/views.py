@@ -112,6 +112,7 @@ def index(request):
 def courses(request):
 
     results = "Hi"
+    search = None
 
     if request.method == "POST":
         
@@ -136,6 +137,7 @@ def courses(request):
     today_page = today_course_paginator.get_page(today_page_num)
     
     return render(request, "courses/courses.html", {
+        "date": search,
         "results": results,
         "student": student,
         "old_page": old_page,
@@ -590,7 +592,7 @@ def student(request, account_id):
 def student_history(request, account_id):
 
     student = Account.objects.get(pk=account_id)
-
+    date_search = None
     results = "Hi"
 
     if request.method == "POST":
@@ -620,6 +622,7 @@ def student_history(request, account_id):
     today_page = today_course_paginator.get_page(today_page_num)
     
     return render(request, "courses/history.html", {
+        "date": date_search,
         "past": past,
         "results": results,
         "student": student,

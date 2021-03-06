@@ -23,7 +23,7 @@
         <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
 
 
-        <style>
+        <style id="styles_js">
             input[type='checkbox'] {
             -webkit-appearance:none;
             width:20px;
@@ -36,12 +36,47 @@
             input[type='checkbox']:checked {
                 background: #abd;
             }
+
+            
         </style>
 
         <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                window.print();
-            });
+
+            function addNewStyle(newStyle) {
+                var styleElement = document.getElementById('styles_js');
+                if (!styleElement) {
+                    styleElement = document.createElement('style');
+                    styleElement.type = 'text/css';
+                    styleElement.id = 'styles_js';
+                    document.getElementsByTagName('head')[0].appendChild(styleElement);
+                }
+                styleElement.appendChild(document.createTextNode(newStyle));
+            }
+
+            // document.addEventListener("DOMContentLoaded", () => {
+            //     window.print();
+
+            //     addNewStyle('body * { font-size: 11px !important; }');
+
+            // });
+
+            function fontsize(value) {
+                addNewStyle(`body * { font-size: ${value}px !important; }`);
+            }
+
+            function showbar() {
+
+                element = document.querySelector("#bar");
+
+                if (element.style.display === "none") {
+                    element.style.display = "block";
+
+                } else {
+                    element.style.display = "none";
+                }
+                
+            }
+
         </script>
     </head>
     <body>
@@ -50,11 +85,12 @@
                 <div class="card card-4">
                     <div class="card-body">
                         <div class="row row-space">
+                            <input style="display: none;" id="bar" type="range" value="" name="fz" min="15" max="30" onchange="fontsize(value)">
                             {% for course in courses|slice:":1" %}
                                 <h3 style="width: 50%; float: left; margin-top: 30px;">{{ course.date|date:"l" }} {{ course.date }}</h3>
                             {% endfor %}
                             <div style="width: 50%; float: right;">
-                                <img style="max-width: 100%;"src="{% static 'courses/aquarium.png' %}">
+                                <img style="max-width: 100%; cursor: pointer;"src="{% static 'courses/aquarium.png' %}" onclick="showbar()">
                             </div>
                             
                         </div>

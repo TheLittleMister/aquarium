@@ -106,7 +106,7 @@
             <div class="w3-container">
                 <form action="{% url 'courses:history' student.id %}" method="POST" enctype="multipart/form-data" style="text-align: center;">
                     {% csrf_token %}
-                    <input type="date" name="date" style="display: inline; width: auto;" required>
+                    <input type="date" name="date" style="display: inline; width: auto;" value="{{ date }}" required>
                     <br><br>
                     <input class="btn btn-info" style="display: inline; width: auto; max-width: 100%;" type="submit" value="Buscar Fecha">
                 </form>
