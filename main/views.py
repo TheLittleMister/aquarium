@@ -17,25 +17,32 @@ def login_view(request):
 
     if request.method == "POST":
 
-        secret_key = settings.RECAPTCHA_SECRET_KEY
+        try:
 
-        # captcha verification
-        data = {
-            'response': request.POST.get('g-recaptcha-response'),
-            'secret': secret_key
-        }
-        resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
-        result_json = resp.json()
+            secret_key = settings.RECAPTCHA_SECRET_KEY
 
-        # print(result_json)
+            # captcha verification
+            data = {
+                'response': request.POST.get('g-recaptcha-response'),
+                'secret': secret_key
+            }
+            resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+            result_json = resp.json()
 
-        if not result_json.get('success'):
-            return render(request, "courses/login.html", {
-                "message": "Problema al iniciar sesión, inténtalo más tarde",
-                'site_key': settings.RECAPTCHA_SITE_KEY
-            })
-        # end captcha verification
+            # print(result_json)
+
+            if not result_json.get('success'):
+                return render(request, "courses/login.html", {
+                    "message": "Sistema en mantenimiento, inténtalo más tarde",
+                    'site_key': settings.RECAPTCHA_SITE_KEY
+                })
+            # end captcha verification
         
+        except:
+            return render(request, "courses/login.html", {
+                "message": "Sistema en mantenimiento, inténtalo más tarde"
+            })
+
         username = request.POST["username"].strip()
         password = request.POST["password"]
 

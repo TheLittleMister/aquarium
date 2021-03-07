@@ -53,12 +53,9 @@
                 styleElement.appendChild(document.createTextNode(newStyle));
             }
 
-            // document.addEventListener("DOMContentLoaded", () => {
-            //     window.print();
-
-            //     addNewStyle('body * { font-size: 11px !important; }');
-
-            // });
+            document.addEventListener("DOMContentLoaded", () => {
+                 window.print();
+            });
 
             function fontsize(value) {
                 addNewStyle(`body * { font-size: ${value}px !important; }`);
@@ -85,7 +82,7 @@
                 <div class="card card-4">
                     <div class="card-body">
                         <div class="row row-space">
-                            <input style="display: none;" id="bar" type="range" value="" name="fz" min="15" max="30" onchange="fontsize(value)">
+                            <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30" onchange="fontsize(value)">
                             {% for course in courses|slice:":1" %}
                                 <h3 style="width: 50%; float: left; margin-top: 30px;">{{ course.date|date:"l" }} {{ course.date }}</h3>
                             {% endfor %}
