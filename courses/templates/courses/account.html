@@ -335,6 +335,7 @@
                         <th scope="col">Asistencia</th>
                         <th scope="col">Cupo</th>
                         <th scope="col">Nota</th>
+                        <th scope="col">Editar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -400,6 +401,11 @@
                                     -
                                 {% endif %}
 
+                            </td>
+                            <td data-label="Editar">
+                                <h4>
+                                    <a href="{% url 'courses:payment' attendance.id %}">✏️</a>
+                                </h4>
                             </td>
                         {% endif %}
                     {% endfor %}

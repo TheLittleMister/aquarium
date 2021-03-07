@@ -963,7 +963,12 @@ def payment(request, attendance_id):
 
         attendance.save()
 
-        return HttpResponseRedirect(reverse("courses:course", args=(attendance.course.id,)))
+        return render(request, 'courses/course.html', {
+            "savemessage": "CAMBIOS GUARDADOS",
+            "payment": True,
+            "attendance": attendance,
+            "course": attendance.course,
+        })
 
     else:
         return render(request, 'courses/course.html', {

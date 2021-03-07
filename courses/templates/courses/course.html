@@ -103,7 +103,8 @@
             {% if message %}
                 <p class="info" style="color: crimson;">{{ message }}</p> <br>
             {% endif %}
-            <p class="info">Fecha:</p> {{ course.date|date:"l"}} {{ course.date }} <br> <hr>
+            <p class="info">Fecha:</p> 
+            <a href="{% url 'courses:course' course.id %}">{{ course.date|date:"l"}} {{ course.date }}</a> <br> <hr>
             <p class="info">Hora Inicio:</p> {{ course.start_time|date:"P" }} <br>
             <p class="info">Hora Final:</p> {{ course.end_time|date:"P" }} <br> <hr>
             <p class="info">No. Estudiantes:</p> <span class="badge badge-primary" style="padding: 5px; font-size: medium;">{{ course.students.count }}</span> <br> <br>
@@ -131,10 +132,17 @@
                         <input style="margin-left: auto; margin-right: auto;" class="btn btn-primary" type="submit" value="Marcar Asistencias">
                     </form>
                 {% elif payment %}
-                        
+
+                        {% if savemessage %}
+                        <div class="alert alert-success" role="alert">
+                            {{savemessage}}
+                        </div>
+                        {% endif %}
                         <form action="{% url 'courses:payment' attendance.id %}" style="text-align: left; font-size: medium;" method="POST" id="create" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <h5 style="font-weight: bold;">{{ attendance.student }}</h5> <br>
+                            <a style="font-size: medium; font-weight: bold;" href="{% url 'courses:student' attendance.student.id %}">
+                                {{ attendance.student }}
+                            </a> <br><br>
                             {% if attendance.cycle == True %}
                                 <input style="width: auto;" type="checkbox" name="cycle" checked> 
                             {% else %}
