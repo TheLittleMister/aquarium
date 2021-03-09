@@ -43,7 +43,7 @@ class Manager(BaseUserManager):
 class Account(AbstractBaseUser):
     username = models.CharField(max_length=60, unique=True) # verbose_name="username"
     email = models.EmailField(max_length=60, unique=True, null=True)
-    image = models.ImageField(default="default-profile.png", upload_to="profile_pics",blank=True)
+    image = models.ImageField(default="default-profile.webp", upload_to="profile_pics",blank=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     id_type = models.ForeignKey(Id_Type, on_delete=models.SET_NULL, related_name="users", null=True) # Make tests
