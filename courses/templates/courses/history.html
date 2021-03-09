@@ -88,8 +88,8 @@
     <div class="w3-row-padding">
     
       <!-- Left Column -->
-      <div class="w3-third">
-        <div class="w3-container w3-card" style="background-color: #e3f2fd; display: block; text-align: center;">
+      <div class="w3-half">
+        <div class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block; text-align: center;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-search fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
                 Buscar Clase de: <br> 
                 <a style="font-size: medium; font-weight: bold;" href="{% url 'courses:student' student.id %}">
@@ -119,7 +119,7 @@
 
             {% if results %}
 
-                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                     </h2>
@@ -218,7 +218,7 @@
             
             {% else %}
 
-                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);"></i>
                         Resultados Busqueda:
                     </h2>
@@ -379,12 +379,12 @@
       </div>
   
       <!-- Right Top Column -->
-      <div class="w3-twothird">
+      <div class="w3-half">
         {% if results != "Hi" %}
 
             {% if results %}
 
-                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                     </h2>
@@ -483,7 +483,7 @@
             
             {% else %}
 
-                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);"></i>
                         Resultados Busqueda:
                     </h2>
@@ -506,7 +506,7 @@
         
         {% endif %}
 
-        <div id="righttop" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+        <div id="righttop" class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
                 Clases de hoy:
             </h2>
@@ -638,7 +638,7 @@
   
         <br>
       <!-- Right Bottom Column -->
-          <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+          <div id="rightbottom" class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
               Próximas Clases:
             </h2>
