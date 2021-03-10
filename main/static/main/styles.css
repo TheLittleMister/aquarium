@@ -320,7 +320,7 @@ select {
 	-ms-appearance: none;
     -o-appearance: none;
     appearance: none;
-    background-image: url('../main/down-arrow.png');
+    background-image: url('../main/down-arrow.webp');
     background-position: 96% 50%;
     background-repeat: no-repeat;
     outline: none;
@@ -772,7 +772,7 @@ input[type='checkbox'] {
 /*    04. Header     */
 /*********************/
 .header {
-	background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('../main/header-background.jpg') center center no-repeat;
+	background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('../main/header-background.webp') center center no-repeat;
 	background-size: cover;
 }
 
@@ -975,7 +975,7 @@ input[type='checkbox'] {
 /*************************/
 .accordion .area-1 {
 	height: 27rem;
-	background: url('../main/water1.jpg') center center no-repeat;
+	background: url('../main/water1.webp') center center no-repeat;
 	background-size: cover;
 }
 
@@ -1165,7 +1165,7 @@ input[type='checkbox'] {
 
 .tabs .area-2 {
 	height: 27rem;
-	background: url('../main/water2.jpg') center center no-repeat;
+	background: url('../main/water2.webp') center center no-repeat;
 	background-size: cover;
 }
 
@@ -1764,7 +1764,7 @@ a.back-to-top {
 	width: 2.625rem;
 	height: 2.625rem;
 	border-radius: 1.875rem;
-	background: steelblue url("../main/up-arrow.png") no-repeat center 47%;
+	background: steelblue url("../main/up-arrow.webp") no-repeat center 47%;
 	background-size: 1.125rem 1.125rem;
 	text-indent: -9999px;
 }
