@@ -31,7 +31,7 @@
     
       <!-- Left Column -->
       <div class="w3-third">
-        <div class="w3-container w3-card" style="background-color: #e3f2fd; display: block; text-align: center;">
+        <div class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block; text-align: center;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-search fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
                 Buscar Clase:
             </h2>
@@ -51,7 +51,7 @@
 
             {% if results %}
 
-                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                         <a href="{% url 'courses:print_search' results.first.id %}" style="margin-left: 50px; font-weight: bold;">Imprimir estos cursos</a>
@@ -80,7 +80,7 @@
             
             {% else %}
 
-                <div class="w3-container w3-card show0" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                     </h2>
@@ -177,7 +177,7 @@
 
             {% if results %}
 
-                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                         <a href="{% url 'courses:print_search' results.first.id %}" style="margin-left: 50px; font-weight: bold;">Imprimir estos cursos</a>
@@ -207,7 +207,7 @@
             
             {% else %}
 
-                <div class="w3-container w3-card show1" style="background-color: #fffde8;">
+                <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
                     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: rgb(218, 178, 0);;"></i>
                         Resultados Busqueda:
                     </h2>
@@ -231,7 +231,7 @@
         
         {% endif %}
 
-        <div id="righttop" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+        <div id="righttop" class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
                 Clases de hoy:
                 <a href="{% url 'courses:print_courses' %}"  style="margin-left: 50px; font-weight: bold;">Imprimir cursos de hoy</a>
@@ -294,7 +294,7 @@
   
         <br>
       <!-- Right Bottom Column -->
-          <div id="rightbottom" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
+          <div id="rightbottom" class="w3-container w3-card w3-card-4" style="background-color: #e3f2fd; display: block;">
             <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge" style="color: #066DAF;"></i>
               Próximas Clases:
             </h2>
