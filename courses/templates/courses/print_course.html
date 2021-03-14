@@ -114,6 +114,10 @@
                                         {% if attendance.student.note %}
                                             <span style="font-weight: bold; font-style: italic;">• {{ attendance.student.note }}</span>
                                         {% endif %}
+
+                                        {% if attendance.note %}
+                                            <span style="font-weight: bold; font-style: italic;">• {{ attendance.note }} </span>
+                                        {% endif %}
                                     </h4>
                                 </li> 
                             {% endfor %}
