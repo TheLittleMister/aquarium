@@ -260,7 +260,7 @@ def create_student(request):
         else:
             student.date_birth = datetime.datetime.today()
         
-        student.address = unidecode.unidecode(request.POST["address"]).upper()
+        student.parent = unidecode.unidecode(request.POST["parent"]).upper()
 
         if request.POST["phone_1"].isdigit():
             student.phone_1 = request.POST["phone_1"]
@@ -396,7 +396,7 @@ def student(request, account_id):
         else:
             student.email = None
 
-        student.address = unidecode.unidecode(request.POST["address"]).upper()
+        student.parent = unidecode.unidecode(request.POST["parent"]).upper()
 
         if request.POST["phone_1"].isdigit():
             student.phone_1 = request.POST["phone_1"]

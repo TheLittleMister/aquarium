@@ -131,7 +131,7 @@ def index(request, account_id):
             else:
                 student.email = None
 
-            student.address = unidecode.unidecode(request.POST["address"]).upper()
+            student.parent = unidecode.unidecode(request.POST["parent"]).upper()
 
             if request.POST["phone_1"].isdigit():
                 if not student.phone_1:

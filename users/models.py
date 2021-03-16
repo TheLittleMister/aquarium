@@ -49,7 +49,7 @@ class Account(AbstractBaseUser):
     id_type = models.ForeignKey(Id_Type, on_delete=models.SET_NULL, related_name="users", null=True) # Make tests
     identity_document = models.BigIntegerField(unique=True, null=True) # ID
     nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, related_name="users", null=True)
-    address = models.CharField(max_length=60, null=True)
+    parent = models.CharField(max_length=60, null=True)
     phone_1 = models.BigIntegerField(null=True)
     phone_2 = models.BigIntegerField(null=True)
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, related_name="users", null=True)

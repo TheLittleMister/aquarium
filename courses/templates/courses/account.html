@@ -173,7 +173,7 @@
             <p class="info">Fecha de Nacimiento:</p> {{ date_birth|slice:18 }}<br> <hr> <br>
             <p class="w3-large" style="color: #066DAF;"><b><i class="fa-fw" style="color: #066DAF;"></i>Contacto:</b></p> <br>
             <p class="info">Correo:</p> {{ user.email }} <br>
-            <p class="info">Dirección:</p> {{ user.address }} <br> <br>
+            <p class="info">Acudiente:</p> {{ user.parent }} <br> <br>
             <p class="info">Teléfono/Celular(1):</p> {{ user.phone_1 }} <br>
             {% if user.phone_1_1 != None %}
                 {% if user.phone_1_1 != "" %}
@@ -578,8 +578,8 @@
                                 </div>
                                 <div style="width: 430px;">
                                     <div class="input-group">
-                                        <label class="label">Dirección</label>
-                                        <input class="input--style-4" type="text" name="address" value="{{ user.address }}">
+                                        <label class="label">Acudiente</label>
+                                        <input class="input--style-4" type="text" name="parent" value="{{ user.parent }}">
                                     </div>
                                 </div>
                             </div>

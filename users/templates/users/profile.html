@@ -75,8 +75,8 @@
           {% if user.email != None %}
           <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.email }}</p>
           {% endif %}
-          {% if user.addess != None %}
-          <p><i class="fa fa-home fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.address }}</p> 
+          {% if user.parent != None %}
+          <p><i class="fa fa-user fa-fw w3-margin-right w3-large" style="color: #066DAF;"></i>{{ user.parent }}</p> 
           {% endif %}
           {% if not user.phone_1_1 %}
             {% if user.phone_1 != None %}
@@ -390,8 +390,8 @@
                                 </div>
                                 <div style="width: 430px;">
                                     <div class="input-group">
-                                        <label class="label">Dirección</label>
-                                        <input class="input--style-4" type="text" name="address" value="{{ user.address }}">
+                                        <label class="label">Acudiente</label>
+                                        <input class="input--style-4" type="text" name="parent" value="{{ user.parent }}">
                                     </div>
                                 </div>
                             </div>
