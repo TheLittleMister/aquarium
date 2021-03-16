@@ -15,7 +15,7 @@
                 Buscar Mis Clases
             </h2>
             <div class="w3-container">
-                <form action="{% url 'users:courses' user.id %}" method="POST" enctype="multipart/form-data">
+                <form action="{% url 'users:courses' user.id %}" method="POST" enctype="multipart/form-data" style="text-align: center;">
                     {% csrf_token %}
                     <input type="date" name="date" style="display: inline; width: auto; max-width: 100%;" required>
                     <br><br>

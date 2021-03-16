@@ -50,18 +50,6 @@ document.addEventListener("click", event => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    fetch(`/courses/notifications/`)
-    .then(response => response.json())
-    .then(count => {
-
-        var notielement = document.querySelector('#notifications');
-        notielement.innerHTML = `${count}`;
-
-        if (count > 0) {
-            notielement.className = "badge badge-danger";
-        }
-    });
     
     document.querySelector('#form-date').onsubmit = () => {
 
