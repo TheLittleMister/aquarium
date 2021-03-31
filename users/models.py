@@ -78,8 +78,11 @@ class Account(AbstractBaseUser):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
+    class Meta:
+        ordering = ['last_name']
+
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.last_name} {self.first_name}"
 
     def has_perm(self, perm,  obj=None):
         return self.is_admin

@@ -63,5 +63,8 @@ class Attendance(models.Model):
 
     note = models.CharField(max_length=280)
 
+    class Meta:
+        ordering = ['student']
+
     def __str__(self):
         return f"{self.student}"

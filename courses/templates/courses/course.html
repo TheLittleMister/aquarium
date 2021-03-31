@@ -211,11 +211,11 @@
                         <tr>                            
                             <td scope="row" data-label="Estudiante">
                                 <a style="font-size: medium;" href="{% url 'courses:student' attendance.student.id %}">
-                                    • 
+                                    <span style="font-weight: bold;">{{ forloop.counter }}.</span>  
                                     {% if course == attendance.student.courses.last %}
                                         <span style="color:crimson; font-weight: bold;">Última Clase de</span>     
                                     {% endif %}
-                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }} 
+                                    {{ attendance.student }} 
                                 </a>
 
                                 {% if attendance.student.note %}

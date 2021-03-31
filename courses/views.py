@@ -609,7 +609,7 @@ def student_history(request, account_id):
     next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
     today_courses = student.courses.filter(date=datetime.datetime.now()).order_by('date','start_time')
 
-    old_course_paginator = Paginator(old_courses, 4)
+    old_course_paginator = Paginator(old_courses, 10)
     old_page_num = request.GET.get("old_page")
     old_page = old_course_paginator.get_page(old_page_num)
 
