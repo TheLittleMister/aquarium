@@ -91,10 +91,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'aquarium',
-	'USER': 'franklin',
-	'PASSWORD': config.get('DBPASSWORD'),
-	'HOST': 'localhost',
-	'PORT': '',
+        'USER': 'franklin',
+        'PASSWORD': config.get('DBPASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 

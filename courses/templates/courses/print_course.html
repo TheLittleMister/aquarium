@@ -103,6 +103,10 @@
                                             <span style="color: blue; font-weight: bold;">• Recuperación</span>
                                         {% endif %}
 
+                                        {% if attendance.cycle == True %}
+                                            <span style="color: blue; font-weight: bold;">• INICIA</span>
+                                        {% endif %}
+
                                         {% if attendance.onlyday == True %}
                                             <span style="color: blue; font-weight: bold;">• Solo el día</span>
                                         {% endif %}
