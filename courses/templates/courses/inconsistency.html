@@ -2,16 +2,18 @@
 {% block body %}
     <br>
     <main class="container">
+
+        <h5>{{ message }}</h5> <br>
         <div class="alert alert-primary" role="alert">
             <ol>
                 {% for student in people %}
                     <li>
                         <a href="{% url 'courses:student' student.id %}">
-                            {{ student.first_name }} {{ student.last_name }} tiene inconsistencia.
+                            {{ student.first_name }} {{ student.last_name }}
                         </a>
                     </li>
                 {% empty %}
-                    <li> Sin Inconsistencias </li>
+                    <li> Vacío </li>
                 {% endfor %}
             </ol>
         </div>

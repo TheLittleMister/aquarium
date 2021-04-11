@@ -82,11 +82,15 @@
                   </a>
                   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                       <li class="nav-item">
+                        <a class="dropdown-item" href="{% url 'courses:create_student' %}">Crear Estudiante</a>
+                      </li>
+                      <li class="nav-item">
                           <a class="dropdown-item" href="{% url 'courses:index' %}">Ver Estudiantes</a>
                       </li>
                       <li class="nav-item">
-                          <a class="dropdown-item" href="{% url 'courses:create_student' %}">Crear Estudiante</a>
+                        <a class="dropdown-item" href="{% url 'courses:plus_one' %}">Estudiantes +1</a>
                       </li>
+                      
                   </ul>
                 </li>
                 <li class="nav-item dropdown">

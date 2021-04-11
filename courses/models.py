@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import Account
 import datetime
+from datetime import date
 
 # Create your models here.
 class Course(models.Model):
@@ -8,6 +9,14 @@ class Course(models.Model):
     end_time = models.TimeField() # Time END
     date = models.DateField(null=True)
     students = models.ManyToManyField(Account, blank=True, related_name="courses") # Students(Account.student) M2M
+
+    @property
+    def is_past_due(self):
+        return date.today() > self.date
+
+    @property
+    def is_today(self):
+        return date.today() == self.date
 
     class Meta:
         ordering = ['date']
@@ -40,8 +49,10 @@ class Course(models.Model):
 class Attendance(models.Model):
     student = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="attendance")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="attendance")
+
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
+    end_cycle = models.BooleanField(default=False)
     recover = models.BooleanField(default=False)
     onlyday = models.BooleanField(default=False)
 
@@ -67,4 +78,4 @@ class Attendance(models.Model):
         ordering = ['student']
 
     def __str__(self):
-        return f"{self.student}"
+        return f"{self.student}: {self.course}"

@@ -11,73 +11,18 @@ from django.urls import reverse
 from django.conf import settings
 import requests
 from django.db.models import Q, Count
-from django import forms
 from PIL import Image
 import unidecode
 import datetime
 import operator
 
 # MODELS
-from .models import Course, Attendance
-from users.models import Account, Id_Type, Nationality, Sex
+from .models import *
+from users.models import *
 
 # FORMS
-class Search(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        search = kwargs.pop("search")
-
-        super(Search, self).__init__(*args, **kwargs)
-
-        self.fields["search"].initial = search
-    
-    search = forms.CharField(label="", required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control', 
-        'placeholder': 'Busca Estudiante...',
-        'style': 'display: inline; width: 300px; margin-right: 10px;',
-        }))
-
-class CourseForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        students = kwargs.pop("students")
-
-        super(CourseForm, self).__init__(*args, **kwargs)
-
-        self.fields["students"].initial = students
-
-    students = forms.ModelMultipleChoiceField(queryset=Account.objects.filter(is_admin=False), label="", widget=FilteredSelectMultiple("Estudiantes", is_stacked=False), required=True)
-
-    class Media:
-        css = {'all': ('/static/admin/css/widgets.css',),}
-        js = ('/admin/jsi18n',)
-
-class StudentForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        image = kwargs.pop("image")
-
-        super(StudentForm, self).__init__(*args, **kwargs)
-
-        self.fields["image"].initial = image
-    
-    image = forms.ImageField(label="", required=False)
-
-class Student_CourseForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        courses = kwargs.pop("courses")
-
-        super(Student_CourseForm, self).__init__(*args, **kwargs)
-
-        self.fields["courses"].initial = courses
-
-    courses = forms.ModelMultipleChoiceField(queryset=Course.objects.filter(date__gte=datetime.datetime.now()).order_by('date','start_time'), label="", widget=FilteredSelectMultiple("Cursos", is_stacked=False, attrs={'style': 'overflow-x: auto;'}), required=True)
-
-    class Media:
-        css = {'all': ('/static/admin/css/widgets.css',),}
-        js = ('/admin/jsi18n',)
-
+from django import forms
+from .forms import *
 
 
 # Create your views here.
@@ -717,27 +662,111 @@ def course(request, course_id):
 def print_course(request, course_id):
 
     courses = [Course.objects.get(pk=course_id)]
+    full = dict()
 
+    for course in courses:
+
+        full[course] = dict()
+
+        for student in course.students.all():
+
+            full[course][student] = dict()
+            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+
+            start_cycle = end_cycle = None
+
+            try:
+                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+            
+            except:
+                pass
+
+            if start_cycle and end_cycle:
+
+                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
+                    
+            else:
+                full[course][student]['cycle'] = None
+    
     return render(request, 'courses/print_course.html', {
-        "courses": courses,
+        "date": courses[0].date,
+        "full": full,
     })
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def print_courses(request):
 
-    today_courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
+    courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
+    full = dict()
+
+    for course in courses:
+
+        full[course] = dict()
+
+        for student in course.students.all():
+
+            full[course][student] = dict()
+            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+
+            start_cycle = end_cycle = None
+
+            try:
+                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+            
+            except:
+                pass
+
+            if start_cycle and end_cycle:
+
+                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date)
+                    
+            else:
+                full[course][student]['cycle'] = None
+
 
     return render(request, 'courses/print_course.html', {
-        "courses": today_courses,
+        "date": datetime.datetime.now(),
+        "full": full,
     })
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def print_search(request, course_id):
 
     courses = Course.objects.filter(date=Course.objects.get(pk=course_id).date).order_by('date','start_time')
+    full = dict()
+
+    for course in courses:
+
+        full[course] = dict()
+
+        for student in course.students.all():
+
+            full[course][student] = dict()
+
+            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+
+            start_cycle = end_cycle = None
+
+            try:
+                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+            
+            except:
+                pass
+
+            if start_cycle and end_cycle:
+
+                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date)
+                    
+            else:
+                full[course][student]['cycle'] = None
+
 
     return render(request, 'courses/print_course.html', {
-        "courses": courses,
+        "date": Course.objects.get(pk=course_id).date,
+        "full": full,
     })
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
@@ -941,6 +970,12 @@ def payment(request, attendance_id):
         
         else:
             attendance.cycle = False
+        
+        if request.POST.get("end_cycle", False) == "on":
+            attendance.end_cycle = True
+        
+        else:
+            attendance.end_cycle = False
         
         if request.POST.get("recover", False) == "on":
             attendance.recover = True
@@ -1221,8 +1256,32 @@ def inconsistency(request):
             people.append(student)
 
     return render(request, "courses/inconsistency.html", {
+        "message": "Inconsistencias",
         "people": people,
     })
+
+def plus_one(request):
+
+    people = []
+
+    for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
+
+        week = set()
+        courses = student.courses.filter(date__gte=datetime.datetime.now()).order_by('date','start_time')
+
+        for course in courses:
+
+            week.add(course.date.weekday())
+
+            if len(week) > 1:
+                people.append(student)
+                break
+        
+    return render(request, "courses/inconsistency.html", {
+        "message": "Estudiantes con más de un curso a la semana.",
+        "people": people,
+    })
+
 
 def login_view(request):
 

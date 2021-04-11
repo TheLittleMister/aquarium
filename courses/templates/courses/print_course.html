@@ -37,6 +37,64 @@
                 background: #abd;
             }
 
+            table {
+                /* border: 1px solid #ccc; */
+                border-collapse: collapse;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+        
+            table tr {
+                /* background: #f8f8f8; */
+                /* border: 1px solid #ddd; */
+                padding: .35em;
+            }
+        
+            table th, table td {
+                padding: .625em;
+                text-align: left;
+            }
+        
+            table th {
+                font-size: .55em;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+            }
+            
+            @media screen and (max-width: 1400px) {
+        
+                table { border: 0; }
+            
+                table thead { display: none; }
+            
+                table tr {
+                /* border-bottom: 3px solid #ddd; */
+                display: block;
+                margin-bottom: .625em;
+                }
+            
+                table td {
+                /* border-bottom: 1px solid #ddd; */
+                display: block;
+                font-size: .8em;
+                text-align: right;
+                }
+            
+                table td:before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+                }
+            
+                table td:last-child { border-bottom: 0; }
+        
+            }
+
+    </style>
+
+
             
         </style>
 
@@ -58,7 +116,7 @@
             });
 
             function fontsize(value) {
-                addNewStyle(`body * { font-size: ${value}px !important; }`);
+                addNewStyle(`.manage { font-size: ${value}px !important; }`);
             }
 
             function showbar() {
@@ -83,45 +141,82 @@
                     <div class="card-body">
                         <div class="row row-space">
                             <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30" onchange="fontsize(value)">
-                            {% for course in courses|slice:":1" %}
-                                <h3 style="width: 50%; float: left; margin-top: 30px;">{{ course.date|date:"l" }} {{ course.date }}</h3>
-                            {% endfor %}
+                            <h3 style="width: 50%; float: left; margin-top: 30px;">{{ date|date:"l" }} {{ date }}</h3>
                             <div style="width: 50%; float: right;">
                                 <img style="max-width: 100%; cursor: pointer;"src="{% static 'main/mainaq.webp' %}" onclick="showbar()">
                             </div>
                             
                         </div>
                         <br><hr><br> 
-                        {% for course in courses %}
-                        <h3> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
+                        {% for course, students in full.items %}
+                        <h3 class="manage"> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
                         <ol style="margin-top: 30px; font-size: x-large;">
-                            {% for attendance in course.attendance.all %}
+                            {% for student, values in students.items %}
+                            
                                 <li style="margin-bottom: 20px;">
                                     <h4>
-                                        <input type="checkbox" style="margin-left: 10px;"> {{ attendance.student }}
-                                        {% if attendance.recover == True %}
-                                            <span style="color: blue; font-weight: bold;">• Recuperación</span>
-                                        {% endif %}
+                                        <div class="manage">
+                                            <input type="checkbox" style="margin-left: 10px;"> {{ student }}
+                                            
+                                            {% if values.attendance.recover == True %}
+                                                <span style="color: blue; font-weight: bold;">• Recuperación</span>
+                                            {% endif %}
 
-                                        {% if attendance.cycle == True %}
-                                            <span style="color: blue; font-weight: bold;">• INICIA</span>
-                                        {% endif %}
+                                            {% if values.attendance.cycle == True %}
+                                                <span style="color: blue; font-weight: bold;">• INICIA</span>
+                                            {% endif %}
 
-                                        {% if attendance.onlyday == True %}
-                                            <span style="color: blue; font-weight: bold;">• Solo el día</span>
-                                        {% endif %}
+                                            {% if values.attendance.end_cycle == True %}
+                                                <span style="color: blue; font-weight: bold;">• TERMINA</span>
+                                            {% endif %}
 
-                                        {% if attendance.student.courses.last == course %}
-                                            <span style="color: darkred; font-weight: bold;">• Última Clase</span>
-                                        {% endif %}
+                                            {% if values.attendance.onlyday == True %}
+                                                <span style="color: blue; font-weight: bold;">• Solo el día</span>
+                                            {% endif %}
 
-                                        {% if attendance.student.note %}
-                                            <span style="font-weight: bold; font-style: italic;">• {{ attendance.student.note }}</span>
-                                        {% endif %}
+                                            {% if values.attendance.student.courses.last == course %}
+                                                <span style="color: darkred; font-weight: bold;">• Última Clase</span>
+                                            {% endif %}
 
-                                        {% if attendance.note %}
-                                            <span style="font-weight: bold; font-style: italic;">• {{ attendance.note }} </span>
-                                        {% endif %}
+                                            {% if values.attendance.student.note %}
+                                                <span style="font-weight: bold; font-style: italic;">• {{ values.attendance.student.note }}</span>
+                                            {% endif %}
+
+                                            {% if values.attendance.note %}
+                                                <span style="font-weight: bold; font-style: italic;">• {{ values.attendance.note }} </span>
+                                            {% endif %}
+                                        </div>
+                                        <div style="overflow-x:auto; max-width: 100%;">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                {% for attendance in values.cycle %}                          
+                                                    <th scope="col">{{attendance.course.date|date:"l"}} <br> {{attendance.course.date}}</th>                                          
+                                                {% endfor %} 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    {% for attendance in values.cycle %}                          
+                                                        <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                            {% if attendance.attendance == True %}
+                                                                <span  style="font-size: large; font-weight: bold;">✓</span>
+                                                            
+                                                            {% else %}
+                                                                {% if attendance.course.is_past_due %}
+                                                                    <span  style="font-size: large; font-weight: bold;">✗</span>
+                                                                {% elif attendance.course.is_today %}
+                                                                    <span  style="font-size: small; font-weight: bold; color: darkgreen;">HOY</span>
+                                                                {% else %}
+                                                                    <span  style="font-size: small;">-</span>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>                                          
+                                                    {% endfor %} 
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     </h4>
                                 </li> 
                             {% endfor %}

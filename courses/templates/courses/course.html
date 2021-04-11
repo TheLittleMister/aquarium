@@ -150,6 +150,13 @@
                             {% endif %}
                                 <label style="width: auto;" for="cycle">INICIA CICLO</label><br>
 
+                            {% if attendance.end_cycle == True %}
+                                <input style="width: auto;" type="checkbox" name="end_cycle" checked> 
+                            {% else %}
+                                <input style="width: auto;" type="checkbox" name="end_cycle"> 
+                            {% endif %}
+                                <label style="width: auto;" for="end_cycle">TERMINA CICLO</label><br>
+
                             {% if attendance.recover == True %}
                                 <input style="width: auto;" type="checkbox" name="recover" checked> 
                             {% else %}
@@ -249,7 +256,14 @@
 
                                 {% if attendance.cycle == True %}
                                     <span id="quota" class="badge badge-warning" style="font-size: small;">
-                                        Inicia Ciclo
+                                        INICIA
+                                    </span>
+                                    <br>
+                                {% endif %}
+
+                                {% if attendance.end_cycle == True %}
+                                    <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                        TERMINA
                                     </span>
                                     <br>
                                 {% endif %}

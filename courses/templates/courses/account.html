@@ -374,7 +374,14 @@
 
                                 {% if attendance.cycle == True %}
                                     <span id="quota" class="badge badge-warning" style="font-size: small;">
-                                        Inicia Ciclo
+                                        INICIA
+                                    </span>
+                                    <br>
+                                {% endif %}
+
+                                {% if attendance.end_cycle == True %}
+                                    <span id="quota" class="badge badge-warning" style="font-size: small;">
+                                        TERMINA
                                     </span>
                                     <br>
                                 {% endif %}
