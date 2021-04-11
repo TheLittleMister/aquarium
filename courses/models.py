@@ -49,6 +49,7 @@ class Course(models.Model):
 class Attendance(models.Model):
     student = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="attendance")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="attendance")
+    image = models.ImageField(upload_to="receipts", blank=True)
 
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
@@ -69,7 +70,7 @@ class Attendance(models.Model):
     quota = models.CharField(
         max_length=10,
         choices=quota_choices,
-        default=PAID,
+        default=SEP,
     ) # SEPARADO / PAGO / NO PAGO
 
     note = models.CharField(max_length=280)

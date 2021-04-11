@@ -961,6 +961,7 @@ def ignore(request, account_id):
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def payment(request, attendance_id):
 
+    savemessage = None
     attendance = Attendance.objects.get(pk=attendance_id)
 
     if request.method == "POST":
@@ -995,22 +996,28 @@ def payment(request, attendance_id):
             attendance.note = request.POST["note"].strip()
         else:
             attendance.note = ""
+        
+        if request.POST.get("image-clear", False) == "on":
+            attendance.image.delete()
+
+        elif request.FILES.get("image", False) != False and 'image' in request.FILES["image"].content_type:
+            attendance.image.delete()
+            attendance.image = request.FILES["image"]
 
         attendance.save()
 
-        return render(request, 'courses/course.html', {
-            "savemessage": "CAMBIOS GUARDADOS",
-            "payment": True,
-            "attendance": attendance,
-            "course": attendance.course,
-        })
+        savemessage = "Cambios Guardados"
 
-    else:
-        return render(request, 'courses/course.html', {
-            "payment": True,
-            "attendance": attendance,
-            "course": attendance.course,
-        })
+
+    return render(request, 'courses/course.html', {
+        "savemessage": savemessage,
+        "payment": True,
+        "attendance": attendance,
+        "course": attendance.course,
+        "form": AttendanceForm(
+            image = attendance.image,
+        ),
+    })
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def past_student_courses(request, account_id):

@@ -138,38 +138,56 @@
                             {{savemessage}}
                         </div>
                         {% endif %}
-                        <form action="{% url 'courses:payment' attendance.id %}" style="text-align: left; font-size: medium;" method="POST" id="create" enctype="multipart/form-data">
+                        <form action="{% url 'courses:payment' attendance.id %}" style="text-align: left; font-size: medium; display: flex; flex-wrap: wrap;" method="POST" id="create" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <a style="font-size: medium; font-weight: bold;" href="{% url 'courses:student' attendance.student.id %}">
-                                {{ attendance.student }}
-                            </a> <br><br>
-                            {% if attendance.cycle == True %}
-                                <input style="width: auto;" type="checkbox" name="cycle" checked> 
-                            {% else %}
-                                <input style="width: auto;" type="checkbox" name="cycle"> 
-                            {% endif %}
-                                <label style="width: auto;" for="cycle">INICIA CICLO</label><br>
-
-                            {% if attendance.end_cycle == True %}
-                                <input style="width: auto;" type="checkbox" name="end_cycle" checked> 
-                            {% else %}
-                                <input style="width: auto;" type="checkbox" name="end_cycle"> 
-                            {% endif %}
-                                <label style="width: auto;" for="end_cycle">TERMINA CICLO</label><br>
-
-                            {% if attendance.recover == True %}
-                                <input style="width: auto;" type="checkbox" name="recover" checked> 
-                            {% else %}
-                                <input style="width: auto;" type="checkbox" name="recover"> 
-                            {% endif %}
-                                <label style="width: auto;" for="recover">RECUPERACION</label><br>
                             
-                            {% if attendance.onlyday == True %}
-                                <input style="width: auto;" type="checkbox" name="onlyday" checked> 
-                            {% else %}
-                                <input style="width: auto;" type="checkbox" name="onlyday"> 
-                            {% endif %}
-                                <label style="width: auto;" for="onlyday">SOLO EL DÍA</label><br>
+                            <div style="margin-right: 15px;">
+
+                                <a style="font-size: medium; font-weight: bold;" href="{% url 'courses:student' attendance.student.id %}">
+                                    {{ attendance.student }}
+                                </a> <br><br>
+                                {% if attendance.cycle == True %}
+                                    <input style="width: auto;" type="checkbox" name="cycle" checked> 
+                                {% else %}
+                                    <input style="width: auto;" type="checkbox" name="cycle"> 
+                                {% endif %}
+                                    <label style="width: auto;" for="cycle">INICIA CICLO</label><br>
+    
+                                {% if attendance.end_cycle == True %}
+                                    <input style="width: auto;" type="checkbox" name="end_cycle" checked> 
+                                {% else %}
+                                    <input style="width: auto;" type="checkbox" name="end_cycle"> 
+                                {% endif %}
+                                    <label style="width: auto;" for="end_cycle">TERMINA CICLO</label><br>
+    
+                                {% if attendance.recover == True %}
+                                    <input style="width: auto;" type="checkbox" name="recover" checked> 
+                                {% else %}
+                                    <input style="width: auto;" type="checkbox" name="recover"> 
+                                {% endif %}
+                                    <label style="width: auto;" for="recover">RECUPERACION</label><br>
+                                
+                                {% if attendance.onlyday == True %}
+                                    <input style="width: auto;" type="checkbox" name="onlyday" checked> 
+                                {% else %}
+                                    <input style="width: auto;" type="checkbox" name="onlyday"> 
+                                {% endif %}
+                                    <label style="width: auto;" for="onlyday">SOLO EL DÍA</label><br>
+                                    <textarea class="form-control" id="thenote" name="note" cols="43" rows="7" maxlength="280" style="max-width: 100%;">{{ attendance.note }}</textarea>
+                                    <br>
+                            </div>
+
+                            <div>
+                                <div style="width: 450px; overflow-x: auto;">
+                                    {{ form }}
+                                </div>
+                                {% if attendance.image %}
+                                    <a href="{{attendance.image.url}}" target="_blank">
+                                        <img src="{{ attendance.image.url }}" style="width: 490px; margin-top: 20px; margin-bottom: 20px; max-width: 100%; " alt="Receipt">
+                                    </a>
+                                {% endif %}
+                                <br>
+                            </div>
                             
                             <div style="display: none;">
 
@@ -194,10 +212,7 @@
                                 {% endif %}
                                     <label style="width: auto;" for="n_paid">NO PAGO</label> 
                             </div> <br>
-
-                            📃NOTA: <textarea class="form-control" name="note"  rows="4" maxlength="280">{{ attendance.note }}</textarea>
-                            <hr> <br>
-                            <input style="width: auto;" style="margin-left: auto; margin-right: auto; font-weight: bold;" class="btn btn-success" type="submit" value="Guardar">
+                            <input style="margin-left: auto; margin-right: auto; font-weight: bold;" class="btn btn-success" type="submit" value="Guardar">
                         </form> <br>
 
                 {% else %}

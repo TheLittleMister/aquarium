@@ -59,4 +59,13 @@ class Student_CourseForm(forms.Form):
         css = {'all': ('/static/admin/css/widgets.css',),}
         js = ('/admin/jsi18n',)
 
+class AttendanceForm(forms.Form):
 
+    def __init__(self, *args, **kwargs):
+        image = kwargs.pop("image")
+
+        super(AttendanceForm, self).__init__(*args, **kwargs)
+
+        self.fields["image"].initial = image
+    
+    image = forms.ImageField(label="", required=False)
