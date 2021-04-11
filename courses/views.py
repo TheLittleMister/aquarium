@@ -676,8 +676,8 @@ def print_course(request, course_id):
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
             
             except:
                 pass
@@ -712,8 +712,8 @@ def print_courses(request):
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
             
             except:
                 pass
@@ -750,8 +750,8 @@ def print_search(request, course_id):
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True).order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True).order_by('-course')[0]
+                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
             
             except:
                 pass
