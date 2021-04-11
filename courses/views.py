@@ -720,7 +720,7 @@ def print_courses(request):
 
             if start_cycle and end_cycle:
 
-                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date)
+                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
                     
             else:
                 full[course][student]['cycle'] = None
@@ -758,7 +758,7 @@ def print_search(request, course_id):
 
             if start_cycle and end_cycle:
 
-                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date)
+                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
                     
             else:
                 full[course][student]['cycle'] = None
