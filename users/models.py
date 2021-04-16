@@ -66,6 +66,7 @@ class Account(AbstractBaseUser):
 
     # User's request to change information
     newrequest = models.BooleanField(default=False)
+    ignore = models.BooleanField(default=False)
 
     first_name_1 = models.CharField(max_length=30, default="", null=True)
     last_name_1 = models.CharField(max_length=30, default="", null=True)
