@@ -929,6 +929,20 @@ def pay(request, attendance_id): # FETCH
 
     return JsonResponse(the_attendance.quota, safe=False)
 
+@staff_member_required(login_url="https://www.aquariumschool.co/login")
+def lever(request, user_id): # FETCH
+
+    user = Account.objects.get(pk=user_id)
+
+    if user.ignore == False:
+        user.ignore = True
+    
+    else:
+        user.ignore = False
+    user.save()
+
+    return JsonResponse(user.ignore, safe=False)
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def notifications(request): # FETCH
@@ -1263,6 +1277,7 @@ def inconsistency(request):
             people.append(student)
 
     return render(request, "courses/inconsistency.html", {
+        "inc": True, 
         "message": "Inconsistencias",
         "people": people,
     })

@@ -23,6 +23,7 @@ urlpatterns = [
     path("course/attendance/<int:course_id>", attendance_course, name="attendance_course"),
     path("attendance/<int:attendance_id>", attendance, name="attendance"), # FETCH
     path("pay/<int:attendance_id>", pay, name="pay"), # FETCH
+    path("lever/<int:user_id>", lever, name="lever"), # FETCH
 
     path("notifications/", notifications, name="notifications"), #FETCH
     path("getnotifications/", getnotifications, name="getnotifications"),
