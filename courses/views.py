@@ -1289,7 +1289,7 @@ def plus_one(request):
     for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
 
         week = set()
-        courses = student.courses.filter(date__gte=datetime.datetime.now()).order_by('date','start_time')
+        courses = student.courses.filter(date__gte=datetime.datetime.now() - datetime.timedelta(30)).order_by('date','start_time')
 
         for course in courses:
 

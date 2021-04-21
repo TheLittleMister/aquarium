@@ -157,47 +157,80 @@
                                     <h4>
                                         <div class="manage">
                                             <input type="checkbox" style="margin-left: 10px;"> {{ student }}
+
+                                            {% if values.attendance.quota == "SEPARADO" %}
+                                                <span style="font-weight: bold;">• SEPARADO</span>
+                                            {% endif %}
                                             
                                             {% if values.attendance.recover == True %}
-                                                <span style="color: blue; font-weight: bold;">• Recuperación</span>
+                                                <span style="font-weight: bold;">• RECUPERA</span>
                                             {% endif %}
 
                                             {% if values.attendance.cycle == True %}
-                                                <span style="color: blue; font-weight: bold;">• INICIA</span>
+                                                <span style="font-weight: bold;">• INICIA</span>
                                             {% endif %}
 
                                             {% if values.attendance.end_cycle == True %}
-                                                <span style="color: blue; font-weight: bold;">• TERMINA</span>
+                                                <span style="font-weight: bold;">• TERMINA</span>
                                             {% endif %}
 
                                             {% if values.attendance.onlyday == True %}
-                                                <span style="color: blue; font-weight: bold;">• Solo el día</span>
+                                                <span style="font-weight: bold;">• DÍA</span>
                                             {% endif %}
 
                                             {% if values.attendance.student.courses.last == course %}
-                                                <span style="color: darkred; font-weight: bold;">• Última Clase</span>
+                                                <span style="font-weight: bold;">• ÚLTIMA</span>
                                             {% endif %}
 
                                             {% if values.attendance.student.note %}
-                                                <span style="font-weight: bold; font-style: italic;">• {{ values.attendance.student.note }}</span>
+                                                <span style="font-style: italic; font-size: medium;">• "{{ values.attendance.student.note }}"</span>
                                             {% endif %}
 
                                             {% if values.attendance.note %}
-                                                <span style="font-weight: bold; font-style: italic;">• {{ values.attendance.note }} </span>
+                                                <span style="font-style: italic; font-size: medium;">• "{{ values.attendance.note }}" </span>
                                             {% endif %}
                                         </div>
                                         <div style="overflow-x:auto; max-width: 100%;">
                                         <table>
                                             <thead>
                                                 <tr>
-                                                {% for attendance in values.cycle %}                          
+                                                {% for attendance in values.cycle|slice:":12" %}                          
                                                     <th scope="col">{{attendance.course.date|date:"l"}} <br> {{attendance.course.date}}</th>                                          
                                                 {% endfor %} 
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    {% for attendance in values.cycle %}                          
+                                                    {% for attendance in values.cycle|slice:":12" %}                          
+                                                        <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                            {% if attendance.attendance == True %}
+                                                                <span  style="font-size: large; font-weight: bold;">✓</span>
+                                                            
+                                                            {% else %}
+                                                                {% if attendance.course.is_past_due %}
+                                                                    <span  style="font-size: large; font-weight: bold;">✗</span>
+                                                                {% elif attendance.course.is_today %}
+                                                                    <span  style="font-size: small; font-weight: bold; color: darkgreen;">HOY</span>
+                                                                {% else %}
+                                                                    <span  style="font-size: small;">-</span>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>                                          
+                                                    {% endfor %} 
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                {% for attendance in values.cycle|slice:"12:" %}                          
+                                                    <th scope="col">{{attendance.course.date|date:"l"}} <br> {{attendance.course.date}}</th>                                          
+                                                {% endfor %} 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    {% for attendance in values.cycle|slice:"12:" %}                          
                                                         <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
                                                             {% if attendance.attendance == True %}
                                                                 <span  style="font-size: large; font-weight: bold;">✓</span>
