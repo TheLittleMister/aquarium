@@ -841,6 +841,10 @@ def create_course(request):
 def delete_student(request, account_id):
 
     student = Account.objects.get(pk=account_id)
+
+    if student.image != 'default-profile.png':
+        student.image.delete()
+        
     student.delete()
     return HttpResponseRedirect(reverse("courses:index",))
 
