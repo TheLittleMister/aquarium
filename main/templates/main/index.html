@@ -10,16 +10,16 @@
 	<meta property="og:site" content="https://www.aquariumschool.co" /> 
 	<meta property="og:title" content="Aquarium School"/> 
 	<meta property="og:description" content="Aquarium School" />
-	<meta property="og:image" content="{% static 'main/linklogo.png' %}" />
+	<meta property="og:image" content="{% static 'images/linklogo.png' %}" />
 	<meta property="og:url" content="https://www.aquariumschool.co" />
     <meta property="og:type" content="article" />
     <meta charset="UTF-8">
 
     <title>Aquarium School</title>
     
-    <link rel="canonical" href="https://www.free-css.com/free-css-templates/page259/aria">
-    <link rel="stylesheet" href="{% static 'main/styles.pure.css' %}">
-    <link rel="icon" href="{% static 'main/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.pure.css' %}">
+    <link rel="icon" href="{% static 'images/logo.webp' %}">
+    <script src="https://kit.fontawesome.com/f042eae6e8.js" crossorigin="anonymous"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -169,7 +169,7 @@
     </div>    
 
     <nav class="navbar navbar-expand-md navbar-dark navbar-custom fixed-top">
-        <a class="navbar-brand logo-image" href="#header"><img src="{% static 'main/logo.svg' %}" alt="alternative"></a>
+        <a class="navbar-brand logo-image" href="#header"><img src="{% static 'images/logo.svg' %}" alt="alternative"></a>
         
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-awesome fas fa-bars"></span>
@@ -218,20 +218,22 @@
             {% if request.user.is_authenticated %}
             <a id="outt" class="nav-link page-scroll" href="{% url 'courses:logout' %}" style="text-decoration: none;">
                 <p style="display: inline; color: white;">Salir</p>
-                <img src="{% static 'main/logout.webp' %}" style="height: 20px;display: inline;">
+                <img src="{% static 'images/logout.webp' %}" style="height: 20px;display: inline;">
             </a>
             {% endif %}
             <span class="nav-item social-icons">
                 <span class="fa-stack">
                     <a href="https://www.facebook.com/AquariumSchoolBogota" target="_blank">
-                        <span class="hexagon"></span>
-                        <i class="fab fa-facebook-f fa-stack-1x"></i>
+                        <span class="hexagon">
+                            <i class="fab fa-facebook-f fa-stack-1x"></i>
+                        </span>
                     </a>
                 </span>
                 <span class="fa-stack">
                     <a href="https://www.instagram.com/aquarium.school/" target="_blank">
-                        <span class="hexagon"></span>
-                        <i class="fab fa-instagram fa-stack-1x"></i>
+                        <span class="hexagon">
+                            <i class="fab fa-instagram fa-stack-1x"></i>
+                        </span>
                     </a>
                 </span>
             </span>
@@ -244,7 +246,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-container">
-                            <img style="max-width: 100%; max-height: 100%;" src="{% static 'main/mainaq.webp' %}">
+                            <img style="max-width: 100%; max-height: 100%;" src="{% static 'images/mainaq.webp' %}">
                             <h3 style="color: steelblue; font-weight: bold;">Donde aprender a nadar es <span id="js-rotating">fácil., rápido., seguro.</span></h3> <br>
                             <a class="btn-solid-lg page-scroll" href="#intro">EMPEZAR</a>
                         </div>
@@ -272,7 +274,7 @@
                             "Ofrecemos cursos de natación para niños, jóvenes y adultos en Bogotá con piscina climatizada, excelente ambiente e instructores."
                         </p>
                         <div style="text-align: center; padding: 50px;">
-                            <img style="width: 150px;"src="{% static 'main/logo.webp' %}">
+                            <img style="width: 150px;"src="{% static 'images/logo.webp' %}">
                             <div id="counter">
                                 <div class="cell">
                                     <div class="counter-value" style="display: inline; color: steelblue;font-size: xx-large; font-weight: bold;" data-count="2021">1</div>
@@ -284,7 +286,7 @@
 
                 <div class="col-lg-7">
                     <div class="image-container">
-                        <img class="img-fluid" src="{% static 'main/project-4.webp' %}" alt="alternative">
+                        <img class="img-fluid" src="{% static 'images/project-4.webp' %}" alt="alternative">
                     </div>
                 </div> 
                 
@@ -356,7 +358,7 @@
                     
                     <div class="card">
                         <div class="card-image">
-                            <img class="img-fluid" src="{% static 'main/services-1.webp' %}" alt="alternative">
+                            <img class="img-fluid" src="{% static 'images/services-1.webp' %}" alt="alternative">
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">Niños</h3>
@@ -380,7 +382,7 @@
 
                     <div class="card">
                         <div class="card-image">
-                            <img class="img-fluid" src="{% static 'main/services-2.webp' %}" alt="alternative">
+                            <img class="img-fluid" src="{% static 'images/services-2.webp' %}" alt="alternative">
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">Jóvenes</h3>
@@ -406,7 +408,7 @@
 
                     <div class="card">
                         <div class="card-image">
-                            <img class="img-fluid" src="{% static 'main/services-3.webp' %}" alt="alternative">
+                            <img class="img-fluid" src="{% static 'images/services-3.webp' %}" alt="alternative">
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">Adultos</h3>
@@ -590,28 +592,28 @@
                     </div> 
                     <div class="grid">
                         <div class="element-item development">
-                            <a class="popup-with-move-anim" href="#project-1"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'main/project-1.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-1"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'images/project-1.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item development">
-                            <a class="popup-with-move-anim" href="#project-2"><div class="element-item-overlay"><span>Sala de espera</span></div><img src="{% static 'main/project-2.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-2"><div class="element-item-overlay"><span>Sala de espera</span></div><img src="{% static 'images/project-2.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design development marketing">
-                            <a class="popup-with-move-anim" href="#project-3"><div class="element-item-overlay"><span>Lockers</span></div><img src="{% static 'main/project-3.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-3"><div class="element-item-overlay"><span>Lockers</span></div><img src="{% static 'images/project-3.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design development marketing">
-                            <a class="popup-with-move-anim" href="#project-4"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'main/project-4.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-4"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'images/project-4.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design development marketing seo">
-                            <a class="popup-with-move-anim" href="#project-5"><div class="element-item-overlay"><span>Recepción</span></div><img src="{% static 'main/project-5.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-5"><div class="element-item-overlay"><span>Recepción</span></div><img src="{% static 'images/project-5.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design marketing seo">
-                            <a class="popup-with-move-anim" href="#project-6"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'main/project-6.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-6"><div class="element-item-overlay"><span>Piscina</span></div><img src="{% static 'images/project-6.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design marketing">
-                            <a class="popup-with-move-anim" href="#project-7"><div class="element-item-overlay"><span>Duchas</span></div><img src="{% static 'main/project-7.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-7"><div class="element-item-overlay"><span>Duchas</span></div><img src="{% static 'images/project-7.webp' %}" alt="alternative"></a>
                         </div>
                         <div class="element-item design marketing">
-                            <a class="popup-with-move-anim" href="#project-8"><div class="element-item-overlay"><span>Sala recepción</span></div><img src="{% static 'main/project-8.webp' %}" alt="alternative"></a>
+                            <a class="popup-with-move-anim" href="#project-8"><div class="element-item-overlay"><span>Sala recepción</span></div><img src="{% static 'images/project-8.webp' %}" alt="alternative"></a>
                         </div>
                     </div> 
                     
@@ -624,7 +626,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-1.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-1.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Piscina</h3>
@@ -652,7 +654,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-2.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-2.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Sala de espera</h3>
@@ -674,7 +676,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-3.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-3.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Lockers</h3>
@@ -694,7 +696,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-4.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-4.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Piscina</h3>
@@ -722,7 +724,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-5.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-5.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Recepción</h3>
@@ -741,7 +743,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-6.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-6.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Piscina</h3>
@@ -768,7 +770,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-7.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-7.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Duchas</h3>
@@ -790,7 +792,7 @@
         <div class="row">
             <button title="Close (Esc)" type="button" class="mfp-close x-button">×</button>
             <div class="col-lg-8">
-                <img class="img-fluid" src="{% static 'main/project-8.webp' %}" alt="alternative">
+                <img class="img-fluid" src="{% static 'images/project-8.webp' %}" alt="alternative">
             </div> 
             <div class="col-lg-4">
                 <h3>Sala recepción</h3>
@@ -944,15 +946,15 @@
         </div> 
     </div>     
     	
-    <script src="{% static 'main/jquery.min.js' %}"></script>
-    <script src="{% static 'main/popper.min.js' %}"></script> 
-    <script src="{% static 'main/bootstrap.min.js' %}"></script> 
-    <script src="{% static 'main/jquery.easing.min.js' %}"></script>
-    <script src="{% static 'main/swiper.min.js' %}"></script>
-    <script src="{% static 'main/jquery.magnific-popup.js' %}"></script>
-    <script src="{% static 'main/morphext.min.js' %}"></script>
-    <script src="{% static 'main/isotope.pkgd.min.js' %}"></script>
-    <script src="{% static 'main/validator.min.js' %}"></script>
-    <script src="{% static 'main/scripts.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script> 
+    <script src="{% static 'js/bootstrap.min.js' %}"></script> 
+    <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'js/swiper.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.js' %}"></script>
+    <script src="{% static 'js/morphext.min.js' %}"></script>
+    <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'js/validator.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>
