@@ -13,7 +13,7 @@
                 {% for student in people %}
                     {% if not student.ignore %}
                         <li>
-                            <a href="{% url 'courses:student' student.id %}" style="color: darkred;">
+                            <a href="{% url 'courses:student' student.id %}" style="color: black;">
                                 {{ student.first_name }} {{ student.last_name }}
                             </a>
                         </li>

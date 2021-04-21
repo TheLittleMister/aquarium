@@ -192,3 +192,13 @@ function course_secure_delete_back() {
   document.querySelector("#course_secure_delete").style.display = "none";
 
 }
+
+function lever(id) {
+
+  fetch(`/courses/lever/${id}`)
+  .then(response => response.json())
+  .then(lever =>{
+      console.log(lever);
+  });
+
+}
