@@ -211,8 +211,6 @@
                                                                     <span  style="font-size: large; font-weight: bold;">✗</span>
                                                                 {% elif attendance.course.is_today %}
                                                                     <span  style="font-size: small; font-weight: bold;">HOY</span>
-                                                                {% else %}
-                                                                    <span  style="font-size: small;">-</span>
                                                                 {% endif %}
                                                             {% endif %}
                                                             {% if attendance.recover == True %}
@@ -243,9 +241,10 @@
                                                                     <span  style="font-size: large; font-weight: bold;">✗</span>
                                                                 {% elif attendance.course.is_today %}
                                                                     <span  style="font-size: small; font-weight: bold; color: darkgreen;">HOY</span>
-                                                                {% else %}
-                                                                    <span  style="font-size: small;">-</span>
                                                                 {% endif %}
+                                                            {% endif %}
+                                                            {% if attendance.recover == True %}
+                                                                <br><span  style="font-size: small; font-weight: bold;">RECUPERA</span>
                                                             {% endif %}
                                                         </td>                                          
                                                     {% endfor %} 
