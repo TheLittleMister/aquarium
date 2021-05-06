@@ -170,8 +170,9 @@
                                 {% for course in results %}
                                 <tr>
                                     <td data-label="Clase">
-                                        <span class="badge badge-info" style="font-size: small;">{{
-                                            course.students.all.count }}</span>
+                                        <span class="badge badge-info" style="font-size: small;">
+                                            {{ course.students.all.count }}
+                                        </span>
                                         <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}}
                                             {{course.date}} de {{course.start_time|date:"P"}} a
                                             {{course.end_time|date:"P"}}</a>
@@ -312,8 +313,9 @@
                                     {% for course in old_page.object_list %}
                                     <tr>
                                         <td data-label="Clase">
-                                            <span class="badge badge-info" style="font-size: small;">{{
-                                                course.students.all.count }}</span>
+                                            <span class="badge badge-info" style="font-size: small;">
+                                                {{ course.students.all.count }}
+                                            </span>
                                             <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}}
                                                 {{course.date}} de {{course.start_time|date:"P"}} a
                                                 {{course.end_time|date:"P"}}</a>
@@ -473,8 +475,9 @@
                                 {% for course in results %}
                                 <tr>
                                     <td data-label="Clase">
-                                        <span class="badge badge-info" style="font-size: small;">{{
-                                            course.students.all.count }}</span>
+                                        <span class="badge badge-info" style="font-size: small;">
+                                            {{ course.students.all.count }}
+                                        </span>
                                         <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}}
                                             {{course.date}} de {{course.start_time|date:"P"}} a
                                             {{course.end_time|date:"P"}}</a>
@@ -614,8 +617,9 @@
                                 {% for course in today_page.object_list %}
                                 <tr>
                                     <td data-label="Clase">
-                                        <span class="badge badge-info" style="font-size: small;">{{
-                                            course.students.all.count }}</span>
+                                        <span class="badge badge-info" style="font-size: small;">
+                                            {{ course.students.all.count }}
+                                        </span>
                                         <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}}
                                             {{course.date}} de {{course.start_time|date:"P"}} a
                                             {{course.end_time|date:"P"}}</a>
@@ -765,8 +769,9 @@
                                 {% for course in next_page.object_list %}
                                 <tr>
                                     <td data-label="Clase">
-                                        <span class="badge badge-info" style="font-size: small;">{{
-                                            course.students.all.count }}</span>
+                                        <span class="badge badge-info" style="font-size: small;">
+                                            {{ course.students.all.count }}
+                                        </span>
                                         <a href="{% url 'courses:course' course.id %}">{{course.date|date:"l"}}
                                             {{course.date}} de {{course.start_time|date:"P"}} a
                                             {{course.end_time|date:"P"}}</a>

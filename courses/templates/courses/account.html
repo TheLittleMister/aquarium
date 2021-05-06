@@ -271,8 +271,9 @@
                     <p class="info">Correo:</p> {{ user.email }} <br>
                     <p class="info">Acudiente:</p> {{ user.parent }} <br> <br>
                     <p class="info">Teléfono/Celular(1):</p> <a id="wanumber"
-                        href="https://api.whatsapp.com/send?phone=57{{ user.phone_1 }}" target="_blank">{{ user.phone_1
-                        }}</a> <br>
+                        href="https://api.whatsapp.com/send?phone=57{{ user.phone_1 }}" target="_blank">
+                        {{ user.phone_1}}
+                    </a> <br>
                     {% if user.phone_1_1 != None %}
                     {% if user.phone_1_1 != "" %}
                     {% if user.phone_1_1 != user.phone_1 %}
@@ -286,8 +287,9 @@
                     {% endif %}
                     {% endif %}
                     <p class="info">Teléfono/Celular(2):</p> <a id="wanumber"
-                        href="https://api.whatsapp.com/send?phone=57{{ user.phone_2 }}" target="_blank">{{ user.phone_2
-                        }}</a> <br>
+                        href="https://api.whatsapp.com/send?phone=57{{ user.phone_2 }}" target="_blank">
+                        {{ user.phone_2 }}
+                    </a> <br>
                     {% if user.phone_2_1 != None %}
                     {% if user.phone_2_1 != "" %}
                     {% if user.phone_2_1 != user.phone_2 %}
