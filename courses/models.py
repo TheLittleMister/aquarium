@@ -4,11 +4,15 @@ import datetime
 from datetime import date
 
 # Create your models here.
+
+
 class Course(models.Model):
-    start_time = models.TimeField() # Time START 
-    end_time = models.TimeField() # Time END
+    start_time = models.TimeField()  # Time START
+    end_time = models.TimeField()  # Time END
     date = models.DateField(null=True)
-    students = models.ManyToManyField(Account, blank=True, related_name="courses") # Students(Account.student) M2M
+    # Students(Account.student) M2M
+    students = models.ManyToManyField(
+        Account, blank=True, related_name="courses")
 
     @property
     def is_past_due(self):
@@ -20,35 +24,41 @@ class Course(models.Model):
 
     class Meta:
         ordering = ['date']
-    
+
     def __str__(self):
-        start_time = datetime.datetime.strptime(f'{str(self.start_time)[:-3]}','%H:%M').strftime('%I:%M %p')
-        end_time = datetime.datetime.strptime(f'{str(self.end_time)[:-3]}','%H:%M').strftime('%I:%M %p')
+        start_time = datetime.datetime.strptime(
+            f'{str(self.start_time)[:-3]}', '%H:%M').strftime('%I:%M %p')
+        end_time = datetime.datetime.strptime(
+            f'{str(self.end_time)[:-3]}', '%H:%M').strftime('%I:%M %p')
         month = self.date.strftime('%m')
         day = self.date.strftime('%d')
         year = self.date.strftime('%y')
 
         months = {
-            "01": "Enero", 
-            "02": "Febrero", 
-            "03": "Marzo", 
-            "04": "Abril", 
-            "05": "Mayo", 
-            "06": "Junio", 
-            "07": "Julio", 
-            "08": "Agosto", 
-            "09": "Septiembre", 
-            "10": "Octubre", 
-            "11": "Noviembre", 
+            "01": "Enero",
+            "02": "Febrero",
+            "03": "Marzo",
+            "04": "Abril",
+            "05": "Mayo",
+            "06": "Junio",
+            "07": "Julio",
+            "08": "Agosto",
+            "09": "Septiembre",
+            "10": "Octubre",
+            "11": "Noviembre",
             "12": "Diciembre",
-            }
-        weekdays = {0: "Lunes", 1: "Martes", 2: "Miercoles", 3: "Jueves", 4: "Viernes", 5: "Sabado", 6: "Domingo",}
-        
+        }
+        weekdays = {0: "Lunes", 1: "Martes", 2: "Miercoles",
+                    3: "Jueves", 4: "Viernes", 5: "Sabado", 6: "Domingo", }
+
         return f"{weekdays[self.date.weekday()]} {day} {months[month]} {year} de {start_time} a {end_time}"
 
+
 class Attendance(models.Model):
-    student = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="attendance")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="attendance")
+    student = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="attendance")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="attendance")
     image = models.ImageField(upload_to="receipts", blank=True)
 
     attendance = models.BooleanField(default=False)
@@ -60,7 +70,7 @@ class Attendance(models.Model):
     PAID = "PAGO"
     N_PAID = "NO PAGO"
     SEP = "SEPARADO"
-    
+
     quota_choices = (
         (PAID, "PAGO"),
         (N_PAID, "NO PAGO"),
@@ -71,7 +81,7 @@ class Attendance(models.Model):
         max_length=10,
         choices=quota_choices,
         default=SEP,
-    ) # SEPARADO / PAGO / NO PAGO
+    )  # SEPARADO / PAGO / NO PAGO
 
     note = models.CharField(max_length=280)
 

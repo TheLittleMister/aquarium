@@ -40,7 +40,8 @@ def index(request):
 
         else:
 
-            accounts = Account.objects.filter(is_admin=False).order_by("first_name", "last_name")
+            accounts = Account.objects.filter(
+                is_admin=False).order_by("first_name", "last_name")
             account_paginator = Paginator(accounts, 13)
             page_num = request.GET.get("page")
             page = account_paginator.get_page(page_num)
@@ -49,9 +50,10 @@ def index(request):
                 "page": page,
                 "form": Search(search="")
             })
-    
+
     else:
         return HttpResponseRedirect(reverse("login"))
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def courses(request):
@@ -60,14 +62,17 @@ def courses(request):
     search = None
 
     if request.method == "POST":
-        
+
         search = request.POST["date"]
-        results = Course.objects.filter(date=search).order_by('date','start_time')
+        results = Course.objects.filter(
+            date=search).order_by('date', 'start_time')
 
-
-    old_courses = Course.objects.filter(date__lt=datetime.datetime.now()).order_by('-date','-start_time')
-    next_courses = Course.objects.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
-    today_courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
+    old_courses = Course.objects.filter(
+        date__lt=datetime.datetime.now()).order_by('-date', '-start_time')
+    next_courses = Course.objects.filter(
+        date__gt=datetime.datetime.now()).order_by('date', 'start_time')
+    today_courses = Course.objects.filter(
+        date=datetime.datetime.now()).order_by('date', 'start_time')
 
     old_course_paginator = Paginator(old_courses, 7)
     old_page_num = request.GET.get("old_page")
@@ -80,7 +85,7 @@ def courses(request):
     today_course_paginator = Paginator(today_courses, 10)
     today_page_num = request.GET.get("today_page")
     today_page = today_course_paginator.get_page(today_page_num)
-    
+
     return render(request, "courses/courses.html", {
         "date": search,
         "results": results,
@@ -91,6 +96,7 @@ def courses(request):
 
     })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def create_student(request):
 
@@ -99,24 +105,29 @@ def create_student(request):
         valid = False
         i = 0
 
-        while valid == False: # DANGER - CAREFUL
+        while valid == False:  # DANGER - CAREFUL
 
             try:
-                username = unidecode.unidecode(request.POST["first_name"]).upper() + " " + unidecode.unidecode(request.POST["last_name"]).upper() + " " + str(i)
-                student = Account.objects.create_user(username=username, password="AquariumSchool")
+                username = unidecode.unidecode(request.POST["first_name"]).upper(
+                ) + " " + unidecode.unidecode(request.POST["last_name"]).upper() + " " + str(i)
+                student = Account.objects.create_user(
+                    username=username, password="AquariumSchool")
                 valid = True
 
             except:
                 i += 1
-        
-        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper().strip()
-        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper().strip()
+
+        student.first_name = unidecode.unidecode(
+            request.POST["first_name"]).upper().strip()
+        student.last_name = unidecode.unidecode(
+            request.POST["last_name"]).upper().strip()
         student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
 
         if request.POST["email"]:
 
             try:
-                already = Account.objects.get(email=request.POST["email"].lower())
+                already = Account.objects.get(
+                    email=request.POST["email"].lower())
                 student.delete()
                 message = "Correo ya está en uso por:"
 
@@ -127,39 +138,39 @@ def create_student(request):
                     "nationalities": Nationality.objects.all(),
                     "sex": Sex.objects.all(),
                     "courses_form": Student_CourseForm(
-                        courses = None,
+                        courses=None,
                     ),
                     "form": StudentForm(
-                        image = None,
+                        image=None,
                     )
                 })
 
             except:
                 student.email = request.POST["email"].lower()
-            
+
         else:
             student.email = None
 
-        
         if request.POST["identity_document"].isdigit():
 
             check = 0
 
             try:
-                already = Account.objects.get(identity_document=request.POST["identity_document"])
+                already = Account.objects.get(
+                    identity_document=request.POST["identity_document"])
                 check += 1
 
             except:
                 pass
 
             try:
-                already = Account.objects.get(identity_document_1=request.POST["identity_document"])
+                already = Account.objects.get(
+                    identity_document_1=request.POST["identity_document"])
                 check += 1
-            
+
             except:
                 pass
-            
-            
+
             if check > 0:
                 student.delete()
                 message = " No. de Documento ya está en uso por:"
@@ -171,20 +182,21 @@ def create_student(request):
                     "nationalities": Nationality.objects.all(),
                     "sex": Sex.objects.all(),
                     "courses_form": Student_CourseForm(
-                        courses = None,
+                        courses=None,
                     ),
                     "form": StudentForm(
-                        image = None,
+                        image=None,
                     )
                 })
-            
+
             else:
                 student.identity_document = request.POST["identity_document"]
-                
+
         else:
             student.identity_document = None
-        
-        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
+
+        student.nationality = Nationality.objects.get(
+            pk=int(request.POST["nationality"]))
         student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
 
         courses = request.POST.getlist("courses")
@@ -200,22 +212,23 @@ def create_student(request):
             student.date_birth = request.POST["date_birth"]
 
         elif request.POST["age"]:
-            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
+            student.date_birth = datetime.datetime.today(
+            ) - datetime.timedelta(days=int(request.POST["age"])*365)
 
         else:
             student.date_birth = datetime.datetime.today()
-        
+
         student.parent = unidecode.unidecode(request.POST["parent"]).upper()
 
         if request.POST["phone_1"].isdigit():
             student.phone_1 = request.POST["phone_1"]
-        
+
         else:
             student.phone_1 = None
-        
+
         if request.POST["phone_2"].isdigit():
             student.phone_2 = request.POST["phone_2"]
-        
+
         else:
             student.phone_2 = None
 
@@ -227,16 +240,16 @@ def create_student(request):
         return HttpResponseRedirect(reverse('courses:student', args=(student.id,)))
 
     else:
-        
+
         return render(request, 'courses/create_student.html', {
             "ids": Id_Type.objects.all(),
             "nationalities": Nationality.objects.all(),
             "sex": Sex.objects.all(),
             "courses_form": Student_CourseForm(
-                courses = None,
+                courses=None,
             ),
             "form": StudentForm(
-                image = None,
+                image=None,
             )
         })
 
@@ -249,12 +262,14 @@ def student(request, account_id):
     message1 = ""
     already = None
     already1 = None
-    
-    #Edit Student
+
+    # Edit Student
     if request.method == "POST":
 
-        student.first_name = unidecode.unidecode(request.POST["first_name"]).upper().strip()
-        student.last_name = unidecode.unidecode(request.POST["last_name"]).upper().strip()
+        student.first_name = unidecode.unidecode(
+            request.POST["first_name"]).upper().strip()
+        student.last_name = unidecode.unidecode(
+            request.POST["last_name"]).upper().strip()
         student.id_type = Id_Type.objects.get(pk=int(request.POST["id_type"]))
 
         if request.POST["identity_document"].isdigit():
@@ -266,7 +281,8 @@ def student(request, account_id):
                 if int(request.POST["identity_document"]) != student.identity_document:
 
                     try:
-                        already = Account.objects.get(identity_document=request.POST["identity_document"])
+                        already = Account.objects.get(
+                            identity_document=request.POST["identity_document"])
                         check += 1
 
                     except:
@@ -279,30 +295,30 @@ def student(request, account_id):
                 if int(request.POST["identity_document"]) != student.identity_document_1:
 
                     try:
-                        already = Account.objects.get(identity_document_1=request.POST["identity_document"])
+                        already = Account.objects.get(
+                            identity_document_1=request.POST["identity_document"])
                         check += 1
-                    
+
                     except:
                         pass
-            
+
             except:
-                pass         
- 
+                pass
+
             if check > 0:
                 message = "No. de Documento ya está en uso por: "
-            
+
             else:
                 student.identity_document = request.POST["identity_document"]
-                
 
         else:
             student.identity_document = None
-            
-  
-        student.nationality = Nationality.objects.get(pk=int(request.POST["nationality"]))
+
+        student.nationality = Nationality.objects.get(
+            pk=int(request.POST["nationality"]))
         student.sex = Sex.objects.get(pk=int(request.POST["sex"]))
 
-        courses = request.POST.getlist("courses") # returns course.id(s)
+        courses = request.POST.getlist("courses")  # returns course.id(s)
 
         for course in student.courses.filter(date__gte=datetime.datetime.now()):
 
@@ -322,7 +338,8 @@ def student(request, account_id):
             student.date_birth = request.POST["date_birth"]
 
         elif request.POST["age"]:
-            student.date_birth = datetime.datetime.today() - datetime.timedelta(days=int(request.POST["age"])*365)
+            student.date_birth = datetime.datetime.today(
+            ) - datetime.timedelta(days=int(request.POST["age"])*365)
 
         else:
             student.date_birth = datetime.datetime.today()
@@ -332,12 +349,13 @@ def student(request, account_id):
             if student.email != request.POST["email"].lower():
 
                 try:
-                    already1 = Account.objects.get(email=request.POST["email"].lower())
+                    already1 = Account.objects.get(
+                        email=request.POST["email"].lower())
                     message1 = "Correo ya está en uso por: "
 
                 except:
                     student.email = request.POST["email"].lower()
-                
+
         else:
             student.email = None
 
@@ -345,16 +363,16 @@ def student(request, account_id):
 
         if request.POST["phone_1"].isdigit():
             student.phone_1 = request.POST["phone_1"]
-        
+
         else:
             student.phone_1 = None
-        
+
         if request.POST["phone_2"].isdigit():
             student.phone_2 = request.POST["phone_2"]
-        
+
         else:
             student.phone_2 = None
-        
+
         if request.POST.get("image-clear", False) == "on":
 
             if student.image != 'default-profile.png':
@@ -371,12 +389,13 @@ def student(request, account_id):
 
         student.save()
 
-    courses = student.courses.filter(date__gte=datetime.datetime.now()).order_by('date','start_time')
-    
+    courses = student.courses.filter(
+        date__gte=datetime.datetime.now()).order_by('date', 'start_time')
+
     course_paginator = Paginator(courses, 8)
     page_num = request.GET.get("page")
     page = course_paginator.get_page(page_num)
-    
+
     schedule = []
     try:
         age = int(str((datetime.date.today() - student.date_birth) / 365)[:2])
@@ -401,13 +420,16 @@ def student(request, account_id):
             age = 0
 
     for course in courses:
-        
-        week = {0: ["-"], 1: ["-"], 2: ["-"], 3: ["-"], 4: ["-"], 5: ["-"], 6: ["-"]}
+
+        week = {0: ["-"], 1: ["-"], 2: ["-"],
+                3: ["-"], 4: ["-"], 5: ["-"], 6: ["-"]}
         weekday = course.date.weekday()
         the_course = []
 
-        start_time = datetime.datetime.strptime(f'{str(course.start_time)[:-3]}','%H:%M')
-        end_time = datetime.datetime.strptime(f'{str(course.end_time)[:-3]}','%H:%M')
+        start_time = datetime.datetime.strptime(
+            f'{str(course.start_time)[:-3]}', '%H:%M')
+        end_time = datetime.datetime.strptime(
+            f'{str(course.end_time)[:-3]}', '%H:%M')
 
         check = False
 
@@ -415,19 +437,19 @@ def student(request, account_id):
             if row_course[0] == start_time and row_course[1] == end_time:
                 row_course[2 + weekday] = "✔"
                 check = True
-        
+
         if check == False:
             the_course.append(start_time)
             the_course.append(end_time)
             week[weekday] = "✔"
 
-            for i in range(7): # 7 - Sunday
-                the_course.append(week[i][0]) # Week days
-            
+            for i in range(7):  # 7 - Sunday
+                the_course.append(week[i][0])  # Week days
+
             if the_course not in schedule:
                 schedule.append(the_course)
 
-    schedule.sort(key=lambda course:course[0])
+    schedule.sort(key=lambda course: course[0])
 
     if student.email == None:
         email = ""
@@ -441,30 +463,36 @@ def student(request, account_id):
         day = str(student.date_birth)[8:10]
 
         date_birth = datetime.date(int(year), int(month), int(day))
-    
+
     except:
         date_birth = str(student.date_birth)
-    
+
     date_birth_form = str(student.date_birth)
 
     # Number of paid courses
-    paid_courses = student.attendance.filter(quota="PAGO", recover=False, onlyday=False).count()
+    paid_courses = student.attendance.filter(
+        quota="PAGO", recover=False, onlyday=False).count()
 
     # Number of attended courses
-    attended = student.attendance.filter(course__date__lte=datetime.datetime.now(), attendance=True).count()
+    attended = student.attendance.filter(
+        course__date__lte=datetime.datetime.now(), attendance=True).count()
 
     # Number of failed courses
-    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=False, quota="PAGO", recover=False, onlyday=False).count()
+    failed = student.attendance.filter(course__date__lt=datetime.datetime.now(
+    ), attendance=False, quota="PAGO", recover=False, onlyday=False).count()
 
     # Number of recovered courses
-    recovered = student.attendance.filter(course__date__lt=datetime.datetime.now(), attendance=True, recover=True).count()
+    recovered = student.attendance.filter(
+        course__date__lt=datetime.datetime.now(), attendance=True, recover=True).count()
 
     # Get the Number of courses that can be recovered
-    
-    N = 4 # N represents the number of courses required to recover 1 course.
 
-    available = ((paid_courses // N) - recovered) # This equation gets the available courses to be recovered
-    rfailed = failed - recovered # Get the number of courses that were failed and never recovered.
+    N = 4  # N represents the number of courses required to recover 1 course.
+
+    # This equation gets the available courses to be recovered
+    available = ((paid_courses // N) - recovered)
+    # Get the number of courses that were failed and never recovered.
+    rfailed = failed - recovered
 
     if rfailed < 0:
         rfailed = 0
@@ -473,11 +501,11 @@ def student(request, account_id):
     if available <= 0:
         can_recover = 0
 
-    # If the available courses to be recovered are more or equal to the courses failed 
+    # If the available courses to be recovered are more or equal to the courses failed
     # then the number of courses failed can be recovered.
     elif available >= rfailed:
         can_recover = rfailed
-    
+
     # If the available courses to be recovered are less than the failed
     # then the available courses to be recovered can be recovered.
     else:
@@ -526,12 +554,14 @@ def student(request, account_id):
         "schedule": schedule,
         "age": int(age),
         "courses_form": Student_CourseForm(
-            courses = student.courses.filter(date__gte=datetime.datetime.now()).order_by('date','start_time'),
+            courses=student.courses.filter(
+                date__gte=datetime.datetime.now()).order_by('date', 'start_time'),
         ),
         "form": StudentForm(
-            image = student.image,
+            image=student.image,
         ),
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def student_history(request, account_id):
@@ -542,17 +572,21 @@ def student_history(request, account_id):
 
     if request.method == "POST":
         date_search = request.POST["date"]
-        results = student.courses.filter(date=date_search).order_by('date','start_time')
+        results = student.courses.filter(
+            date=date_search).order_by('date', 'start_time')
 
-    try: 
-        past = datetime.date.today() > results.first().date 
-    
-    except: 
+    try:
+        past = datetime.date.today() > results.first().date
+
+    except:
         past = False
 
-    old_courses = student.courses.filter(date__lt=datetime.datetime.now()).order_by('-date','-start_time')
-    next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
-    today_courses = student.courses.filter(date=datetime.datetime.now()).order_by('date','start_time')
+    old_courses = student.courses.filter(
+        date__lt=datetime.datetime.now()).order_by('-date', '-start_time')
+    next_courses = student.courses.filter(
+        date__gt=datetime.datetime.now()).order_by('date', 'start_time')
+    today_courses = student.courses.filter(
+        date=datetime.datetime.now()).order_by('date', 'start_time')
 
     old_course_paginator = Paginator(old_courses, 10)
     old_page_num = request.GET.get("old_page")
@@ -565,7 +599,7 @@ def student_history(request, account_id):
     today_course_paginator = Paginator(today_courses, 10)
     today_page_num = request.GET.get("today_page")
     today_page = today_course_paginator.get_page(today_page_num)
-    
+
     return render(request, "courses/history.html", {
         "date": date_search,
         "past": past,
@@ -576,6 +610,7 @@ def student_history(request, account_id):
         "today_page": today_page,
 
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def course(request, course_id):
@@ -588,8 +623,9 @@ def course(request, course_id):
         students = request.POST.getlist("students")  # returns student.id(s)
 
         try:
-            course = Course.objects.get(start_time=start_time, end_time=end_time, date=date)
-        
+            course = Course.objects.get(
+                start_time=start_time, end_time=end_time, date=date)
+
         except:
             course = Course.objects.get(pk=course_id)
 
@@ -601,11 +637,12 @@ def course(request, course_id):
             else:
                 course.date = request.POST["date"]
                 course.start_time = request.POST["start_time"]
-                course.end_time = request.POST["end_time"]           
+                course.end_time = request.POST["end_time"]
 
                 for student in course.students.all():
                     if str(student.id) not in students:
-                        Attendance.objects.get(student=student, course=course).delete()
+                        Attendance.objects.get(
+                            student=student, course=course).delete()
                         course.students.remove(student)
 
             for student_id in students:
@@ -626,17 +663,17 @@ def course(request, course_id):
             end_time = str(course.end_time)
 
             return render(request, 'courses/course.html', {
-            "past": datetime.date.today() > course.date,
-            "attendances": Attendance.objects.filter(course=course).order_by('student'),
-            "course": course,
-            "date": date,
-            "start_time": start_time,
-            "end_time": end_time,
-            "form": CourseForm(
-                students=request.POST.getlist("students"),
-            ),
-            "message": "Hora Inicial debe ser menor a la Final",
-        })
+                "past": datetime.date.today() > course.date,
+                "attendances": Attendance.objects.filter(course=course).order_by('student'),
+                "course": course,
+                "date": date,
+                "start_time": start_time,
+                "end_time": end_time,
+                "form": CourseForm(
+                    students=request.POST.getlist("students"),
+                ),
+                "message": "Hora Inicial debe ser menor a la Final",
+            })
 
     else:
 
@@ -658,6 +695,7 @@ def course(request, course_id):
             )
         })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def print_course(request, course_id):
 
@@ -671,33 +709,39 @@ def print_course(request, course_id):
         for student in course.students.all():
 
             full[course][student] = dict()
-            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+            full[course][student]['attendance'] = Attendance.objects.get(
+                student=student, course=course)
 
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
-            
+                start_cycle = Attendance.objects.filter(
+                    student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(
+                    student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
+
             except:
                 pass
 
             if start_cycle and end_cycle:
 
-                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
-                    
+                full[course][student]['cycle'] = student.attendance.filter(
+                    course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
+
             else:
                 full[course][student]['cycle'] = None
-    
+
     return render(request, 'courses/print_course.html', {
         "date": courses[0].date,
         "full": full,
     })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def print_courses(request):
 
-    courses = Course.objects.filter(date=datetime.datetime.now()).order_by('date','start_time')
+    courses = Course.objects.filter(
+        date=datetime.datetime.now()).order_by('date', 'start_time')
     full = dict()
 
     for course in courses:
@@ -707,34 +751,39 @@ def print_courses(request):
         for student in course.students.all():
 
             full[course][student] = dict()
-            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+            full[course][student]['attendance'] = Attendance.objects.get(
+                student=student, course=course)
 
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
-            
+                start_cycle = Attendance.objects.filter(
+                    student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(
+                    student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
+
             except:
                 pass
 
             if start_cycle and end_cycle:
 
-                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
-                    
+                full[course][student]['cycle'] = student.attendance.filter(
+                    course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
+
             else:
                 full[course][student]['cycle'] = None
-
 
     return render(request, 'courses/print_course.html', {
         "date": datetime.datetime.now(),
         "full": full,
     })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def print_search(request, course_id):
 
-    courses = Course.objects.filter(date=Course.objects.get(pk=course_id).date).order_by('date','start_time')
+    courses = Course.objects.filter(date=Course.objects.get(
+        pk=course_id).date).order_by('date', 'start_time')
     full = dict()
 
     for course in courses:
@@ -745,29 +794,33 @@ def print_search(request, course_id):
 
             full[course][student] = dict()
 
-            full[course][student]['attendance'] = Attendance.objects.get(student=student, course=course)
+            full[course][student]['attendance'] = Attendance.objects.get(
+                student=student, course=course)
 
             start_cycle = end_cycle = None
 
             try:
-                start_cycle = Attendance.objects.filter(student=student, cycle=True, quota="PAGO").order_by('-course')[0]
-                end_cycle = Attendance.objects.filter(student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
-            
+                start_cycle = Attendance.objects.filter(
+                    student=student, cycle=True, quota="PAGO").order_by('-course')[0]
+                end_cycle = Attendance.objects.filter(
+                    student=student, end_cycle=True, quota="PAGO").order_by('-course')[0]
+
             except:
                 pass
 
             if start_cycle and end_cycle:
 
-                full[course][student]['cycle'] = student.attendance.filter(course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
-                    
+                full[course][student]['cycle'] = student.attendance.filter(
+                    course__date__gte=start_cycle.course.date, course__date__lte=end_cycle.course.date).order_by('course')
+
             else:
                 full[course][student]['cycle'] = None
-
 
     return render(request, 'courses/print_course.html', {
         "date": Course.objects.get(pk=course_id).date,
         "full": full,
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def create_course(request):
@@ -785,32 +838,37 @@ def create_course(request):
 
             for date in dates:
                 try:
-                    course = Course.objects.get(start_time=start_time, end_time=end_time, date=date)
+                    course = Course.objects.get(
+                        start_time=start_time, end_time=end_time, date=date)
 
                     for student_id in students:
                         student = Account.objects.get(pk=int(student_id))
 
                         if student not in course.students.all():
-                            attendance = Attendance(course=course, student=student)
+                            attendance = Attendance(
+                                course=course, student=student)
                             attendance.save()
                             course.students.add(student)
-                        
+
                     course.save()
                     assign_only_list.append(course)
-                    
+
                 except:
 
-                    new_course = Course(start_time=start_time, end_time=end_time, date=date)
+                    new_course = Course(
+                        start_time=start_time, end_time=end_time, date=date)
                     new_course.save()
 
                     for student_id in students:
                         student = Account.objects.get(pk=int(student_id))
-                        attendance = Attendance(course=new_course, student=student)
+                        attendance = Attendance(
+                            course=new_course, student=student)
                         attendance.save()
                         new_course.students.add(student)
-                    
+
                     new_course.save()
-                    new_courses_list.append(Course.objects.get(start_time=start_time, end_time=end_time, date=date))
+                    new_courses_list.append(Course.objects.get(
+                        start_time=start_time, end_time=end_time, date=date))
 
             return render(request, 'courses/create_course.html', {
                 "form": CourseForm(
@@ -837,6 +895,7 @@ def create_course(request):
             )
         })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def delete_student(request, account_id):
 
@@ -844,9 +903,10 @@ def delete_student(request, account_id):
 
     if student.image != 'default-profile.png':
         student.image.delete()
-        
+
     student.delete()
     return HttpResponseRedirect(reverse("courses:index",))
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def delete_course(request, course_id):
@@ -855,11 +915,13 @@ def delete_course(request, course_id):
     course.delete()
     return HttpResponseRedirect(reverse("courses:courses",))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def attendance_course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
-    students_attendance = Attendance.objects.filter(course=course, attendance=True)
+    students_attendance = Attendance.objects.filter(
+        course=course, attendance=True)
 
     if request.method == "POST":
         attendances = request.POST.getlist("attendances")
@@ -872,11 +934,11 @@ def attendance_course(request, course_id):
             attendance = Attendance.objects.get(pk=int(attendance_id))
             attendance.attendance = True
             attendance.save()
-        
+
         return HttpResponseRedirect(reverse("courses:course", args=(course.id,)))
 
     else:
-        
+
         class AttendanceForm(forms.Form):
 
             def __init__(self, *args, **kwargs):
@@ -885,17 +947,18 @@ def attendance_course(request, course_id):
                 super(AttendanceForm, self).__init__(*args, **kwargs)
 
                 self.fields["attendances"].initial = attendances
-            
-            attendances = forms.ModelMultipleChoiceField(queryset=Attendance.objects.filter(course=course), label="", widget=forms.CheckboxSelectMultiple()) 
 
+            attendances = forms.ModelMultipleChoiceField(queryset=Attendance.objects.filter(
+                course=course), label="", widget=forms.CheckboxSelectMultiple())
 
         return render(request, 'courses/course.html', {
             "attendance_form": AttendanceForm(attendances=students_attendance),
             "course": course,
         })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
-def attendance(request, attendance_id): # FETCH
+def attendance(request, attendance_id):  # FETCH
 
     the_attendance = Attendance.objects.get(pk=attendance_id)
     today = datetime.date.today()
@@ -907,7 +970,7 @@ def attendance(request, attendance_id): # FETCH
     elif today > the_attendance.course.date and the_attendance.attendance == True:
         the_attendance.attendance = False
         attendance = "NO ASISTIO"
-    
+
     elif today <= the_attendance.course.date and the_attendance.attendance == True:
         the_attendance.attendance = False
         attendance = "PENDIENTE"
@@ -915,32 +978,34 @@ def attendance(request, attendance_id): # FETCH
     the_attendance.save()
     return JsonResponse(attendance, safe=False)
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
-def pay(request, attendance_id): # FETCH
+def pay(request, attendance_id):  # FETCH
 
     the_attendance = Attendance.objects.get(pk=attendance_id)
 
     if the_attendance.quota == "PAGO":
         the_attendance.quota = "SEPARADO"
-    
+
     elif the_attendance.quota == "SEPARADO":
         the_attendance.quota = "NO PAGO"
 
     else:
         the_attendance.quota = "PAGO"
-    
+
     the_attendance.save()
 
     return JsonResponse(the_attendance.quota, safe=False)
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
-def lever(request, user_id): # FETCH
+def lever(request, user_id):  # FETCH
 
     user = Account.objects.get(pk=user_id)
 
     if user.ignore == False:
         user.ignore = True
-    
+
     else:
         user.ignore = False
     user.save()
@@ -949,15 +1014,17 @@ def lever(request, user_id): # FETCH
 
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
-def notifications(request): # FETCH
+def notifications(request):  # FETCH
 
     count = Account.objects.filter(newrequest=True).count()
     return JsonResponse(count, safe=False)
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def getnotifications(request):
 
-    accounts = Account.objects.filter(newrequest=True).order_by("first_name", "last_name")
+    accounts = Account.objects.filter(
+        newrequest=True).order_by("first_name", "last_name")
     account_paginator = Paginator(accounts, 13)
     page_num = request.GET.get("page")
     page = account_paginator.get_page(page_num)
@@ -965,6 +1032,7 @@ def getnotifications(request):
     return render(request, "courses/notifications.html", {
         "page": page,
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def ignore(request, account_id):
@@ -976,6 +1044,7 @@ def ignore(request, account_id):
 
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def payment(request, attendance_id):
 
@@ -983,38 +1052,38 @@ def payment(request, attendance_id):
     attendance = Attendance.objects.get(pk=attendance_id)
 
     if request.method == "POST":
-        
+
         if request.POST.get("cycle", False) == "on":
             attendance.cycle = True
-        
+
         else:
             attendance.cycle = False
-        
+
         if request.POST.get("end_cycle", False) == "on":
             attendance.end_cycle = True
-        
+
         else:
             attendance.end_cycle = False
-        
+
         if request.POST.get("recover", False) == "on":
             attendance.recover = True
-        
+
         else:
             attendance.recover = False
 
         if request.POST.get("onlyday", False) == "on":
             attendance.onlyday = True
-        
+
         else:
             attendance.onlyday = False
-        
+
         attendance.quota = request.POST["payment"]
 
         if request.POST["note"]:
             attendance.note = request.POST["note"].strip()
         else:
             attendance.note = ""
-        
+
         if request.POST.get("image-clear", False) == "on":
             attendance.image.delete()
 
@@ -1026,22 +1095,23 @@ def payment(request, attendance_id):
 
         savemessage = "Cambios Guardados"
 
-
     return render(request, 'courses/course.html', {
         "savemessage": savemessage,
         "payment": True,
         "attendance": attendance,
         "course": attendance.course,
         "form": AttendanceForm(
-            image = attendance.image,
+            image=attendance.image,
         ),
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def past_student_courses(request, account_id):
 
     student = Account.objects.get(pk=account_id)
-    old_courses = student.courses.filter(date__lt=datetime.datetime.now()).order_by('date','start_time')
+    old_courses = student.courses.filter(
+        date__lt=datetime.datetime.now()).order_by('date', 'start_time')
     old_course_paginator = Paginator(old_courses, 10)
     page_num = request.GET.get("page")
     old_page = old_course_paginator.get_page(page_num)
@@ -1051,12 +1121,14 @@ def past_student_courses(request, account_id):
         "student": student,
         "message": "Anteriores",
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def next_student_courses(request, account_id):
 
     student = Account.objects.get(pk=account_id)
-    next_courses = student.courses.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
+    next_courses = student.courses.filter(
+        date__gt=datetime.datetime.now()).order_by('date', 'start_time')
     next_course_paginator = Paginator(next_courses, 10)
     page_num = request.GET.get("page")
     next_page = next_course_paginator.get_page(page_num)
@@ -1067,10 +1139,12 @@ def next_student_courses(request, account_id):
         "message": "Proximos",
     })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def past_courses(request):
 
-    old_courses = Course.objects.filter(date__lt=datetime.datetime.now()).order_by('date','start_time')
+    old_courses = Course.objects.filter(
+        date__lt=datetime.datetime.now()).order_by('date', 'start_time')
     old_course_paginator = Paginator(old_courses, 10)
     page_num = request.GET.get("page")
     old_page = old_course_paginator.get_page(page_num)
@@ -1080,10 +1154,12 @@ def past_courses(request):
         "message": "Anteriores",
     })
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def next_courses(request):
 
-    next_courses = Course.objects.filter(date__gt=datetime.datetime.now()).order_by('date','start_time')
+    next_courses = Course.objects.filter(
+        date__gt=datetime.datetime.now()).order_by('date', 'start_time')
     next_course_paginator = Paginator(next_courses, 10)
     page_num = request.GET.get("page")
     next_page = next_course_paginator.get_page(page_num)
@@ -1092,6 +1168,7 @@ def next_courses(request):
         "next_page": next_page,
         "message": "Proximos",
     })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def assign(request):
@@ -1110,9 +1187,9 @@ def assign(request):
                     attendance = Attendance(course=course, student=student)
                     attendance.save()
                     course.students.add(student)
-            
+
             course.save()
-        
+
         return HttpResponseRedirect(reverse("courses:courses"))
 
     else:
@@ -1123,10 +1200,11 @@ def assign(request):
             ),
 
             "courses_form": Student_CourseForm(
-                courses = None,
+                courses=None,
             ),
-            
+
         })
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def quota(request, student_id):
@@ -1135,12 +1213,13 @@ def quota(request, student_id):
 
     if request.POST["quota"]:
         student.note = request.POST["quota"].strip()
-    
+
     else:
         student.note = ""
-    
+
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student_id,)))
+
 
 def check(student):
 
@@ -1154,108 +1233,119 @@ def check(student):
         if student.identity_document_1 != None:
             if int(student.identity_document_1) != int(student.identity_document):
                 return True
-    
+
     if student.phone_1_1 != None and student.phone_1 != None:
         if student.phone_1_1 != None:
             if int(student.phone_1_1) != int(student.phone_1):
                 return True
-    
+
     if student.phone_2_1 != None and student.phone_2 != None:
         if student.phone_2_1 != None:
             if int(student.phone_2_1) != int(student.phone_2):
                 return True
-    
+
     return False
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def update_first_name(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.first_name = student.first_name_1
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def reject_first_name(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.first_name_1 = None
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def update_last_name(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.last_name = student.last_name_1
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def reject_last_name(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.last_name_1 = None
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def update_id(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.identity_document = student.identity_document_1
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def reject_id(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.identity_document_1 = None
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def update_phone_1(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.phone_1 = student.phone_1_1
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def reject_phone_1(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.phone_1_1 = None
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def update_phone_2(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.phone_2 = student.phone_2_1
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
 
+
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def reject_phone_2(request, account_id):
-    
+
     student = Account.objects.get(pk=account_id)
     student.phone_2_1 = None
     student.newrequest = check(student)
     student.save()
     return HttpResponseRedirect(reverse("courses:student", args=(student.id,)))
+
 
 @staff_member_required(login_url="https://www.aquariumschool.co/login")
 def inconsistency(request):
@@ -1281,10 +1371,11 @@ def inconsistency(request):
             people.append(student)
 
     return render(request, "courses/inconsistency.html", {
-        "inc": True, 
+        "inc": True,
         "message": "Inconsistencias",
         "people": people,
     })
+
 
 def plus_one(request):
 
@@ -1293,7 +1384,8 @@ def plus_one(request):
     for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
 
         week = set()
-        courses = student.courses.filter(date__gte=datetime.datetime.now() - datetime.timedelta(30)).order_by('date','start_time')
+        courses = student.courses.filter(date__gte=datetime.datetime.now(
+        ) - datetime.timedelta(30)).order_by('date', 'start_time')
 
         for course in courses:
 
@@ -1302,7 +1394,7 @@ def plus_one(request):
             if len(week) > 1:
                 people.append(student)
                 break
-        
+
     return render(request, "courses/inconsistency.html", {
         "message": "Estudiantes con más de un curso a la semana.",
         "people": people,
@@ -1320,7 +1412,8 @@ def login_view(request):
             'response': request.POST.get('g-recaptcha-response'),
             'secret': secret_key
         }
-        resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+        resp = requests.post(
+            'https://www.google.com/recaptcha/api/siteverify', data=data)
         result_json = resp.json()
 
         # print(result_json)
@@ -1331,7 +1424,7 @@ def login_view(request):
                 'site_key': settings.RECAPTCHA_SITE_KEY
             })
         # end captcha verification
-        
+
         username = request.POST["username"]
         password = request.POST["password"]
 
@@ -1340,7 +1433,7 @@ def login_view(request):
         if user is not None and user.is_admin:
             login(request, user)
             return HttpResponseRedirect(reverse("courses:index"))
-        
+
         else:
             return render(request, "courses/login.html", {
                 "message": "Usuario y/o Contraseña de Administrador invalidas.",
@@ -1350,6 +1443,7 @@ def login_view(request):
         return render(request, "courses/login.html", {
             'site_key': settings.RECAPTCHA_SITE_KEY
         })
+
 
 def logout_view(request):
     logout(request)

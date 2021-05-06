@@ -1,23 +1,23 @@
-{%  extends "courses/layout.html" %}
+{% extends "courses/layout.html" %}
 {% block body %}
-    <br>
-    <main class="container">
-        <h5>{{ message }}</h5> <br>
+<br>
+<main class="container">
+    <h5>{{ message }}</h5> <br>
 
-        {% if inc %}
-        <div class="alert alert-danger" role="alert">
+    {% if inc %}
+    <div class="alert alert-danger" role="alert">
         {% else %}
         <div class="alert alert-primary" role="alert">
-        {% endif %}
+            {% endif %}
             <ol>
                 {% for student in people %}
-                    {% if not student.ignore %}
-                        <li>
-                            <a href="{% url 'courses:student' student.id %}" style="color: black;">
-                                {{ student.first_name }} {{ student.last_name }}
-                            </a>
-                        </li>
-                    {% endif %}
+                {% if not student.ignore %}
+                <li>
+                    <a href="{% url 'courses:student' student.id %}" style="color: black;">
+                        {{ student.first_name }} {{ student.last_name }}
+                    </a>
+                </li>
+                {% endif %}
                 {% endfor %}
             </ol>
         </div>
@@ -26,17 +26,17 @@
         <div class="alert alert-primary" role="alert">
             <ol>
                 {% for student in people %}
-                    {% if student.ignore %}
-                        <li>
-                            <a href="{% url 'courses:student' student.id %}">
-                                {{ student.first_name }} {{ student.last_name }}
-                            </a>
-                        </li>
-                    {% endif %}
+                {% if student.ignore %}
+                <li>
+                    <a href="{% url 'courses:student' student.id %}">
+                        {{ student.first_name }} {{ student.last_name }}
+                    </a>
+                </li>
+                {% endif %}
                 {% endfor %}
             </ol>
         </div>
         {% endif %}
-    </main>
+</main>
 
 {% endblock %}

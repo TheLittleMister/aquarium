@@ -1,117 +1,130 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-    <title>
+<title>
 
-    {% if not user.first_name_1 %}
-        {{ user.first_name }}
-    {% else %}
-        {{ user.first_name_1 }}
-    {% endif %} | Aquarium School
-    
-    </title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}"/>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-    <script src="{% static 'js/profile.js' %}"></script>
+  {% if not user.first_name_1 %}
+  {{ user.first_name }}
+  {% else %}
+  {{ user.first_name_1 }}
+  {% endif %} | Aquarium School
 
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}" />
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="{% static 'js/profile.js' %}"></script>
 
-    <!-- Icons font CSS-->
-    <link href="{% static 'css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
-    <link href="{% static 'css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
-    <!-- Font special for pages-->
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Vendor CSS-->
-    <link href="{% static 'css/select21.min.css' %}" rel="stylesheet" media="all">
-    <link href="{% static 'css/daterangepicker1.css' %}" rel="stylesheet" media="all">
+<!-- Icons font CSS-->
+<link href="{% static 'css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
+<link href="{% static 'css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
+<!-- Font special for pages-->
+<link
+  href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+  rel="stylesheet">
 
-    <!-- Main CSS-->
-    <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
-    {% block head %}
-    {% endblock %}
-    <style>
+<!-- Vendor CSS-->
+<link href="{% static 'css/select21.min.css' %}" rel="stylesheet" media="all">
+<link href="{% static 'css/daterangepicker1.css' %}" rel="stylesheet" media="all">
 
-        /* @import url("{% static 'fontawesome-free/css/fontawesome-all.min.css' %}");
+<!-- Main CSS-->
+<link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+{% block head %}
+{% endblock %}
+<style>
+  /* @import url("{% static 'fontawesome-free/css/fontawesome-all.min.css' %}");
         @import url("{% static 'framework.css' %}"); */
 
-        html,body,h1,h2,h3,h4,h5,h6 {
-            font-family: "Roboto", sans-serif
-        }
+  html,
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Roboto", sans-serif
+  }
 
-        #sch {
-            width: 200px;
-        }
+  #sch {
+    width: 200px;
+  }
 
-        span {
-            cursor: pointer;
-        }
+  span {
+    cursor: pointer;
+  }
 
-        #out {
-            opacity: 0.6;
-        }
+  #out {
+    opacity: 0.6;
+  }
 
-        #out:hover {
-            opacity: 1;
-        }
+  #out:hover {
+    opacity: 1;
+  }
 
-        #id_old_password, #id_new_password2 {
-          margin-bottom: 30px;
-        }
+  #id_old_password,
+  #id_new_password2 {
+    margin-bottom: 30px;
+  }
 
-        p {
-          margin-bottom: 10px;
-        }
+  p {
+    margin-bottom: 10px;
+  }
 
-        #image-clear_id {
-          width: 30px;
-        }
+  #image-clear_id {
+    width: 30px;
+  }
 
-        #reco:hover {
-          opacity: 0.8;
-          color: blue;
-        }
-        
-    </style>
-    <body class="w3-white">
+  #reco:hover {
+    opacity: 0.8;
+    color: blue;
+  }
+</style>
 
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: steelblue;">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="{% url 'index' %}">
-                <img src="{% static 'images/nav.webp' %}" style="height: 35px; margin-left: 7px;">
-                </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'users:index' user.id %}">Perfil</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'users:courses' user.id %}">Mis Clases</a>
-                  </li>
-                </ul>
-              </div>
-              <div id="out" class="navbar-nav ml-auto" style="width: 100px;">
-                <a href="{% url 'courses:logout' %}" style="text-decoration: none;">
-                    <p style="display: inline; color: white;">Salir</p>
-                    <img src="{% static 'images/logout.webp' %}" style="height: 25px;display: inline;">
-                </a>
-              </div>
-            </div>
-          </nav>
+<body class="w3-white">
 
-        {% block body %}
-        {% endblock %}
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: steelblue;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'images/nav.webp' %}" style="height: 35px; margin-left: 7px;">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'users:index' user.id %}">Perfil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:courses' user.id %}">Mis Clases</a>
+          </li>
+        </ul>
+      </div>
+      <div id="out" class="navbar-nav ml-auto" style="width: 100px;">
+        <a href="{% url 'courses:logout' %}" style="text-decoration: none;">
+          <p style="display: inline; color: white;">Salir</p>
+          <img src="{% static 'images/logout.webp' %}" style="height: 25px;display: inline;">
+        </a>
+      </div>
+    </div>
+  </nav>
 
-    </body>
+  {% block body %}
+  {% endblock %}
+
+</body>
+
 </html>

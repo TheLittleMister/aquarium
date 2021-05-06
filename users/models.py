@@ -3,11 +3,14 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from PIL import Image
 
 # Create your models here.
+
+
 class Id_Type(models.Model):
     id_type = models.CharField(max_length=60)
 
     def __str__(self):
         return f"{self.id_type}"
+
 
 class Sex(models.Model):
     sex_name = models.CharField(max_length=60)
@@ -15,14 +18,16 @@ class Sex(models.Model):
     def __str__(self):
         return f"{self.sex_name}"
 
+
 class Nationality(models.Model):
-    nationality_name = models.CharField(max_length=60) # identity_document
+    nationality_name = models.CharField(max_length=60)  # identity_document
 
     def __str__(self):
         return f"{self.nationality_name}"
 
+
 class Manager(BaseUserManager):
-    def create_user(self, username, password=None): # self.normalize_email(email)
+    def create_user(self, username, password=None):  # self.normalize_email(email)
         if not username:
             raise ValueError("Users must have an username")
 
@@ -30,7 +35,7 @@ class Manager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+
     def create_superuser(self, username, password=None):
         user = self.create_user(username=username, password=password)
 
@@ -40,19 +45,25 @@ class Manager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class Account(AbstractBaseUser):
-    username = models.CharField(max_length=60, unique=True) # verbose_name="username"
+    # verbose_name="username"
+    username = models.CharField(max_length=60, unique=True)
     email = models.EmailField(max_length=60, unique=True, null=True)
-    image = models.ImageField(default="default-profile.png", upload_to="profile_pics",blank=True)
+    image = models.ImageField(
+        default="default-profile.png", upload_to="profile_pics", blank=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    id_type = models.ForeignKey(Id_Type, on_delete=models.SET_NULL, related_name="users", null=True) # Make tests
-    identity_document = models.BigIntegerField(unique=True, null=True) # ID
-    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, related_name="users", null=True)
+    id_type = models.ForeignKey(
+        Id_Type, on_delete=models.SET_NULL, related_name="users", null=True)  # Make tests
+    identity_document = models.BigIntegerField(unique=True, null=True)  # ID
+    nationality = models.ForeignKey(
+        Nationality, on_delete=models.SET_NULL, related_name="users", null=True)
     parent = models.CharField(max_length=60, null=True)
     phone_1 = models.BigIntegerField(null=True)
     phone_2 = models.BigIntegerField(null=True)
-    sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, related_name="users", null=True)
+    sex = models.ForeignKey(Sex, on_delete=models.SET_NULL,
+                            related_name="users", null=True)
     date_birth = models.DateField(null=True)
     note = models.CharField(max_length=280)
 
@@ -70,7 +81,7 @@ class Account(AbstractBaseUser):
 
     first_name_1 = models.CharField(max_length=30, default="", null=True)
     last_name_1 = models.CharField(max_length=30, default="", null=True)
-    identity_document_1 = models.BigIntegerField(unique=True, null=True) # ID
+    identity_document_1 = models.BigIntegerField(unique=True, null=True)  # ID
     phone_1_1 = models.BigIntegerField(null=True)
     phone_2_1 = models.BigIntegerField(null=True)
 
@@ -101,15 +112,17 @@ class Account(AbstractBaseUser):
                 size = abs(img.height - img.width) // 2
 
                 if img.height > img.width:
-                    area = (0, size, (img.height - (2 * size)), img.height - size)
-                    
+                    area = (0, size, (img.height - (2 * size)),
+                            img.height - size)
+
                 else:
-                    area = (size, 0, img.width - size, (img.width - (2 * size)))
-                
+                    area = (size, 0, img.width - size,
+                            (img.width - (2 * size)))
+
                 crop = img.crop(area)
                 crop.save(self.image.path)
-            
-            if self.image.size > 5485760: # 5MB
+
+            if self.image.size > 5485760:  # 5MB
                 self.image.delete()
                 self.image = 'default-profile.png'
                 self.save()

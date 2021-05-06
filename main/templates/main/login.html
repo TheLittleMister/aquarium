@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
 	<title>Aquarium School</title>
 	<meta charset="UTF-8">
@@ -9,30 +10,32 @@
 	<link rel="icon" href="{% static 'images/logo.webp' %}">
 
 	<link href="{% static 'css/styles.purelogin.css' %}" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	<script src="https://www.google.com/recaptcha/api.js?render=6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"></script>
 	<script src="https://kit.fontawesome.com/f042eae6e8.js" crossorigin="anonymous"></script>
 
 	<script>
-        grecaptcha.ready(function() {
-            $('#loginform').submit(function(e){
-                var form = this;
-                e.preventDefault()
-                grecaptcha.execute('6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC', {action: '{% url 'login' %}'}).then(function(token) {
-                    $('#recaptcha').val(token)
-                    form.submit()
-                });
-            })
+		grecaptcha.ready(function () {
+			$('#loginform').submit(function (e) {
+				var form = this;
+				e.preventDefault()
+				grecaptcha.execute('6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC', { action: '{% url 'login' %}'}).then(function (token) {
+					$('#recaptcha').val(token)
+					form.submit()
+				});
+			})
 
-        });
-    </script>
-	
+		});
+	</script>
+
 </head>
+
 <body>
-	
+
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('{% static 'images/header-background.webp' %}');">
-			
+
 			<div class="wrap-login100 p-t-190 p-b-30">
 				<form class="login100-form validate-form" id="loginform" action="{% url 'login' %}" method="post">
 					{% csrf_token %}
@@ -41,12 +44,12 @@
 					</div>
 
 					{% if message %}
-						<span class="login100-form-title p-t-20 p-b-45">
-							{{ message }}
-						</span>
+					<span class="login100-form-title p-t-20 p-b-45">
+						{{ message }}
+					</span>
 					{% endif %}
 
-					<div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">
+					<div class="wrap-input100 validate-input m-b-10" data-validate="Username is required">
 						<input class="input100" type="text" name="username" placeholder="Correo / No. de Documento">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
@@ -54,7 +57,7 @@
 						</span>
 					</div>
 
-					<div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">
+					<div class="wrap-input100 validate-input m-b-10" data-validate="Password is required">
 						<input class="input100" type="password" name="password" placeholder="Contraseña">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
@@ -86,4 +89,5 @@
 		</div>
 	</div>
 </body>
+
 </html>

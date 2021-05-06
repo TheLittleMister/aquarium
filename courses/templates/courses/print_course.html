@@ -1,265 +1,289 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Aquarium School</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-        <link href="{% static 'images/logo.webp' %}" rel="icon">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Icons font CSS-->
-        <link href="{% static 'css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
-        <link href="{% static 'css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
-        <!-- Font special for pages-->
-        <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+<head>
+    <title>Aquarium School</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'images/logo.webp' %}" rel="icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Vendor CSS-->
-        <link href="{% static 'css/select21.min.css' %}" rel="stylesheet" media="all">
-        <link href="{% static 'css/daterangepicker1.css' %}" rel="stylesheet" media="all">
+    <!-- Icons font CSS-->
+    <link href="{% static 'css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link
+        href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-        <!-- Main CSS-->
-        <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+    <!-- Vendor CSS-->
+    <link href="{% static 'css/select21.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'css/daterangepicker1.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
 
 
-        <style id="styles_js">
-            input[type='checkbox'] {
-            -webkit-appearance:none;
-            width:20px;
-            height:20px;
-            background:white;
-            border-radius:5px;
-            border:2px solid #555;
-            }
-            
-            input[type='checkbox']:checked {
-                background: #abd;
-            }
+    <style id="styles_js">
+        input[type='checkbox'] {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 5px;
+            border: 2px solid #555;
+        }
+
+        input[type='checkbox']:checked {
+            background: #abd;
+        }
+
+        table {
+            /* border: 1px solid #ccc; */
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        table tr {
+            /* background: #f8f8f8; */
+            /* border: 1px solid #ddd; */
+            padding: .35em;
+        }
+
+        table th,
+        table td {
+            padding: .625em;
+            text-align: left;
+        }
+
+        table th {
+            font-size: .55em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        @media screen and (max-width: 1400px) {
 
             table {
-                /* border: 1px solid #ccc; */
-                border-collapse: collapse;
-                margin: 0;
-                padding: 0;
-                width: 100%;
+                border: 0;
             }
-        
+
+            table thead {
+                display: none;
+            }
+
             table tr {
-                /* background: #f8f8f8; */
-                /* border: 1px solid #ddd; */
-                padding: .35em;
-            }
-        
-            table th, table td {
-                padding: .625em;
-                text-align: left;
-            }
-        
-            table th {
-                font-size: .55em;
-                letter-spacing: .1em;
-                text-transform: uppercase;
-            }
-            
-            @media screen and (max-width: 1400px) {
-        
-                table { border: 0; }
-            
-                table thead { display: none; }
-            
-                table tr {
                 /* border-bottom: 3px solid #ddd; */
                 display: block;
                 margin-bottom: .625em;
-                }
-            
-                table td {
+            }
+
+            table td {
                 /* border-bottom: 1px solid #ddd; */
                 display: block;
                 font-size: .8em;
                 text-align: right;
-                }
-            
-                table td:before {
+            }
+
+            table td:before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
                 text-transform: uppercase;
-                }
-            
-                table td:last-child { border-bottom: 0; }
-        
             }
 
+            table td:last-child {
+                border-bottom: 0;
+            }
+
+        }
     </style>
 
 
-            
-        </style>
 
-        <script>
+    </style>
 
-            function addNewStyle(newStyle) {
-                var styleElement = document.getElementById('styles_js');
-                if (!styleElement) {
-                    styleElement = document.createElement('style');
-                    styleElement.type = 'text/css';
-                    styleElement.id = 'styles_js';
-                    document.getElementsByTagName('head')[0].appendChild(styleElement);
-                }
-                styleElement.appendChild(document.createTextNode(newStyle));
+    <script>
+
+        function addNewStyle(newStyle) {
+            var styleElement = document.getElementById('styles_js');
+            if (!styleElement) {
+                styleElement = document.createElement('style');
+                styleElement.type = 'text/css';
+                styleElement.id = 'styles_js';
+                document.getElementsByTagName('head')[0].appendChild(styleElement);
+            }
+            styleElement.appendChild(document.createTextNode(newStyle));
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.print();
+        });
+
+        function fontsize(value) {
+            addNewStyle(`.manage { font-size: ${value}px !important; }`);
+        }
+
+        function showbar() {
+
+            element = document.querySelector("#bar");
+
+            if (element.style.display === "none") {
+                element.style.display = "block";
+
+            } else {
+                element.style.display = "none";
             }
 
-            document.addEventListener("DOMContentLoaded", () => {
-                 window.print();
-            });
+        }
 
-            function fontsize(value) {
-                addNewStyle(`.manage { font-size: ${value}px !important; }`);
-            }
+    </script>
+</head>
 
-            function showbar() {
-
-                element = document.querySelector("#bar");
-
-                if (element.style.display === "none") {
-                    element.style.display = "block";
-
-                } else {
-                    element.style.display = "none";
-                }
-                
-            }
-
-        </script>
-    </head>
-    <body>
-        <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
-            <div class="wrapper wrapper--w680">
-                <div class="card card-4">
-                    <div class="card-body">
-                        <div class="row row-space">
-                            <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30" onchange="fontsize(value)">
-                            <h3 style="width: 50%; float: left; margin-top: 30px;">{{ date|date:"l" }} {{ date }}</h3>
-                            <div style="width: 50%; float: right;">
-                                <img style="max-width: 100%; cursor: pointer;"src="{% static 'images/mainaq.webp' %}" onclick="showbar()">
-                            </div>
-                            
+<body>
+    <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-4">
+                <div class="card-body">
+                    <div class="row row-space">
+                        <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30"
+                            onchange="fontsize(value)">
+                        <h3 style="width: 50%; float: left; margin-top: 30px;">{{ date|date:"l" }} {{ date }}</h3>
+                        <div style="width: 50%; float: right;">
+                            <img style="max-width: 100%; cursor: pointer;" src="{% static 'images/mainaq.webp' %}"
+                                onclick="showbar()">
                         </div>
-                        <br><hr><br> 
-                        {% for course, students in full.items %}
-                        <h3 class="manage"> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
-                        <ol style="margin-top: 30px; font-size: x-large;">
-                            {% for student, values in students.items %}
-                            
-                                <li style="margin-bottom: 20px;">
-                                    <h4>
-                                        <div class="manage">
-                                            <input type="checkbox" style="margin-left: 10px;"> {{ student }}
 
-                                            {% if values.attendance.quota == "SEPARADO" %}
-                                                <span style="font-weight: bold;">• SEPARADO</span>
-                                            {% endif %}
-                                            
-                                            {% if values.attendance.recover == True %}
-                                                <span style="font-weight: bold;">• RECUPERA</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.cycle == True %}
-                                                <span style="font-weight: bold;">• INICIA</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.end_cycle == True %}
-                                                <span style="font-weight: bold;">• TERMINA</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.onlyday == True %}
-                                                <span style="font-weight: bold;">• DÍA</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.student.courses.last == course %}
-                                                <span style="font-weight: bold;">• ÚLTIMA</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.student.note %}
-                                                <span style="font-style: italic; font-size: medium;">• "{{ values.attendance.student.note }}"</span>
-                                            {% endif %}
-
-                                            {% if values.attendance.note %}
-                                                <span style="font-style: italic; font-size: medium;">• "{{ values.attendance.note }}" </span>
-                                            {% endif %}
-                                        </div>
-                                        <div style="overflow-x:auto; max-width: 100%;">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                {% for attendance in values.cycle|slice:":12" %}                          
-                                                    <th scope="col">{{attendance.course.date|date:"l"}} <br> {{attendance.course.date}}</th>                                          
-                                                {% endfor %} 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    {% for attendance in values.cycle|slice:":12" %}                          
-                                                        <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
-                                                            {% if attendance.attendance == True %}
-                                                                <span  style="font-size: large; font-weight: bold;">✓</span>
-                                                            
-                                                            {% else %}
-                                                                {% if attendance.course.is_past_due %}
-                                                                    <span  style="font-size: large; font-weight: bold;">✗</span>
-                                                                {% elif attendance.course.is_today %}
-                                                                    <span  style="font-size: small; font-weight: bold;">HOY</span>
-                                                                {% endif %}
-                                                            {% endif %}
-                                                            {% if attendance.recover == True %}
-                                                                <span  style="font-size: small; font-weight: bold;">RECUPERA</span>
-                                                            {% endif %}
-                                                        </td>                                          
-                                                    {% endfor %} 
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                {% for attendance in values.cycle|slice:"12:" %}                          
-                                                    <th scope="col">{{attendance.course.date|date:"l"}} <br> {{attendance.course.date}}</th>                                          
-                                                {% endfor %} 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    {% for attendance in values.cycle|slice:"12:" %}                          
-                                                        <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
-                                                            {% if attendance.attendance == True %}
-                                                                <span  style="font-size: large; font-weight: bold;">✓</span>
-                                                            
-                                                            {% else %}
-                                                                {% if attendance.course.is_past_due %}
-                                                                    <span  style="font-size: large; font-weight: bold;">✗</span>
-                                                                {% elif attendance.course.is_today %}
-                                                                    <span  style="font-size: small; font-weight: bold; color: darkgreen;">HOY</span>
-                                                                {% endif %}
-                                                            {% endif %}
-                                                            {% if attendance.recover == True %}
-                                                                <span  style="font-size: small; font-weight: bold;">RECUPERA</span>
-                                                            {% endif %}
-                                                        </td>                                          
-                                                    {% endfor %} 
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    </h4>
-                                </li> 
-                            {% endfor %}
-                        </ol> <hr><br>
-                        {% endfor %}
                     </div>
+                    <br>
+                    <hr><br>
+                    {% for course, students in full.items %}
+                    <h3 class="manage"> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
+                    <ol style="margin-top: 30px; font-size: x-large;">
+                        {% for student, values in students.items %}
+
+                        <li style="margin-bottom: 20px;">
+                            <h4>
+                                <div class="manage">
+                                    <input type="checkbox" style="margin-left: 10px;"> {{ student }}
+
+                                    {% if values.attendance.quota == "SEPARADO" %}
+                                    <span style="font-weight: bold;">• SEPARADO</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.recover == True %}
+                                    <span style="font-weight: bold;">• RECUPERA</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.cycle == True %}
+                                    <span style="font-weight: bold;">• INICIA</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.end_cycle == True %}
+                                    <span style="font-weight: bold;">• TERMINA</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.onlyday == True %}
+                                    <span style="font-weight: bold;">• DÍA</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.student.courses.last == course %}
+                                    <span style="font-weight: bold;">• ÚLTIMA</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.student.note %}
+                                    <span style="font-style: italic; font-size: medium;">• "{{
+                                        values.attendance.student.note }}"</span>
+                                    {% endif %}
+
+                                    {% if values.attendance.note %}
+                                    <span style="font-style: italic; font-size: medium;">• "{{ values.attendance.note
+                                        }}" </span>
+                                    {% endif %}
+                                </div>
+                                <div style="overflow-x:auto; max-width: 100%;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% for attendance in values.cycle|slice:":12" %}
+                                                <th scope="col">{{attendance.course.date|date:"l"}} <br>
+                                                    {{attendance.course.date}}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                {% for attendance in values.cycle|slice:":12" %}
+                                                <td scope="row"
+                                                    data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                    {% if attendance.attendance == True %}
+                                                    <span style="font-size: large; font-weight: bold;">✓</span>
+
+                                                    {% else %}
+                                                    {% if attendance.course.is_past_due %}
+                                                    <span style="font-size: large; font-weight: bold;">✗</span>
+                                                    {% elif attendance.course.is_today %}
+                                                    <span style="font-size: small; font-weight: bold;">HOY</span>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% if attendance.recover == True %}
+                                                    <span style="font-size: small; font-weight: bold;">RECUPERA</span>
+                                                    {% endif %}
+                                                </td>
+                                                {% endfor %}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% for attendance in values.cycle|slice:"12:" %}
+                                                <th scope="col">{{attendance.course.date|date:"l"}} <br>
+                                                    {{attendance.course.date}}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                {% for attendance in values.cycle|slice:"12:" %}
+                                                <td scope="row"
+                                                    data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                    {% if attendance.attendance == True %}
+                                                    <span style="font-size: large; font-weight: bold;">✓</span>
+
+                                                    {% else %}
+                                                    {% if attendance.course.is_past_due %}
+                                                    <span style="font-size: large; font-weight: bold;">✗</span>
+                                                    {% elif attendance.course.is_today %}
+                                                    <span
+                                                        style="font-size: small; font-weight: bold; color: darkgreen;">HOY</span>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% if attendance.recover == True %}
+                                                    <span style="font-size: small; font-weight: bold;">RECUPERA</span>
+                                                    {% endif %}
+                                                </td>
+                                                {% endfor %}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </h4>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                    <hr><br>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

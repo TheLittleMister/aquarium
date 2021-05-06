@@ -1,25 +1,21 @@
-
-
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 
-
 @font-face {
-  font-family: OpenSans-Regular;
-  src: url('../fonts/OpenSans/OpenSans-Regular.ttf'); 
+	font-family: OpenSans-Regular;
+	src: url("../fonts/OpenSans/OpenSans-Regular.ttf");
 }
-
-
 
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
 * {
-	margin: 0px; 
-	padding: 0px; 
+	margin: 0px;
+	padding: 0px;
 	box-sizing: border-box;
 }
 
-body, html {
+body,
+html {
 	height: 100%;
 	font-family: sans-serif;
 }
@@ -29,8 +25,8 @@ a {
 	margin: 0px;
 	transition: all 0.4s;
 	-webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	-moz-transition: all 0.4s;
 }
 
 a:focus {
@@ -42,30 +38,40 @@ a:hover {
 }
 
 /* ------------------------------------ */
-h1,h2,h3,h4,h5,h6 {margin: 0px;}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0px;
+}
 
-p {margin: 0px;}
+p {
+	margin: 0px;
+}
 
-ul, li {
+ul,
+li {
 	margin: 0px;
 	list-style-type: none;
 }
 
-
 /* ------------------------------------ */
 input {
-  display: block;
+	display: block;
 	outline: none;
 	border: none !important;
 }
 
 textarea {
-  display: block;
-  outline: none;
+	display: block;
+	outline: none;
 }
 
-textarea:focus, input:focus {
-  border-color: transparent !important;
+textarea:focus,
+input:focus {
+	border-color: transparent !important;
 }
 
 /* ------------------------------------ */
@@ -83,194 +89,191 @@ iframe {
 	border: none !important;
 }
 
-
-
-
 /*//////////////////////////////////////////////////////////////////
 [ Utiliti ]*/
-
-
-
-
-
 
 /*//////////////////////////////////////////////////////////////////
 [ Table ]*/
 
 .limiter {
-  width: 100%;
-  margin: 0 auto;
+	width: 100%;
+	margin: 0 auto;
 }
 
 .container-table100 {
-  width: 100%;
-  /* min-height: 0;94.3vh; */
-  background: white;
+	width: 100%;
+	/* min-height: 0;94.3vh; */
+	background: white;
 
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 33px 30px;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding: 33px 30px;
 }
 
 .wrap-table100 {
-  width: 1170px;
+	width: 1170px;
 }
 
 table {
-  border-spacing: 1;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
+	border-spacing: 1;
+	border-collapse: collapse;
+	background: white;
+	border-radius: 10px;
+	overflow: hidden;
+	width: 100%;
+	margin: 0 auto;
+	position: relative;
 }
 table * {
-  position: relative;
+	position: relative;
 }
-table td, table th {
-  padding-left: 8px;
+table td,
+table th {
+	padding-left: 8px;
 }
 table thead tr {
-  height: 60px;
-  background: steelblue;
+	height: 60px;
+	background: steelblue;
 }
 table tbody tr {
-  height: 50px;
+	height: 50px;
 }
 table tbody tr:last-child {
-  border: 0;
+	border: 0;
 }
-table td, table th {
-  text-align: left;
+table td,
+table th {
+	text-align: left;
 }
-table td.l, table th.l {
-  text-align: right;
+table td.l,
+table th.l {
+	text-align: right;
 }
-table td.c, table th.c {
-  text-align: center;
+table td.c,
+table th.c {
+	text-align: center;
 }
-table td.r, table th.r {
-  text-align: center;
+table td.r,
+table th.r {
+	text-align: center;
 }
 
-
-.table100-head th{
-  font-family: OpenSans-Regular;
-  font-size: 18px;
-  color: #fff;
-  line-height: 1.2;
-  font-weight: unset;
+.table100-head th {
+	font-family: OpenSans-Regular;
+	font-size: 18px;
+	color: #fff;
+	line-height: 1.2;
+	font-weight: unset;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #f5f5f5;
+	background-color: #f5f5f5;
 }
 
 tbody tr {
-  font-family: OpenSans-Regular;
-  font-size: 15px;
-  color: #808080;
-  line-height: 1.2;
-  font-weight: unset;
+	font-family: OpenSans-Regular;
+	font-size: 15px;
+	color: #808080;
+	line-height: 1.2;
+	font-weight: unset;
 }
 
 tbody tr:hover {
-  color: #555555;
-  background-color: #f5f5f5;
-  cursor: pointer;
+	color: #555555;
+	background-color: #f5f5f5;
+	cursor: pointer;
 }
 
 .first_column {
-  width: 160px;
-  padding-left: 40px;
+	width: 160px;
+	padding-left: 40px;
 }
 
 .column {
-  width: 160px;
+	width: 160px;
 }
 
 .last_column {
-  width: 160px;
-  /* padding-right: 20px; */
+	width: 160px;
+	/* padding-right: 20px; */
 }
 
-
 @media screen and (max-width: 992px) {
-  table {
-    display: block;
-  }
-  table > *, table tr, table td, table th {
-    display: block;
-  }
-  table thead {
-    display: none;
-  }
-  table tbody tr {
-    height: auto;
-    padding: 37px 0;
-  }
-  table tbody tr td {
-    padding-left: 40% !important;
-    margin-bottom: 24px;
-  }
-  table tbody tr td:last-child {
-    margin-bottom: 0;
-  }
-  table tbody tr td:before {
-    font-family: OpenSans-Regular;
-    font-size: 14px;
-    color: #999999;
-    line-height: 1.2;
-    font-weight: unset;
-    position: absolute;
-    width: 40%;
-    left: 30px;
-    top: 0;
-  }
-  table tbody tr td:nth-child(1):before {
-    content: "Documento";
-  }
-  table tbody tr td:nth-child(2):before {
-    content: "Nombres";
-  }
-  table tbody tr td:nth-child(3):before {
-    content: "Apellidos";
-  }
-  table tbody tr td:nth-child(4):before {
-    content: "Tel/Cel (1)";
-  }
-  table tbody tr td:nth-child(5):before {
-    content: "Tel/Cel (2)";
-  }
+	table {
+		display: block;
+	}
+	table > *,
+	table tr,
+	table td,
+	table th {
+		display: block;
+	}
+	table thead {
+		display: none;
+	}
+	table tbody tr {
+		height: auto;
+		padding: 37px 0;
+	}
+	table tbody tr td {
+		padding-left: 40% !important;
+		margin-bottom: 24px;
+	}
+	table tbody tr td:last-child {
+		margin-bottom: 0;
+	}
+	table tbody tr td:before {
+		font-family: OpenSans-Regular;
+		font-size: 14px;
+		color: #999999;
+		line-height: 1.2;
+		font-weight: unset;
+		position: absolute;
+		width: 40%;
+		left: 30px;
+		top: 0;
+	}
+	table tbody tr td:nth-child(1):before {
+		content: "Documento";
+	}
+	table tbody tr td:nth-child(2):before {
+		content: "Nombres";
+	}
+	table tbody tr td:nth-child(3):before {
+		content: "Apellidos";
+	}
+	table tbody tr td:nth-child(4):before {
+		content: "Tel/Cel (1)";
+	}
+	table tbody tr td:nth-child(5):before {
+		content: "Tel/Cel (2)";
+	}
 
+	.column,
+	.last_column {
+		text-align: left;
+	}
 
-  .column,
-  .last_column {
-    text-align: left;
-  }
+	.column,
+	.last_column,
+	.first_column {
+		width: 100%;
+	}
 
-  .column,
-  .last_column,
-  .first_column {
-    width: 100%;
-  }
-
-  tbody tr {
-    font-size: 14px;
-  }
+	tbody tr {
+		font-size: 14px;
+	}
 }
 
 @media (max-width: 576px) {
-  .container-table100 {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
+	.container-table100 {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
 }

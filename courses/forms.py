@@ -3,6 +3,7 @@ from .models import *
 from users.models import *
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+
 class Search(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -11,12 +12,13 @@ class Search(forms.Form):
         super(Search, self).__init__(*args, **kwargs)
 
         self.fields["search"].initial = search
-    
+
     search = forms.CharField(label="", required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control', 
+        'class': 'form-control',
         'placeholder': 'Busca Estudiante...',
         'style': 'display: inline; width: 300px; margin-right: 10px;',
-        }))
+    }))
+
 
 class CourseForm(forms.Form):
 
@@ -27,11 +29,13 @@ class CourseForm(forms.Form):
 
         self.fields["students"].initial = students
 
-    students = forms.ModelMultipleChoiceField(queryset=Account.objects.filter(is_admin=False), label="", widget=FilteredSelectMultiple("Estudiantes", is_stacked=False), required=True)
+    students = forms.ModelMultipleChoiceField(queryset=Account.objects.filter(
+        is_admin=False), label="", widget=FilteredSelectMultiple("Estudiantes", is_stacked=False), required=True)
 
     class Media:
-        css = {'all': ('/static/admin/css/widgets.css',),}
+        css = {'all': ('/static/admin/css/widgets.css',), }
         js = ('/admin/jsi18n',)
+
 
 class StudentForm(forms.Form):
 
@@ -41,8 +45,9 @@ class StudentForm(forms.Form):
         super(StudentForm, self).__init__(*args, **kwargs)
 
         self.fields["image"].initial = image
-    
+
     image = forms.ImageField(label="", required=False)
+
 
 class Student_CourseForm(forms.Form):
 
@@ -53,11 +58,13 @@ class Student_CourseForm(forms.Form):
 
         self.fields["courses"].initial = courses
 
-    courses = forms.ModelMultipleChoiceField(queryset=Course.objects.filter(date__gte=datetime.datetime.now()).order_by('date','start_time'), label="", widget=FilteredSelectMultiple("Cursos", is_stacked=False, attrs={'style': 'overflow-x: auto;'}), required=True)
+    courses = forms.ModelMultipleChoiceField(queryset=Course.objects.filter(date__gte=datetime.datetime.now()).order_by(
+        'date', 'start_time'), label="", widget=FilteredSelectMultiple("Cursos", is_stacked=False, attrs={'style': 'overflow-x: auto;'}), required=True)
 
     class Media:
-        css = {'all': ('/static/admin/css/widgets.css',),}
+        css = {'all': ('/static/admin/css/widgets.css',), }
         js = ('/admin/jsi18n',)
+
 
 class AttendanceForm(forms.Form):
 
@@ -67,5 +74,5 @@ class AttendanceForm(forms.Form):
         super(AttendanceForm, self).__init__(*args, **kwargs)
 
         self.fields["image"].initial = image
-    
+
     image = forms.ImageField(label="", required=False)

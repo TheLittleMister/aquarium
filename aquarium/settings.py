@@ -31,7 +31,8 @@ SECRET_KEY = config.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '172.104.13.4', 'aquariumschool.co', 'www.aquariumschool.co']
+ALLOWED_HOSTS = ['localhost', '172.104.13.4',
+                 'aquariumschool.co', 'www.aquariumschool.co']
 
 
 # Application definition
@@ -48,9 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
-#MIDDLEWARE_CLASSES = [
+# MIDDLEWARE_CLASSES = [
 #    'djangosecure.middleware.SecurityMiddleware',
-#]
+# ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -139,9 +140,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # SESSION
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True     # opional, as this will log you out when browser is closed
-SESSION_COOKIE_AGE = 10000                 # 3600s = 1h 
-SESSION_SAVE_EVERY_REQUEST = True          # Will prrevent from logging you out after N seconds
+# opional, as this will log you out when browser is closed
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 10000                 # 3600s = 1h
+# Will prrevent from logging you out after N seconds
+SESSION_SAVE_EVERY_REQUEST = True
 
 # HTTPS
 #SECURE_SSL_REDIRECT = True
@@ -174,7 +177,6 @@ EMAIL_HOST_PASSWORD = config.get('GPASS')
 EMAIL_USE_TLS = True
 SERVER_EMAIL = 'aquariumschool@gmail.com'
 DEFAULT_FROM_EMAIL = 'aquariumschool@gmail.com'
-
 
 
 # CRISPY
