@@ -213,7 +213,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:":12" %}
+                                                {% for attendance in values.cycle|slice:":9" %}
                                                 <th scope="col">{{attendance.course.date|date:"l"}} <br>
                                                     {{attendance.course.date}}</th>
                                                 {% endfor %}
@@ -221,7 +221,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:":12" %}
+                                                {% for attendance in values.cycle|slice:":9" %}
                                                 <td scope="row"
                                                     data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
                                                     {% if attendance.attendance == True %}
@@ -245,7 +245,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:"12:" %}
+                                                {% for attendance in values.cycle|slice:"9:" %}
                                                 <th scope="col">{{attendance.course.date|date:"l"}} <br>
                                                     {{attendance.course.date}}</th>
                                                 {% endfor %}
@@ -253,7 +253,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:"12:" %}
+                                                {% for attendance in values.cycle|slice:"9:" %}
                                                 <td scope="row"
                                                     data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
                                                     {% if attendance.attendance == True %}

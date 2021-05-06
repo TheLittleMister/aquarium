@@ -478,8 +478,9 @@
                                 {% for course in page.object_list %}
                                 <tr>
                                     <td data-label="Clase">
-                                        <span class="badge badge-info" style="font-size: small;">{{
-                                            course.students.all.count }}</span>
+                                        <span class="badge badge-info" style="font-size: small;">
+                                            {{ course.students.all.count }}
+                                        </span>
                                         {% if course.date == datetoday %}
                                         <span class="badge badge-success">HOY</span>
                                         {% endif %}
