@@ -987,9 +987,6 @@ def pay(request, attendance_id):  # FETCH
     if the_attendance.quota == "PAGO":
         the_attendance.quota = "SEPARADO"
 
-    elif the_attendance.quota == "SEPARADO":
-        the_attendance.quota = "NO PAGO"
-
     else:
         the_attendance.quota = "PAGO"
 
