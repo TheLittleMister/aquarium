@@ -27,6 +27,7 @@
     <!-- Main CSS-->
     <link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- jQuery is required -->
 
     <style id="styles_js">
         input[type='checkbox'] {
@@ -142,13 +143,25 @@
             }
 
         }
+        function addSpace(divElement) {
+
+            divElement.append("<br>");
+        }
+
+        function resetSpace(divElement) {
+
+            divElement.empty();
+
+            divElement.append('<button onclick="addSpace($(this).parent())">&plus;</button>');
+            divElement.append('<button onclick="resetSpace($(this).parent())">&times;</button>')
+        }
 
     </script>
 </head>
 
 <body>
     <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
-        <div class="wrapper wrapper--w680">
+        <div class="wrapper wrapper--w960" style="max-width: 1500px !important;">
             <div class="card card-4">
                 <div class="card-body">
                     <div class="row row-space">
@@ -213,7 +226,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:":9" %}
+                                                {% for attendance in values.cycle|slice:":14" %}
                                                 <th scope="col">{{attendance.course.date|date:"l"}} <br>
                                                     {{attendance.course.date}}</th>
                                                 {% endfor %}
@@ -221,7 +234,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:":9" %}
+                                                {% for attendance in values.cycle|slice:":14" %}
                                                 <td scope="row"
                                                     data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
                                                     {% if attendance.attendance == True %}
@@ -245,7 +258,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:"9:" %}
+                                                {% for attendance in values.cycle|slice:"14:" %}
                                                 <th scope="col">{{attendance.course.date|date:"l"}} <br>
                                                     {{attendance.course.date}}</th>
                                                 {% endfor %}
@@ -253,7 +266,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                {% for attendance in values.cycle|slice:"9:" %}
+                                                {% for attendance in values.cycle|slice:"14:" %}
                                                 <td scope="row"
                                                     data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
                                                     {% if attendance.attendance == True %}
@@ -278,6 +291,10 @@
                                 </div>
                             </h4>
                         </li>
+                        <div>
+                            <button onclick="addSpace($(this).parent())">&plus;</button>
+                            <button onclick="resetSpace($(this).parent())">&times;</button>
+                        </div>
                         {% endfor %}
                     </ol>
                     <hr><br>
