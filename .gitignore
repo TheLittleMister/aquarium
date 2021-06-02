@@ -141,4 +141,4 @@ cython_debug/
 **/migrations/*
 
 # Media
-media
+# media

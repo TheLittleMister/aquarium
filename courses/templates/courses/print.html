@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        async function print() {
+            await new Promise(r => setTimeout(r, 1000));
+            window.print();
+        }
+
+        print();
+    });
+
+    function addSpace(divElement) {
+
+        divElement.append("<br>");
+    }
+
+    function resetSpace(divElement) {
+
+        divElement.empty();
+
+        divElement.append('<button class="btn-sm" onclick="addSpace($(this).parent())">&plus;</button>');
+        divElement.append('<button class="btn-sm" onclick="resetSpace($(this).parent())">&times;</button>')
+    }
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Container -->
+<div class=" w3-margin-top" style="max-width:1500px; margin-left: auto; margin-right: auto;">
+
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+
+        <!-- Column -->
+        <div class="">
+            <div class="card-body">
+                <div class="row row-space">
+                    <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30" onchange="fontsize(value)">
+                    <h3 style="width: 50%; float: left; margin-top: 30px;">{{ date|date:"l" }} {{ date }}</h3>
+                    <div style="width: 50%; float: right;">
+                        <img style="max-width: 100%; cursor: pointer;" src="{% static 'images/mainaq.webp' %}" onclick="showbar()">
+                    </div>
+
+                </div>
+                <br>
+                <hr><br>
+                {% for course, attendance in schedules.items %}
+                <h3 class="manage"> De {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</h3>
+                <ol style="margin-top: 30px; font-size: x-large;">
+
+                    {% for attendance, cycle in attendance.items %}
+                    <li style="margin-bottom: 20px;">
+                        <h4>
+                            <div class="manage">
+
+                                <table>
+                                    <thead>
+                                        <tr>
+
+                                            <th scope="col"></th>
+                                            <th scope="col">
+                                                {{ attendance.student }}
+                                            </th>
+                                            <th scope="col">
+                                                <span style="font-weight: bold;">{{ attendance.quota }}</span>
+                                                {% if attendance.recover == True %}
+                                                <span style="font-weight: bold;">• RECUPERA</span>
+                                                {% endif %}
+
+                                                {% if attendance.cycle == True %}
+                                                <span style="font-weight: bold;">• INICIA</span>
+                                                {% endif %}
+
+                                                {% if attendance.end_cycle == True %}
+                                                <span style="font-weight: bold;">• TERMINA</span>
+                                                {% endif %}
+
+                                                {% if attendance.onlyday == True %}
+                                                <span style="font-weight: bold;">• DÍA</span>
+                                                {% endif %}
+
+                                                {% if attendance.student.courses.last == course %}
+                                                <span style="font-weight: bold;">• ÚLTIMA</span>
+                                                {% endif %}
+                                            </th>
+
+                                            {% if attendance.student.note %}
+                                            <th scope="col">
+                                                {{ attendance.student.note }}
+                                            </th>
+                                            {% endif %}
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- <tr>
+                                            <td scope="row" data-label="">
+                                                {{ attendance.student.note }}
+                                            </td>
+                                        </tr> -->
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div style="overflow-x:auto; max-width: 100%;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            {% for attendance in cycle.cycle|slice:":12" %}
+                                            <th scope="col">{{attendance.course.date|date:"l"}} <br>
+                                                {{attendance.course.date}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            {% for attendance in cycle.cycle|slice:":12" %}
+                                            <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                {% if attendance.attendance == True %}
+                                                <span style="font-size: large; font-weight: bold;">✓</span>
+
+                                                {% else %}
+                                                {% if attendance.course.is_past_due %}
+                                                <span style="font-size: large; font-weight: bold;">✗</span>
+                                                {% elif attendance.course.is_today %}
+                                                <span style="font-size: small; font-weight: bold;">HOY</span>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% if attendance.recover == True %}
+                                                <span style="font-size: small; font-weight: bold;">RECUPERA</span>
+                                                {% endif %}
+                                                {% if attendance.note %}
+                                                <br>
+                                                <span style="font-style: italic; font-size: medium;">
+                                                    "{{ attendance.note }}"
+                                                </span>
+                                                {% endif %}
+
+
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            {% for attendance in cycle.cycle|slice:"12:" %}
+                                            <th scope="col">{{attendance.course.date|date:"l"}} <br>
+                                                {{attendance.course.date}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            {% for attendance in cycle.cycle|slice:"12:" %}
+                                            <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                {% if attendance.attendance == True %}
+                                                <span style="font-size: large; font-weight: bold;">✓</span>
+
+                                                {% else %}
+                                                {% if attendance.course.is_past_due %}
+                                                <span style="font-size: large; font-weight: bold;">✗</span>
+                                                {% elif attendance.course.date == course.date %}
+                                                <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% if attendance.recover == True %}
+                                                <span style="font-size: small; font-weight: bold;">RECUPERA</span>
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </h4>
+                    </li>
+                    <div>
+                        <button class="btn-sm" onclick="addSpace($(this).parent())">&plus;</button><button class="btn-sm" onclick="resetSpace($(this).parent())">&times;</button>
+                    </div>
+                    {% endfor %}
+                </ol>
+                <hr><br>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/courses_scripts.js' %}"></script> <!-- Custom courses scripts -->
+{% endblock %}
