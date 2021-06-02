@@ -16,7 +16,7 @@ function tConvert(time) {
 function getSchedule(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://www.aquariumschool.co/courses/create_schedule/",
+		url: "https://aquariumschool.co/courses/create_schedule/",
 		data: {
 			userID: user_id,
 		},
@@ -97,7 +97,7 @@ $("#editProfileForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://www.aquariumschool.co${action}`,
+		url: `https://aquariumschool.co${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#editProfileButton").style.display = "none";
@@ -139,7 +139,7 @@ $("#editProfileForm").submit(function (e) {
 function studentStatistics(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://www.aquariumschool.co/courses/student_statistics/",
+		url: "https://aquariumschool.co/courses/student_statistics/",
 		data: {
 			userID: user_id,
 		},

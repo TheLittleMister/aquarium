@@ -14,7 +14,7 @@ function levels(userID) {
 	document.querySelector("#levelsBtn").style.display = "none";
 	document.querySelector("#showLevelsBtn").style.visibility = "visible";
 
-	fetch(`https://www.aquariumschool.co/courses/levels/${userID}`)
+	fetch(`https://aquariumschool.co/courses/levels/${userID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -29,7 +29,7 @@ function levels(userID) {
 				} else {
 					$.ajax({
 						type: "GET",
-						url: "https://www.aquariumschool.co/courses/date_attendances/",
+						url: "https://aquariumschool.co/courses/date_attendances/",
 						data: {
 							date: response[level]["date"],
 							userID: userID,
