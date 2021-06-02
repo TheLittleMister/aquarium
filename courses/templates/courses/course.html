@@ -195,7 +195,7 @@
                                 <td scope="row" data-label="Cupo">
 
                                     {% if attendance.quota == "PAGO" %}
-                                    <button id="quotaButton{{ attendance.id }}" class="btn btn-sm btn-success">{{ attendance.quota }}</button>
+                                    <button id="quotaButton{{ attendance.id }}" onclick="changeQuota({{ attendance.id }});" class="btn btn-sm btn-success">{{ attendance.quota }}</button>
                                     {% else %}
                                     <button id="quotaButton{{ attendance.id }}" onclick="changeQuota({{ attendance.id }});" class="btn btn-sm btn-secondary">{{ attendance.quota }}</button>
                                     {% endif %}

@@ -280,7 +280,7 @@ def create_schedule(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        courses = Account.objects.get(pk=request.GET.get("userID")).courses.filter(
+        courses = Account.objects.get(pk=request.GET.get("userID")).teacher_courses.filter(
             date__gte=datetime.datetime.now()).order_by('date', 'start_time')
 
         return JsonResponse({'schedule': get_schedule(courses)}, status=200)

@@ -100,7 +100,10 @@ function load_future_attendaces() {
 					day = "RECUPERA";
 				}
 
-				if (response["attendances"][studentID]["note"] !== null) {
+				if (
+					response["attendances"][studentID]["note"] !== null &&
+					response["attendances"][studentID]["note"] !== ""
+				) {
 					note = response["attendances"][studentID]["note"];
 					note_emoji = "📃";
 				}
@@ -253,7 +256,10 @@ function load_past_attendances() {
 					day = "RECUPERA";
 				}
 
-				if (response["attendances"][studentID]["note"] !== null) {
+				if (
+					response["attendances"][studentID]["note"] !== null &&
+					response["attendances"][studentID]["note"] !== ""
+				) {
 					note = response["attendances"][studentID]["note"];
 					note_emoji = "📃";
 				}
