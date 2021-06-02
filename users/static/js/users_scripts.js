@@ -38,7 +38,7 @@ function load_future_attendances() {
 	// Fetch new future attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://www.aquariumschool.co/courses/load_future_attendances/",
+		url: "https://aquariumschool.co/courses/load_future_attendances/",
 		data: {
 			start: start,
 			end: end,
@@ -97,7 +97,7 @@ function load_future_attendances() {
                                             </tr>`);
 
 				fetch(
-					`https://www.aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -154,7 +154,7 @@ function load_past_attendances() {
 	// Fetch new past attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://www.aquariumschool.co/courses/load_past_attendances/",
+		url: "https://aquariumschool.co/courses/load_past_attendances/",
 		data: {
 			start: start,
 			end: end,
@@ -210,7 +210,7 @@ function load_past_attendances() {
                                             </tr>`);
 
 				fetch(
-					`https://www.aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -235,7 +235,7 @@ $("#attendanceSearchForm").submit(function (e) {
 
 	$.ajax({
 		type: "GET",
-		url: "https://www.aquariumschool.co/courses/search_attendance/",
+		url: "https://aquariumschool.co/courses/search_attendance/",
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchAttendancesTableBody").innerHTML = "";
@@ -288,7 +288,7 @@ $("#attendanceSearchForm").submit(function (e) {
                                             </tr>`);
 
 					fetch(
-						`https://www.aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+						`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 					)
 						.then((data) => data.json())
 						.then((data) => {
