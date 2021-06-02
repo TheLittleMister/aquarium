@@ -427,7 +427,7 @@ $(document).ready(function () {
 
 		$.ajax({
 			type: "POST",
-			url: "https://www.aquariumschool.co/users/login/",
+			url: "https://aquariumschool.co/users/login/",
 			data: form.serialize(),
 			beforeSend: function () {
 				document.querySelector("#loginMessage").innerHTML = "";
@@ -462,7 +462,7 @@ $(document).ready(function () {
 
 // 			$.ajax({
 // 				type: "POST",
-// 				url: "https://www.aquariumschool.co/users/login/",
+// 				url: "https://aquariumschool.co/users/login/",
 // 				data: form.serialize(),
 // 				beforeSend: function () {
 // 					document.querySelector("#loginMessage").innerHTML = "";
@@ -489,7 +489,7 @@ $("#id_username").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://www.aquariumschool.co/users/available/",
+			url: "https://aquariumschool.co/users/available/",
 			data: {
 				username: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -544,7 +544,7 @@ $("#id_email").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://www.aquariumschool.co/users/available/",
+			url: "https://aquariumschool.co/users/available/",
 			data: {
 				email: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -599,7 +599,7 @@ $("#id_identity_document").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://www.aquariumschool.co/users/available/",
+			url: "https://aquariumschool.co/users/available/",
 			data: {
 				identity_document: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -664,7 +664,7 @@ $("#id_identity_document_1").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://www.aquariumschool.co/users/available/",
+			url: "https://aquariumschool.co/users/available/",
 			data: {
 				identity_document: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),

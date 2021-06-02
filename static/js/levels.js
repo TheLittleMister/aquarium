@@ -15,7 +15,7 @@ function levels(userID) {
 	document.querySelector("#levelsBtn").style.display = "none";
 	document.querySelector("#showLevelsBtn").style.visibility = "visible";
 
-	fetch(`https://www.aquariumschool.co/courses/levels/${userID}`)
+	fetch(`https://aquariumschool.co/courses/levels/${userID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -28,7 +28,7 @@ function levels(userID) {
 				} else {
 					$.ajax({
 						type: "GET",
-						url: "https://www.aquariumschool.co/courses/date_attendances/",
+						url: "https://aquariumschool.co/courses/date_attendances/",
 						data: {
 							date: response[level]["date"],
 							userID: userID,
@@ -86,7 +86,7 @@ function levels(userID) {
 }
 
 function editLevel(studentLevelID) {
-	fetch(`https://www.aquariumschool.co/courses/level_info/${studentLevelID}`)
+	fetch(`https://aquariumschool.co/courses/level_info/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			document.querySelector("#levelFormMessages").classList.remove("alert");
@@ -122,7 +122,7 @@ $("#levelForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://www.aquariumschool.co${action}`,
+		url: `https://aquariumschool.co${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#btnLevelSubmit").style.display = "none";
@@ -176,7 +176,7 @@ $("#levelForm").submit(function (e) {
 
 function deactivateLevel(studentLevelID) {
 	fetch(
-		`https://www.aquariumschool.co/courses/deactivate_level/${studentLevelID}`
+		`https://aquariumschool.co/courses/deactivate_level/${studentLevelID}`
 	)
 		.then((response) => response.json())
 		.then((response) => {
@@ -186,7 +186,7 @@ function deactivateLevel(studentLevelID) {
 
 function generateCertificate(studentLevelID) {
 	fetch(
-		`https://www.aquariumschool.co/courses/generate_certificate/${studentLevelID}`
+		`https://aquariumschool.co/courses/generate_certificate/${studentLevelID}`
 	)
 		.then((response) => response.json())
 		.then((response) => {
@@ -196,7 +196,7 @@ function generateCertificate(studentLevelID) {
 
 function deleteCertificate(studentLevelID) {
 	fetch(
-		`https://www.aquariumschool.co/courses/delete_certificate/${studentLevelID}`
+		`https://aquariumschool.co/courses/delete_certificate/${studentLevelID}`
 	)
 		.then((response) => response.json())
 		.then((response) => {
