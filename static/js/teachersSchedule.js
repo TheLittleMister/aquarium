@@ -37,6 +37,7 @@ function getSchedule(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
+			console.log(response);
 			for (
 				var scheduleID = 0;
 				scheduleID < response["schedule"].length;
@@ -61,7 +62,7 @@ function getSchedule(user_id) {
 				};
 
 				for (var i = 2; i < response["schedule"][scheduleID].length; i++) {
-					if (response["schedule"][scheduleID][i] !== "-") {
+					if (response["schedule"][scheduleID][i] !== ["-"]) {
 						$("#modalsDiv")
 							.append(`<div class="modal" id="scheduleModal${scheduleID}${i}" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">\
 						<div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">\
@@ -137,9 +138,9 @@ function getSchedule(user_id) {
                                                 </td>\
                                             </tr>`);
 
-							response["schedule"][scheduleID][
-								i
-							] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
+							// response["schedule"][scheduleID][
+							// 	i
+							// ] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
 						}
 					}
 				}
