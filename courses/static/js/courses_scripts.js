@@ -186,9 +186,7 @@ $("#editStudentForm").submit(function (e) {
 });
 
 function changeAttendance(attendanceID) {
-	fetch(
-		`https://aquariumschool.co/courses/change_attendance/${attendanceID}`
-	)
+	fetch(`https://aquariumschool.co/courses/change_attendance/${attendanceID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -377,8 +375,7 @@ function getAttendanceInfo(attendanceID, courseID) {
 			let recover = response["attendance"][0]["recover"];
 			let note = response["attendance"][0]["note"];
 			let image =
-				"https://aquariumschool.co/media/" +
-				response["attendance"][0]["image"];
+				"https://aquariumschool.co/media/" + response["attendance"][0]["image"];
 
 			if (cycle === true && end_cycle === false) {
 				document
@@ -924,12 +921,7 @@ function getSchedule(user_id) {
 				scheduleID++
 			) {
 				var DE = tConvert(response["schedule"][scheduleID][0]);
-
-				DE = DE.slice(0, 4) + " " + DE.slice(7);
-
 				var A = tConvert(response["schedule"][scheduleID][1]);
-
-				A = A.slice(0, 4) + " " + A.slice(7);
 
 				$("#studentScheduleBody").append(`<tr> \
                                                 <td scope="row" data-label="Hora"> \

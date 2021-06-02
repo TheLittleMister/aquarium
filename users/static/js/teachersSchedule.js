@@ -44,12 +44,7 @@ function getSchedule(user_id) {
 				scheduleID++
 			) {
 				var DE = tConvert(response["schedule"][scheduleID][0]);
-
-				DE = DE.slice(0, 4) + " " + DE.slice(7);
-
 				var A = tConvert(response["schedule"][scheduleID][1]);
-
-				A = A.slice(0, 4) + " " + A.slice(7);
 
 				weekdays = {
 					2: "LUNES",
