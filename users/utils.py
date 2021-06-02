@@ -50,6 +50,6 @@ def get_schedule(courses):
             if the_course not in schedule:
                 schedule.append(the_course)
 
-    schedule.sort(key=lambda course: course[0])
+    #schedule.sort(key=lambda course: course[0])
 
     return schedule
