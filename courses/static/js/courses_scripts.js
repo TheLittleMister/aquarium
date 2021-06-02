@@ -186,7 +186,9 @@ $("#editStudentForm").submit(function (e) {
 });
 
 function changeAttendance(attendanceID) {
-	fetch(`https://www.aquariumschool.co/courses/change_attendance/${attendanceID}`)
+	fetch(
+		`https://www.aquariumschool.co/courses/change_attendance/${attendanceID}`
+	)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -375,7 +377,8 @@ function getAttendanceInfo(attendanceID, courseID) {
 			let recover = response["attendance"][0]["recover"];
 			let note = response["attendance"][0]["note"];
 			let image =
-				"https://www.aquariumschool.co/media/" + response["attendance"][0]["image"];
+				"https://www.aquariumschool.co/media/" +
+				response["attendance"][0]["image"];
 
 			if (cycle === true && end_cycle === false) {
 				document
@@ -758,7 +761,10 @@ $("#attendanceSearchForm").submit(function (e) {
 						day = "RECUPERA";
 					}
 
-					if (response["attendances"][studentID]["note"] !== null) {
+					if (
+						response["attendances"][studentID]["note"] !== null &&
+						response["attendances"][studentID]["note"] !== ""
+					) {
 						note = response["attendances"][studentID]["note"];
 						note_emoji = "📃";
 					}
