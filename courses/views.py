@@ -37,7 +37,7 @@ from time import sleep
 # Create your views here.
 
 # USERS FUNCTIONS
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def students(request):
     return render(request, 'courses/students.html', {
         'studentForm': RegistrationForm(),
@@ -46,7 +46,7 @@ def students(request):
     })
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def load_students(request):
 
     response = {
@@ -70,7 +70,7 @@ def load_students(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def search_students(request):
 
     response = {
@@ -86,7 +86,7 @@ def search_students(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def create_student(request):
 
     response = {
@@ -112,7 +112,7 @@ def create_student(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def student(request, student_id):
 
     student = Account.objects.get(pk=student_id)
@@ -145,7 +145,7 @@ def student_statistics(request):
         return JsonResponse({"Privilege": "Restricted"}, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def inconsistencies(request):
 
     response = {
@@ -167,7 +167,7 @@ def inconsistencies(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change_exception(request, student_id):
 
     student = Account.objects.get(pk=student_id)
@@ -177,7 +177,7 @@ def change_exception(request, student_id):
     return JsonResponse({'exception': student.ignore}, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def plus(request):
 
     response = {
@@ -209,7 +209,7 @@ def plus(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change(request):
 
     response = {
@@ -222,7 +222,7 @@ def change(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def teachers(request):
 
     response = {
@@ -378,7 +378,7 @@ def load_past_attendances(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change_attendance(request, attendance_id):
 
     response = {
@@ -397,7 +397,7 @@ def change_attendance(request, attendance_id):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change_quota(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=int(attendance_id))
@@ -407,7 +407,7 @@ def change_quota(request, attendance_id):
     return JsonResponse({'quota': attendance.quota}, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def attendance_info(request, attendance_id):
 
     form = AttendanceForm(
@@ -422,7 +422,7 @@ def attendance_info(request, attendance_id):
     )
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change_cycle(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=int(attendance_id))
@@ -443,7 +443,7 @@ def change_cycle(request, attendance_id):
     return JsonResponse({'cycle': attendance.cycle, 'end_cycle': attendance.end_cycle}, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def change_day(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=int(attendance_id))
@@ -464,7 +464,7 @@ def change_day(request, attendance_id):
     return JsonResponse({'onlyday': attendance.onlyday, 'recover': attendance.recover}, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def edit_attendance(request, attendance_id):
 
     response = {
@@ -573,7 +573,7 @@ def course_info(request, course_id):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def edit_courses(request, user_id):
 
     student = Account.objects.get(pk=user_id)
@@ -597,7 +597,7 @@ def edit_courses(request, user_id):
     return HttpResponseRedirect(reverse('courses:student', args=(user_id,)))
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def courses(request):
     return render(request, 'courses/courses.html', {
         'createCoursesForm': CreateCoursesForm(),
@@ -605,7 +605,7 @@ def courses(request):
     })
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def load_past_courses(request):
 
     response = {
@@ -629,7 +629,7 @@ def load_past_courses(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def load_future_courses(request):
 
     response = {
@@ -653,7 +653,7 @@ def load_future_courses(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def search_course(request):
 
     response = {
@@ -669,7 +669,7 @@ def search_course(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def create_courses(request):
 
     response = {
@@ -716,7 +716,7 @@ def create_courses(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
@@ -729,7 +729,7 @@ def course(request, course_id):
     })
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def edit_course(request, course_id):
 
     response = {
@@ -777,13 +777,13 @@ def edit_course(request, course_id):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def delete_course(request, course_id):
     Course.objects.get(pk=course_id).delete()
     return HttpResponseRedirect(reverse("courses:courses"))
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def print_courses(request):
 
     date = request.GET.get('date')
@@ -797,7 +797,7 @@ def print_courses(request):
     })
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def print_course(request, course_id):
 
     courses = Course.objects.filter(pk=course_id)

@@ -173,7 +173,7 @@ def profile_photo(request, user_id):
         return HttpResponseRedirect(reverse('users:profile', args=(user.id,)))
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def edit_student(request, user_id):
 
     response = {
@@ -196,7 +196,7 @@ def edit_student(request, user_id):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def default_password(request, user_id):
 
     user = Account.objects.get(pk=user_id)
@@ -206,7 +206,7 @@ def default_password(request, user_id):
     return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def delete_student(request, user_id):
     Account.objects.get(pk=user_id).delete()
     return HttpResponseRedirect(reverse("courses:students"))
@@ -252,7 +252,7 @@ def cancel_request(request, user_id):
     return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
 
 
-@staff_member_required(login_url="https://www.aquariumschool.co/")
+@staff_member_required(login_url="https://aquariumschool.co/")
 def approve_request(request, user_id):
 
     user = Account.objects.get(pk=user_id)
