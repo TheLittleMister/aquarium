@@ -9,7 +9,7 @@ function showlevels() {
 }
 
 function levels(userID) {
-	console.log(userID);
+	// console.log(userID);
 
 	document.querySelector("#levelsDiv").style.display = "block";
 	document.querySelector("#levelsBtn").style.display = "none";
@@ -18,7 +18,7 @@ function levels(userID) {
 	fetch(`https://www.aquariumschool.co/courses/levels/${userID}`)
 		.then((response) => response.json())
 		.then((response) => {
-			console.log(response);
+			// console.log(response);
 
 			for (level in response) {
 				if (response[level]["is_active"] === false) {
@@ -175,7 +175,9 @@ $("#levelForm").submit(function (e) {
 });
 
 function deactivateLevel(studentLevelID) {
-	fetch(`https://www.aquariumschool.co/courses/deactivate_level/${studentLevelID}`)
+	fetch(
+		`https://www.aquariumschool.co/courses/deactivate_level/${studentLevelID}`
+	)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);
@@ -183,7 +185,9 @@ function deactivateLevel(studentLevelID) {
 }
 
 function generateCertificate(studentLevelID) {
-	fetch(`https://www.aquariumschool.co/courses/generate_certificate/${studentLevelID}`)
+	fetch(
+		`https://www.aquariumschool.co/courses/generate_certificate/${studentLevelID}`
+	)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);
@@ -191,7 +195,9 @@ function generateCertificate(studentLevelID) {
 }
 
 function deleteCertificate(studentLevelID) {
-	fetch(`https://www.aquariumschool.co/courses/delete_certificate/${studentLevelID}`)
+	fetch(
+		`https://www.aquariumschool.co/courses/delete_certificate/${studentLevelID}`
+	)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);
