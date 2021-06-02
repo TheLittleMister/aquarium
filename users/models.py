@@ -48,24 +48,27 @@ class Manager(BaseUserManager):
 
 class Account(AbstractBaseUser):
     # verbose_name="username"
-    username = models.CharField(max_length=60, unique=True)
-    email = models.EmailField(max_length=60, unique=True, null=True)
+    username = models.CharField("Usuario", max_length=60, unique=True)
+    email = models.EmailField("Correo Electrónico",
+                              max_length=60, unique=True, null=True, blank=True)
     image = models.ImageField(
         default="default-profile.png", upload_to="profile_pics", blank=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    first_name = models.CharField("Nombres", max_length=30)
+    last_name = models.CharField("Apellidos", max_length=30)
     id_type = models.ForeignKey(
-        Id_Type, on_delete=models.SET_NULL, related_name="users", null=True)  # Make tests
-    identity_document = models.BigIntegerField(unique=True, null=True)  # ID
+        Id_Type, on_delete=models.SET_NULL, related_name="users", null=True, blank=True, verbose_name="Tipo de Documento")  # Make tests
+    identity_document = models.BigIntegerField(
+        "Número de Documento", unique=True, null=True, blank=True)  # ID
     nationality = models.ForeignKey(
-        Nationality, on_delete=models.SET_NULL, related_name="users", null=True)
-    parent = models.CharField(max_length=60, null=True)
-    phone_1 = models.BigIntegerField(null=True)
-    phone_2 = models.BigIntegerField(null=True)
+        Nationality, on_delete=models.SET_NULL, related_name="users", null=True, blank=True, verbose_name="Nacionalidad")
+    parent = models.CharField(
+        "Acudiente", max_length=60, null=True, blank=True)
+    phone_1 = models.BigIntegerField("Tel/Cel (1)", null=True, blank=True)
+    phone_2 = models.BigIntegerField("Tel/Cel (2)", null=True, blank=True)
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL,
-                            related_name="users", null=True)
-    date_birth = models.DateField(null=True)
-    note = models.CharField(max_length=280)
+                            related_name="users", null=True, blank=True, verbose_name="Sexo Biológico")
+    date_birth = models.DateField("Fecha de Nacimiento", null=True, blank=True)
+    note = models.CharField("Nota", max_length=280, blank=True, null=True)
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
@@ -73,17 +76,20 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_teacher = models.BooleanField(default=False)
+    is_teacher = models.BooleanField("Profesor", default=False)
 
     # User's request to change information
     newrequest = models.BooleanField(default=False)
     ignore = models.BooleanField(default=False)
 
-    first_name_1 = models.CharField(max_length=30, default="", null=True)
-    last_name_1 = models.CharField(max_length=30, default="", null=True)
-    identity_document_1 = models.BigIntegerField(unique=True, null=True)  # ID
-    phone_1_1 = models.BigIntegerField(null=True)
-    phone_2_1 = models.BigIntegerField(null=True)
+    first_name_1 = models.CharField(
+        "Nombres", max_length=30, default="", null=True)
+    last_name_1 = models.CharField(
+        "Apellidos", max_length=30, default="", null=True)
+    identity_document_1 = models.BigIntegerField(
+        "Número de Documento", unique=True, null=True)  # ID
+    phone_1_1 = models.BigIntegerField("Tel/Cel (1)", null=True)
+    phone_2_1 = models.BigIntegerField("Tel/Cel (2)", null=True, blank=True)
 
     objects = Manager()
 
@@ -101,28 +107,3 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        if self.image:
-            img = Image.open(self.image.path)
-
-            if img.height != img.width:
-                size = abs(img.height - img.width) // 2
-
-                if img.height > img.width:
-                    area = (0, size, (img.height - (2 * size)),
-                            img.height - size)
-
-                else:
-                    area = (size, 0, img.width - size,
-                            (img.width - (2 * size)))
-
-                crop = img.crop(area)
-                crop.save(self.image.path)
-
-            if self.image.size > 5485760:  # 5MB
-                self.image.delete()
-                self.image = 'default-profile.png'
-                self.save()

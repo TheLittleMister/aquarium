@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- Modal to create a new student-->
+<div class="modal" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createStudentModalLabel">Crear Estudiante</h5>
+                <button onclick="setDefaultPassword();" type="button" class="btn btn-outline-primary">Contraseña: "AquariumSchool"</button>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <form id="createStudentForm" action="" method="POST">
+                    {% csrf_token %}
+                    {{ studentForm|crispy }}
+                    <div id="createStudentMessages"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button id="createStudentButton" type="submit" class="btn btn-primary">Crear</button>
+                        <div id="loadCreateStudent"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to show student inconsistencies -->
+<div class="modal" id="inconsistenciesStudentModal" tabindex="-1" aria-labelledby="inconsistenciesStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inconsistenciesStudentModalLabel">Inconsistencias</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                            <th scope="col">Excepción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inconsistenciesTableBody"></tbody>
+                </table>
+                <div id="loadInconsistencies"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to show students plus -->
+<div class="modal" id="plusStudentModal" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="plusStudentModalLabel">Estudiantes +</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="plusTableBody"></tbody>
+                </table>
+                <div id="loadplus"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to show change information students -->
+<div class="modal" id="changeStudentModal" tabindex="-1" aria-labelledby="changeStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeStudentModalLabel">Cambio de información</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="changeTableBody"></tbody>
+                </table>
+                <div id="loadChange"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to show teachers -->
+<div class="modal" id="teachersModal" tabindex="-1" aria-labelledby="teachersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="teachersModalLabel">Profesores</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersTableBody"></tbody>
+                </table>
+                <div id="loadTeachers"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+
+        <!-- Left Column -->
+        <div class="w3-third" style="float: right">
+
+            <div class="w3-text-grey w3-card-4">
+                <div class="w3-container" style="text-align: center;">
+                    <br>
+
+                    <p class="w3-large">
+                        <b>
+                            <i class="fas fa-users-cog fa-fw w3-margin-right w3-text-realBlue"></i>
+                            Más opciones
+                        </b>
+                        <button id="showStudentOptionsButton" onclick="showStudentOptions();" class="btn btn-outline-primary">Cerrar</button>
+                    </p>
+
+                    <div id="studentOptions">
+                        <button onclick="get_inconsistencies();" class="btn btn-outline-danger mb-2" data-bs-toggle="modal" data-bs-target="#inconsistenciesStudentModal">
+                            Inconsistencias
+                        </button>
+                        <button onclick="get_plus();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#plusStudentModal">
+                            Estudiantes +
+                        </button>
+                        <button onclick="get_teachers();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#teachersModal">
+                            Profesores
+                        </button>
+                        <button onclick="get_change();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#changeStudentModal">
+                            <span class="badge bg-primary" style="color: white;">{{ changeCount }}</span>
+                            Cambio de Información
+                        </button>
+                        <br>
+                    </div>
+                </div>
+            </div><br>
+
+            <!-- End Left Column -->
+        </div>
+
+        <!-- Right Column -->
+        <div class="w3-twothird">
+
+            <div class="w3-container w3-card w3-margin-bottom">
+                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-users fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
+                    Estudiantes
+                    <button class="btn btn-primary" style="float: right;" data-bs-toggle="modal" data-bs-target="#createStudentModal">
+                        Crear Estudiante
+                    </button>
+                </h2>
+                <input id="searchStudents" type="text" class="form-control" placeholder="Buscar Estudiantes">
+                <br>
+                <div id="searchStudentsLoader"></div>
+                <div class="w3-container">
+                    <table id="resultsStudentsTable" style="visibility: hidden; background-color: lightyellow;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Tel/Cel (1)</th>
+                                <th scope="col">Tel/Cel (2)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsStudentsTableBody"></tbody>
+                    </table>
+                    <br>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Tel/Cel (1)</th>
+                                <th scope="col">Tel/Cel (2)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students_table"></tbody>
+                    </table>
+                    <div id="loadStudents"></div>
+                    <br>
+                </div>
+            </div>
+            <!-- End Right Column -->
+        </div>
+
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/courses_scripts.js' %}"></script> <!-- Custom courses scripts -->
+<script src="{% static 'js/load_students.js' %}"></script> <!-- LOAD STUDENTS script -->
+{% endblock %}

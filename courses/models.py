@@ -6,13 +6,22 @@ from datetime import date
 # Create your models here.
 
 
+class Level(models.Model):
+    name = models.CharField(max_length=60)
+
+    def __str__(self):
+        return f"{self.id} {self.name}"
+
+
 class Course(models.Model):
-    start_time = models.TimeField()  # Time START
-    end_time = models.TimeField()  # Time END
-    date = models.DateField(null=True)
+    start_time = models.TimeField("Hora Inicio")  # Time START
+    end_time = models.TimeField("Hora Termina")  # Time END
+    date = models.DateField("Fecha", null=True)
     # Students(Account.student) M2M
     students = models.ManyToManyField(
         Account, blank=True, related_name="courses")
+    teachers = models.ManyToManyField(
+        Account, blank=True, related_name="teacher_courses")
 
     @property
     def is_past_due(self):
@@ -23,7 +32,7 @@ class Course(models.Model):
         return date.today() == self.date
 
     class Meta:
-        ordering = ['date']
+        ordering = ['date', 'start_time']
 
     def __str__(self):
         start_time = datetime.datetime.strptime(
@@ -32,7 +41,7 @@ class Course(models.Model):
             f'{str(self.end_time)[:-3]}', '%H:%M').strftime('%I:%M %p')
         month = self.date.strftime('%m')
         day = self.date.strftime('%d')
-        year = self.date.strftime('%y')
+        year = self.date.strftime('%Y')
 
         months = {
             "01": "Enero",
@@ -56,10 +65,10 @@ class Course(models.Model):
 
 class Attendance(models.Model):
     student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="attendance")
+        Account, on_delete=models.CASCADE, related_name="attendances")
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="attendance")
-    image = models.ImageField(upload_to="receipts", blank=True)
+        Course, on_delete=models.CASCADE, related_name="attendances")
+    image = models.ImageField("Imagen", upload_to="receipts", blank=True)
 
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
@@ -83,10 +92,29 @@ class Attendance(models.Model):
         default=SEP,
     )  # SEPARADO / PAGO / NO PAGO
 
-    note = models.CharField(max_length=280)
+    note = models.CharField("Nota", max_length=280, null=True, blank=True)
 
     class Meta:
         ordering = ['student']
 
     def __str__(self):
         return f"{self.student}: {self.course}"
+
+
+class Student_Level(models.Model):
+
+    student = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="levels")
+
+    level = models.ForeignKey(
+        Level, on_delete=models.CASCADE, related_name="levels")
+    date = models.DateField("Desde", null=True)
+    attendances = models.IntegerField("Asistencias Requeridas", default=0)
+
+    certificate_img = models.ImageField(
+        upload_to="certificates", null=True, blank=True)
+
+    certificate_pdf = models.FileField(
+        upload_to="certificates", null=True, blank=True)
+
+    is_active = models.BooleanField(default=False)

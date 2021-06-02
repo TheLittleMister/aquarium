@@ -40,7 +40,7 @@ ALLOWED_HOSTS = ['localhost', '172.104.13.4',
 INSTALLED_APPS = [
     'users',
     'courses',
-    'main',
+
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup.apps.CleanupConfig',
 ]
 # MIDDLEWARE_CLASSES = [
 #    'djangosecure.middleware.SecurityMiddleware',
@@ -138,6 +139,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "templates/static/")
+]
 
 # SESSION
 # opional, as this will log you out when browser is closed

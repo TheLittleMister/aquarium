@@ -1,45 +1,135 @@
-{% extends 'courses/layout.html' %}
+{% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
-{% block head %}
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% block content %}
 
-<!-- Icons font CSS-->
-<link href="{% static 'css/material-design-iconic-font1.min.css' %}" rel="stylesheet" media="all">
-<link href="{% static 'css/font-awesome1.min.css' %}" rel="stylesheet" media="all">
-<!-- Font special for pages-->
-<link
-    href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
-    rel="stylesheet">
+<!-- MODAL TO SEARCH COURSE -->
+<div class="modal" id="modalSearchCourse" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Buscar Clases</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
+                <!-- ------------ -->
+                <form action="{% url 'courses:search_course' %}" id="courseSearchForm" method="GET">
+                    {% csrf_token %}
+                    <input type="date" name="date" class="dateinput form-control" id="course_date" required> <br>
+                    <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
+                </form>
+                <!-- ------------ -->
+            </div>
 
-<!-- Vendor CSS-->
-<link href="{% static 'css/select21.min.css' %}" rel="stylesheet" media="all">
-<link href="{% static 'css/daterangepicker1.css' %}" rel="stylesheet" media="all">
+            <div class="col-10" style="margin-left: auto; margin-right: auto;">
+                <table id="resultsStudentsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Clase</th>
+                        </tr>
+                    </thead>
+                    <tbody id="searchCoursesTableBody"></tbody>
+                </table>
+            </div>
+            <br>
 
-<!-- Main CSS-->
-<link href="{% static 'css/main1.css' %}" rel="stylesheet" media="all">
+        </div>
+    </div>
+</div>
+<!-- MODAL TO PRINT COURSE -->
+<div class="modal" id="modalPrintCourse" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Imprimir Clases</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
+                <!-- ------------ -->
+                <form action="{% url 'courses:print_courses' %}" id="coursePrintForm" method="GET">
+                    {% csrf_token %}
+                    <input type="date" name="date" class="dateinput form-control" id="course_print_date" required> <br>
+                    <button id="printDateButton" type="submit" class="btn btn-warning">Imprimir</button>
+                </form>
+                <!-- ------------ -->
+            </div>
 
-<style>
-    @media screen and (max-width: 600px) {
+        </div>
+    </div>
+</div>
 
-        .show1 {
-            display: none;
-        }
-    }
+<!-- MODAL TO CREATE COURSES -->
+<div class="modal" id="modalCreateCourses" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crear Clases</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="col-10" style="margin-left: auto; margin-right: auto; overflow-y: auto;">
+                <ul id="createCoursesMessages"></ul>
+                <!-- ------------ -->
+                <form id="form-date" style="float: left;">
+                    <label class="label">Fecha</label>
+                    <input id="add-date" type="date" name="date" style="display: inline; width: auto;" required>
+                    <br> <br>
+                    <input style="margin-left: auto; margin-right: auto; width: auto;" class="btn btn-primary" type="submit" value="Añadir Fecha">
+                </form>
+                <br> <br>
+                <form id="createCoursesForm" action="{% url 'courses:create_courses' %}" method="POST" class="form-control">
+                    {% csrf_token %}
+                    <div class="input-group" style="width: 395px;">
+                        <label class="label">Fechas Añadidas</label>
+                        <select id="dates" name="dates" multiple class="form-control" style="width: 450px; height: 150px;margin-left: auto; margin-right: auto;" required></select>
+                    </div>
+                    {{ createCoursesForm.media }}
+                    {{ createCoursesForm.as_table }}
+                    <script type=" text/javascript" src="{% url 'courses:jsi18n' %}">
+                    </script>
+                    <button id="createCoursesButton" type="submit" class="btn btn-outline-primary">Guardar</button>
+                    <div id="loadCreateCourses"></div>
+                </form>
+                <!-- ------------ -->
+            </div>
+        </div>
+    </div>
+</div>
 
-    @media screen and (min-width: 600px) {
+<!-- MODAL TO SHOW CREATED COURSES -->
+<div class="modal" id="modalShowCreatedCourse" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: lightcyan;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Clases Creadas</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
 
-        .show0 {
-            display: none;
-        }
-    }
-</style>
-{% endblock %}
+            <div class="col-10" style="margin-left: auto; margin-right: auto;">
+                <table id="resultsStudentsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Clase</th>
+                        </tr>
+                    </thead>
+                    <tbody id="createdCoursesTableBody"></tbody>
+                </table>
+            </div>
+            <br>
 
-
-{% block body %}
+        </div>
+    </div>
+</div>
 
 <!-- Page Container -->
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
@@ -47,378 +137,60 @@
     <!-- The Grid -->
     <div class="w3-row-padding">
 
-        <!-- Left Column -->
-        <div class="w3-third">
-            <div class="w3-container w3-card w3-card-4"
-                style="background-color: #e3f2fd; display: block; text-align: center;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-search fa-fw w3-margin-right w3-xxlarge"
-                        style="color: #066DAF;"></i>
-                    Buscar Clase:
+        <!-- Right Column -->
+        <div class="w3-half">
+
+            <div class="w3-container w3-card  w3-margin-bottom">
+                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-backward fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
+                    Anteriores
+                    <button class="btn btn-outline-primary" onclick="closePastCourses(this);">Cerrar</button>
+                    <button onclick="document.querySelector('#searchCoursesTableBody').innerHTML = '';" class="btn btn-info mt-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalSearchCourse">Buscar Clases</button>
                 </h2>
-                <div class="w3-container">
-                    <form action="{% url 'courses:courses' %}" method="POST" enctype="multipart/form-data"
-                        style="text-align: center;">
-                        {% csrf_token %}
-                        <input type="date" name="date" style="display: inline; width: auto;" value="{{ date }}"
-                            required>
-                        <br><br>
-                        <input class="btn btn-info" style="display: inline; width:auto; max-width: 100%;" type="submit"
-                            value="Buscar Fecha">
-                    </form>
+                <div id="pastCourses" class="w3-container" style="display: block;">
+                    <table id="resultsStudentsTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">Clase</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pastCoursesTableBody"></tbody>
+                    </table>
+                    <div id="loadStudents"></div>
                     <br>
-                </div>
-            </div>
-            <br>
-
-            {% if results != "Hi" %}
-
-            {% if results %}
-
-            <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: rgb(218, 178, 0);;"></i>
-                    Resultados Busqueda:
-                    <a href="{% url 'courses:print_search' results.first.id %}"
-                        style="margin-left: 50px; font-weight: bold;">Imprimir estos cursos</a>
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-                            {% for course in results %}
-                            <li>
-                                <span class="badge badge-info" style="font-size: small;">
-                                    {{ course.students.all.count }}
-                                </span>
-                                <a href="{% url 'courses:course' course.id %}"
-                                    style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de
-                                    {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                            </li>
-                            <br>
-
-                            {% empty %}
-
-                            <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin
-                                Resultados</li>
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <br>
-
-            {% else %}
-
-            <div class="w3-container w3-card w3-card-4 show0" style="background-color: #fffde8;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: rgb(218, 178, 0);;"></i>
-                    Resultados Busqueda:
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-
-                            <li>
-                                Sin resultados.
-                            </li>
-                            <br>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <br>
-
-            {% endif %}
-
-            {% endif %}
-
-            <div class="w3-text-grey w3-card-4" style="background-color: #e3f2fd;">
-
-                <div id="righttop" class="w3-container w3-card" style="background-color: #e3f2fd; display: block;">
-                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                            style="color: #066DAF;"></i>
-                        Anteriores Clases:
-                    </h2>
-                    <div class="w3-container">
-                        <div id="student-next" style="color: black;">
-
-                            <ul style="text-align: left; margin-top: 20px;">
-                                {% for course in old_page.object_list %}
-                                <li>
-                                    <span class="badge badge-info" style="font-size: small;">
-                                        {{ course.students.all.count }}
-                                    </span>
-                                    <a href="{% url 'courses:course' course.id %}"
-                                        style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de
-                                        {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                                </li>
-                                <br>
-
-                                {% empty %}
-
-                                <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">
-                                    Sin Clases Anteriores</li>
-
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div id="student-pag" style="text-align: center; padding: 10px;">
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination justify-content-center">
-                                    {% if old_page.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?old_page=1" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                            <span class="sr-only">begin</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-
-                                    {% for n in old_page.paginator.page_range %}
-                                    {% if old_page.number == n %}
-                                    <li class="page-item active">
-                                        <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
-                                    </li>
-                                    {% elif n > old_page.number|add:'-3' and n < old_page.number|add:'3' %} <li
-                                        class="page-item">
-                                        <a class="page-link" href="?old_page={{ n }}">{{ n }}</a>
-                                        </li>
-                                        {% endif %}
-                                        {% endfor %}
-
-                                        {% if old_page.has_next %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?old_page={{ old_page.paginator.num_pages }}"
-                                                aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                                <span class="sr-only">end</span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div><br>
-
-            <!-- End Left Column -->
-        </div>
-
-        <!-- Right Top Column -->
-        <div class="w3-twothird">
-            {% if results != "Hi" %}
-
-            {% if results %}
-
-            <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: rgb(218, 178, 0);;"></i>
-                    Resultados Busqueda:
-                    <a href="{% url 'courses:print_search' results.first.id %}"
-                        style="margin-left: 50px; font-weight: bold;">Imprimir estos cursos</a>
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-                            {% for course in results %}
-                            <li>
-                                <span class="badge badge-info" style="font-size: small;">
-                                    {{ course.students.all.count }}
-                                </span>
-                                <a href="{% url 'courses:course' course.id %}"
-                                    style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de
-                                    {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                            </li>
-                            <br>
-
-                            {% empty %}
-
-                            <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin
-                                Resultados</li>
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-
-            {% else %}
-
-            <div class="w3-container w3-card w3-card-4 show1" style="background-color: #fffde8;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: rgb(218, 178, 0);;"></i>
-                    Resultados Busqueda:
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-
-                            <li>
-                                Sin resultados.
-                            </li>
-                            <br>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-
-            {% endif %}
-
-            {% endif %}
-
-            <div id="righttop" class="w3-container w3-card w3-card-4"
-                style="background-color: #e3f2fd; display: block;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: #066DAF;"></i>
-                    Clases de hoy:
-                    <a href="{% url 'courses:print_courses' %}" style="margin-left: 50px; font-weight: bold;">Imprimir
-                        cursos de hoy</a>
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-                            {% for course in today_page.object_list %}
-                            <li>
-                                <span class="badge badge-info" style="font-size: small;">
-                                    {{ course.students.all.count }}
-                                </span>
-                                <a href="{% url 'courses:course' course.id %}"
-                                    style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de
-                                    {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                            </li>
-                            <br>
-
-                            {% empty %}
-
-                            <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin
-                                Clases Hoy</li>
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div id="student-pag" style="text-align: center; padding: 10px;">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-                                {% if today_page.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?today_page=1" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                        <span class="sr-only">begin</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                {% for n in today_page.paginator.page_range %}
-                                {% if today_page.number == n %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
-                                </li>
-                                {% elif n > today_page.number|add:'-3' and n < today_page.number|add:'3' %} <li
-                                    class="page-item">
-                                    <a class="page-link" href="?today_page={{ n }}">{{ n }}</a>
-                                    </li>
-                                    {% endif %}
-                                    {% endfor %}
-
-                                    {% if today_page.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?today_page={{ today_page.paginator.num_pages }}"
-                                            aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                            <span class="sr-only">end</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <!-- Right Bottom Column -->
-            <div id="rightbottom" class="w3-container w3-card w3-card-4"
-                style="background-color: #e3f2fd; display: block;">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-flag fa-fw w3-margin-right w3-xxlarge"
-                        style="color: #066DAF;"></i>
-                    Próximas Clases:
-                </h2>
-                <div class="w3-container">
-                    <div id="student-next" style="color: black;">
-
-                        <ul style="text-align: left; margin-top: 20px;">
-                            {% for course in next_page.object_list %}
-                            <li>
-                                <span class="badge badge-info" style="font-size: small;">
-                                    {{ course.students.all.count }}
-                                </span>
-                                <a href="{% url 'courses:course' course.id %}"
-                                    style="font-size: medium;">{{course.date|date:"l"}} {{course.date}} de
-                                    {{course.start_time|date:"P"}} a {{course.end_time|date:"P"}}</a>
-                            </li>
-                            <br>
-
-                            {% empty %}
-
-                            <li style="text-align: left; margin-bottom: 30px; color: steelblue; font-weight: bold;">Sin
-                                Proximas Clases</li>
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div id="student-pag" style="text-align: center; padding: 10px;">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-                                {% if next_page.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?next_page=1" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                        <span class="sr-only">begin</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-
-                                {% for n in next_page.paginator.page_range %}
-                                {% if next_page.number == n %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
-                                </li>
-                                {% elif n > next_page.number|add:'-3' and n < next_page.number|add:'3' %} <li
-                                    class="page-item">
-                                    <a class="page-link" href="?next_page={{ n }}">{{ n }}</a>
-                                    </li>
-                                    {% endif %}
-                                    {% endfor %}
-
-                                    {% if next_page.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?next_page={{ next_page.paginator.num_pages }}"
-                                            aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                            <span class="sr-only">end</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
                 </div>
             </div>
 
             <!-- End Right Column -->
+        </div>
 
+
+        <!-- Right Column -->
+        <div class="w3-half">
+
+            <div class="w3-container w3-card  w3-margin-bottom">
+                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-forward fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
+                    Próximas
+                    <button class="btn btn-outline-primary" onclick="closeFutureCourses(this);">Cerrar</button>
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalPrintCourse">Imprimir</button>
+                    <button class="btn btn-info mt-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalCreateCourses">Crear Clases</button>
+                </h2>
+                <div id="futureCourses" class="w3-container" style="display: block;">
+                    <table id="resultsStudentsTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">Clase</th>
+                            </tr>
+                        </thead>
+                        <tbody id="futureCoursesTableBody"></tbody>
+                    </table>
+                    <div id="loadFutureAttendances"></div>
+                    <br>
+                </div>
+            </div>
+
+            <!-- End Right Column -->
         </div>
 
         <!-- End Grid -->
@@ -426,16 +198,10 @@
 
     <!-- End Page Container -->
 </div>
+{% endblock %}
 
-<!-- Jquery JS-->
-<script src="{% static 'js/jquery1.min.js' %}"></script>
-<!-- Vendor JS-->
-<script src="{% static 'js/select21.min.js' %}"></script>
-<script src="{% static 'js/moment1.min.js' %}"></script>
-<script src="{% static 'js/daterangepicker1.js' %}"></script>
-
-<!-- Main JS-->
-<script src="{% static 'js/global1.js' %}"></script>
-
+{% block scripts %}
+<script src="{% static 'js/courses_scripts.js' %}"></script> <!-- Custom courses scripts -->
+<script src="{% static 'js/load_courses.js' %}"></script> <!-- Custom courses scripts -->
 
 {% endblock %}

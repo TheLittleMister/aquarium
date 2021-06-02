@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Aria is a business focused HTML landing page template built with Bootstrap to help you create lead generation websites for companies and their services.">
+    <meta name="author" content="Inovatik">
+
+    <!-- OG Meta Tags to improve the way the post looks when you share the page on LinkedIn, Facebook, Google+ -->
+    <meta property="og:site_name" content="" /> <!-- website name -->
+    <meta property="og:site" content="" /> <!-- website link -->
+    <meta property="og:title" content="" /> <!-- title shown in the actual shared post -->
+    <meta property="og:description" content="" /> <!-- description shown in the actual shared post -->
+    <meta property="og:image" content="" /> <!-- image link, make sure it's jpg -->
+    <meta property="og:url" content="" /> <!-- where do you want your post to link to -->
+    <meta property="og:type" content="article" />
+
+    <!-- Website Title -->
+    <title>Aquarium School</title>
+
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700&display=swap&subset=latin-ext" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600&display=swap&subset=latin-ext" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/swiper.css' %}" rel="stylesheet">
+    <link href="{% static 'css/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"></script>
+    <script data-ad-client="ca-pub-9848347625525796" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XTNLXDS27T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-XTNLXDS27T');
+    </script>
+
+    <!-- END GOOGLE -->
+
+
+    <!-- Favicon  -->
+    <link rel="icon" href="{% static 'images/favicon.webp' %}">
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/f042eae6e8.js" crossorigin="anonymous"></script>
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body data-spy="scroll" data-target=".fixed-top">
+
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v10.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/es_LA/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your Chat Plugin code -->
+    <div class="fb-customerchat" attribution="setup_tool" page_id="104390134444348"></div>
+
+    <!-- Preloader -->
+    <div class="spinner-wrapper">
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+    </div>
+    <!-- end of preloader -->
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark navbar-custom fixed-top">
+        <!-- Text Logo - Use this if you don't have a graphic logo -->
+        <!-- <a class="navbar-brand logo-text page-scroll" href="index.html">Aria</a> -->
+
+        <!-- Image Logo -->
+        <a class="navbar-brand logo-image" href="/"><img src="{% static 'images/logo.svg' %}" alt="alternative"></a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-awesome fas fa-bars"></span>
+            <span class="navbar-toggler-awesome fas fa-times"></span>
+        </button>
+        <!-- end of mobile menu toggle button -->
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav ml-auto">
+                {% if adminBar %}
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{% url 'courses:students' %}">ESTUDIANTES</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{% url 'courses:courses' %}">CLASES</a>
+                </li>
+
+                {% elif userBar or teacherBar %}
+                {% else %}
+
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#header">INICIO <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#intro">NOSOTROS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#services">CURSOS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#info">INFORMACIÓN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#projects">FOTOS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#contact">CONTACTOS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="#social">SOCIAL</a>
+                </li>
+
+                {% if request.user.is_admin %}
+                <!-- Dropdown Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle page-scroll" href="#about" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">ADMIN</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'courses:students' %}"><span class="item-text">
+                                ESTUDIANTES</span></a>
+                        <div class="dropdown-items-divide-hr"></div>
+                        <a class="dropdown-item" href="{% url 'courses:courses' %}"><span class="item-text">
+                                CLASES</span></a>
+                    </div>
+                </li>
+                <!-- end of dropdown menu -->
+                {% endif %}
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link page-scroll sign" href="{% url 'users:redirection' %}">{{ request.user.username }}</a>
+                </li>
+                <li class="nav-item">
+
+                    <a class="nav-link page-scroll sign" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> SALIR</a>
+                </li>
+
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link page-scroll sign" href="#" data-bs-toggle="modal" data-bs-target="#modal"><i class="fas fa-sign-in-alt"></i> INGRESAR</a>
+                </li>
+                {% endif %}
+
+
+
+            </ul>
+            <span class="nav-item social-icons">
+                <span class="fa-stack">
+                    <a href="#your-link">
+                        <span class="hexagon"></span>
+                        <i class="fab fa-facebook-f fa-stack-1x mr-5"></i>
+                    </a>
+                </span>
+                <span class="fa-stack">
+                    <a href="#your-link">
+                        <span class="hexagon"></span>
+                        <i class="fab fa-twitter fa-stack-1x"></i>
+                    </a>
+                </span>
+            </span>
+        </div>
+    </nav> <!-- end of navbar -->
+    <!-- end of navbar -->
+
+    {% if not request.user.is_authenticated %}
+    <!-- First modal dialog -->
+    <div class="modal" id="modal" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="background-color: #ccf3fb;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ingresar</h5>
+                    <button type="button" class="btn btn-outline-info btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                    <div style="text-align: center;">
+                        <img src="{% static 'images/logo.webp' %}" alt="DupleBeat" style="width: 100px;">
+                    </div>
+                    <br>
+                    <form id="loginForm" action="#" method="POST" autocomplete="off" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <span id="loginMessage" style="color: crimson;"></span>
+                        <input id="loginUsername" type="text" class="form-control" placeholder="Documento / Correo electrónico" name="username" required> <br>
+                        <input id="loginPassword" type="password" class="form-control" placeholder="Contraseña" name="password" required>
+                        <br>
+                        <button id="loginButton" type="submit" class="btn btn-info js-crop-and-upload" form="loginForm">
+                            Iniciar Sesión
+                        </button>
+                        <div id="loadLogin"></div>
+
+                        <div class="modal-footer mt-1">
+                            <!-- <button style="float: right;"  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atrás</button> -->
+                            <a href="{% url 'reset_password' %}" class="btn btn-outline-info" type="button">
+                                ¿Olvidó la contraseña?
+                            </a>
+                            <!-- Toogle to second dialog -->
+                            <!-- <button type="button" class="btn btn-warning" data-bs-target="#modal2"
+                                data-bs-toggle="modal" data-bs-dismiss="modal">¿Sin cuenta?</button>
+ -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Second modal dialog -->
+    <div class="modal" id="modal2" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+        <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Registrarse</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                </div>
+                <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                    <ul id="errorMessages"></ul>
+                    <form id="registerForm" action="#" method="POST" autocomplete="off" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- registerform | crispy -->
+                        <br>
+                        <button id="registerButton" type="submit" class="btn btn-outline-success js-crop-and-upload" form="registerForm">Registrarse</button>
+                        <div id="loadRegister"></div>
+                        <div class="modal-footer mt-1">
+                            <!-- <button type="button" class="btn btn-success" data-bs-dismiss="modal">Atrás</button> -->
+                            <!-- Toogle to first dialog, `data-bs-dismiss` attribute can be omitted - clicking on link will close dialog anyway -->
+                            <a class="btn btn-warning" href="#modal" data-bs-toggle="modal" role="button" data-bs-dismiss="modal">
+                                ¿Ya tiene una cuenta?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 90px;">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/jquery.min.js' %}"></script> <!-- jQuery for Bootstrap's JavaScript plugins -->
+    <script src="{% static 'js/popper.min.js' %}"></script> <!-- Popper tooltip library for Bootstrap -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script> <!-- Bootstrap framework -->
+    <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+    <!-- jQuery Easing for smooth scrolling between anchors -->
+    <script src="{% static 'js/swiper.min.js' %}"></script> <!-- Swiper for image and text sliders -->
+    <script src="{% static 'js/jquery.magnific-popup.js' %}"></script> <!-- Magnific Popup for lightboxes -->
+    <script src="{% static 'js/morphext.min.js' %}"></script> <!-- Morphtext rotating text in the header -->
+    <script src="{% static 'js/isotope.pkgd.min.js' %}"></script> <!-- Isotope for filter -->
+    <script src="{% static 'js/validator.min.js' %}"></script>
+    <!-- Validator.js - Bootstrap plugin that validates forms -->
+    <script src="{% static 'js/scripts.js' %}"></script> <!-- Custom scripts -->
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+
+</html>
