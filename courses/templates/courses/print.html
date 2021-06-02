@@ -133,8 +133,8 @@
                                                 {% else %}
                                                 {% if attendance.course.is_past_due %}
                                                 <span style="font-size: large; font-weight: bold;">✗</span>
-                                                {% elif attendance.course.is_today %}
-                                                <span style="font-size: small; font-weight: bold;">HOY</span>
+                                                {% elif attendance.course == course.date %}
+                                                <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
                                                 {% endif %}
                                                 {% if attendance.recover == True %}
