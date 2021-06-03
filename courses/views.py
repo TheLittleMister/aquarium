@@ -870,7 +870,13 @@ def generate_certificate(request, student_level_id):
 
         # DATE
         # font = ImageFont.truetype(font_src, 15)
-        text = str(datetime.date.today().strftime('%d de %B del %Y')).upper()
+
+        day = str(datetime.date.today().strftime('%d')).upper()
+        month = get_month(str(datetime.date.today().strftime('%B').upper()))
+        year = str(datetime.date.today().strftime('%Y')).upper()
+
+        text = day + " DE " + month + " DEL " + year
+
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
