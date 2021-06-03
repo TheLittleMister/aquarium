@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from users.models import *
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
 

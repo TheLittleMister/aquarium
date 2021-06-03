@@ -1,42 +1,31 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, response
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.templatetags.static import static
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
-from django.db import IntegrityError
 from django.shortcuts import render
 from django.urls import reverse
 from django.conf import settings
-import requests
-from django.db.models import Q, Count
+from django.db.models import Q
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-import unidecode
 import datetime
-import operator
 from io import BytesIO
 from django.core.files import File
+import locale
 
 # MODELS
 from .models import *
 from users.models import *
 
 # FORMS
-from django import forms
 from .forms import *
-
 from .utils import *
-
-from time import sleep
-
 
 # Create your views here.
 
 # USERS FUNCTIONS
+
+
 @staff_member_required(login_url="https://aquariumschool.co/")
 def students(request):
     return render(request, 'courses/students.html', {
@@ -823,6 +812,7 @@ def generate_certificate(request, student_level_id):
 
     if request.user.is_admin or request.user.is_teacher:
 
+        locale.setlocale(locale.LC_TIME, 'es')
         media_url = settings.MEDIA_URL
 
         # img_src = media_url + "certificate.png"
@@ -877,6 +867,15 @@ def generate_certificate(request, student_level_id):
 
         # draw.text((x, y),"Sample Text",(r,g,b))
         draw.text((545, 610), text, (83, 83, 83), font=font)
+
+        # DATE
+        # font = ImageFont.truetype(font_src, 15)
+        text = str(datetime.date.today().strftime('%d de %B del %Y')).upper()
+        x, y = font.getsize(text)
+
+        # draw.text((x, y),"Sample Text",(r,g,b))
+        draw.text(((img.width // 2) - (x // 2), 695),
+                  text, (83, 83, 83), font=font)
 
         blob = BytesIO()
         img.save(blob, 'PNG')

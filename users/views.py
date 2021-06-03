@@ -1,18 +1,15 @@
 from django.shortcuts import render
-import unidecode
 import datetime
-from django import forms
 from django.urls import reverse
-from django.core.paginator import Paginator
-from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.http import HttpResponseRedirect, JsonResponse
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.contrib.admin.views.decorators import staff_member_required
 from users.models import *
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Q, Count
+from django.db.models import Q
 
 from courses.forms import *
 from .forms import *
