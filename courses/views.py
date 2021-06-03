@@ -856,7 +856,7 @@ def generate_certificate(request, student_level_id):
         # TEACHER AND ADMIN NAMES
 
         # font = ImageFont.truetype(<font-file>, <font-size>)
-        font = ImageFont.truetype(font_src, 18)
+        font = ImageFont.truetype(font_src, 17)
 
         text = f"{request.user.first_name} {request.user.last_name}".upper()
 
