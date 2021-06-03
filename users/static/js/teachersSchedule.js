@@ -94,19 +94,19 @@ function getSchedule(user_id) {
 								// console.log(response["schedule"][scheduleID][i][objID]);
 								$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 							}
@@ -117,19 +117,19 @@ function getSchedule(user_id) {
 						} else {
 							$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 
@@ -235,19 +235,19 @@ function load_students_levels(levelID) {
 				) {
 					$(`#levelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (2)">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
 				}
@@ -292,38 +292,38 @@ $("#levelSearch").keyup(
 					) {
 						$(`#searchLevelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (2)">\
-										<a target="_blank" href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
 					}
 				} else {
 					$(`#searchLevelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a target="_blank" href="#">SIN RESULTADOS</a>\
+										<a href="#">SIN RESULTADOS</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a target="_blank" href="#">-</a>\
+										<a href="#">-</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a target="_blank" href="#">-</a>\
+										<a href="#">-</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a target="_blank" href="#">-</a>\
+										<a href="#">-</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (2)">\
-										<a target="_blank" href="#">-</a>\
+										<a href="#">-</a>\
 									</td>\
 								</tr>`);
 				}
