@@ -11,7 +11,7 @@ from PIL import ImageDraw
 import datetime
 from io import BytesIO
 from django.core.files import File
-import locale
+#import locale
 
 # MODELS
 from .models import *
@@ -812,7 +812,7 @@ def generate_certificate(request, student_level_id):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        locale.setlocale(locale.LC_TIME, 'es')
+        #locale.setlocale(locale.LC_TIME, 'es')
         media_url = settings.MEDIA_URL
 
         # img_src = media_url + "certificate.png"
