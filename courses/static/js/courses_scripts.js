@@ -1063,19 +1063,19 @@ function get_inconsistencies() {
 					}
 					$("#inconsistenciesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                                 <td id="tdException${response["students"][studentID]["id"]}" scope="row" data-label="Excepción">\
                                                     <button onclick="changeException(${response["students"][studentID]["id"]});" class="btn btn-sm ${btnExceptionClass}">${btnException}</button>\
@@ -1118,19 +1118,19 @@ function get_plus() {
 				) {
 					$("#plusTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -1164,19 +1164,19 @@ function get_change() {
 				) {
 					$("#changeTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -1200,19 +1200,19 @@ function get_teachers() {
 				) {
 					$("#teachersTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a target="_blank" href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="https://aquariumschool.co/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}
