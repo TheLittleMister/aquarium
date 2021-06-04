@@ -281,8 +281,8 @@
 
             <!-- End Right Column -->
         </div>
-        {% if request.user.is_teacher or request.user.is_admin %}
-        {% if request.user != user %}
+        {% if not user.is_teacher %}
+
         <div class="w3-twothird">
 
             <div class="w3-container w3-card  w3-margin-bottom">
@@ -306,26 +306,12 @@
                         </tbody>
                     </table>
                     <br>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope="col">Pago</th>
-                                <th scope="col">Pago dia</th>
-                                <th scope="col">No pago</th>
-                                <th scope="col">Separado</th>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentPaymentStatsBody">
-                        </tbody>
-                    </table>
-                    <br>
                 </div>
             </div>
 
             <!-- End Right Column -->
         </div>
-        {% endif %}
+
         {% endif %}
 
 
