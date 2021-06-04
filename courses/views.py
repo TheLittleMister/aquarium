@@ -126,12 +126,7 @@ def create_schedule(request):
 
 
 def student_statistics(request):
-
-    if request.user.is_admin or request.user.is_teacher:
-        return JsonResponse(get_student_statistics(Account.objects.get(pk=request.GET.get("userID"))), status=200)
-
-    else:
-        return JsonResponse({"Privilege": "Restricted"}, status=200)
+    return JsonResponse(get_student_statistics(Account.objects.get(pk=request.GET.get("userID"))), status=200)
 
 
 @staff_member_required(login_url="https://aquariumschool.co/")
