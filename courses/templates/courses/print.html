@@ -142,12 +142,10 @@
                                                 {% endif %}
                                                 {% if attendance.note %}
                                                 <br>
-                                                <span style="font-style: italic; font-size: medium;">
-                                                    "{{ attendance.note }}"
+                                                <span style="font-style: italic; font-size: small;">
+                                                    {{ attendance.note }}
                                                 </span>
                                                 {% endif %}
-
-
                                             </td>
                                             {% endfor %}
                                         </tr>
@@ -178,6 +176,12 @@
                                                 {% endif %}
                                                 {% if attendance.recover == True %}
                                                 <span style="font-size: small; font-weight: bold;">RECUPERA</span>
+                                                {% endif %}
+                                                {% if attendance.note %}
+                                                <br>
+                                                <span style="font-style: italic; font-size: small;">
+                                                    {{ attendance.note }}
+                                                </span>
                                                 {% endif %}
                                             </td>
                                             {% endfor %}
