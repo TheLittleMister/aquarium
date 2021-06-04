@@ -10,9 +10,7 @@ function showlevels() {
 
 function levels(userID) {
 	// console.log(userID);
-	document.querySelector("#levelsDiv").style.display = "block";
 	document.querySelector("#levelsBtn").style.display = "none";
-	document.querySelector("#showLevelsBtn").style.visibility = "visible";
 
 	fetch(`https://aquariumschool.co/courses/levels/${userID}`)
 		.then((response) => response.json())
@@ -68,5 +66,7 @@ function levels(userID) {
 					});
 				}
 			}
+			document.querySelector("#levelsDiv").style.display = "block";
+			document.querySelector("#showLevelsBtn").style.visibility = "visible";
 		});
 }
