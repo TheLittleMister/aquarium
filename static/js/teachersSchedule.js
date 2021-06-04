@@ -441,24 +441,6 @@ function studentStatistics(user_id) {
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);
-
-			$("#studentPaymentStatsBody").append(`<tr> \
-                                                <td scope="row" data-label="Pago"> \
-                                                    ${response["paid"]}\
-                                                </td>\
-                                                <td scope="row" data-label="Pago Día">\
-                                                    ${response["onlyday"]}\
-                                                </td>\
-                                                <td scope="row" data-label="No pago">\
-                                                    ${response["n_paid"]}\
-                                                </td>\
-                                                <td scope="row" data-label="Separado">\
-                                                    ${response["sep"]}\
-                                                </td>\
-                                                <td scope="row" data-label="Total">\
-                                                    ${response["total"]}\
-                                                </td>\
-                                            </tr>`);
 		},
 	});
 }
