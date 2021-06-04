@@ -10,43 +10,7 @@
 {% block content %}
 
 {% if request.user == user %}
-<!-- MODAL TO SEARCH ATTENDANCE -->
-<div class="modal fade" id="modalSearchAttendance" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Buscar Clases de {{ user }}</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
-                <!-- ------------ -->
-                <form action="{% url 'courses:search_attendance' %}" id="attendanceSearchForm" method="GET">
-                    {% csrf_token %}
-                    <input type="hidden" name="userID" value="{{ user.id }}">
-                    <input type="date" name="date" class="dateinput form-control" id="attendance_date" required> <br>
-                    <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
-                </form>
-                <!-- ------------ -->
-            </div>
 
-            <div class="col-10" style="margin-left: auto; margin-right: auto;">
-                <table id="resultsStudentsTable">
-                    <thead>
-                        <tr>
-                            <th scope="col">Asistencia</th>
-                            <th scope="col">Clase</th>
-                        </tr>
-                    </thead>
-                    <tbody id="searchAttendancesTableBody"></tbody>
-                </table>
-            </div>
-            <br>
-
-        </div>
-    </div>
-</div>
 
 <!-- MODAL TO EDIT PROFILE -->
 <div class="modal fade" id="modalProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -101,6 +65,44 @@
     </div>
 </div>
 {% endif %}
+
+<!-- MODAL TO SEARCH ATTENDANCE -->
+<div class="modal fade" id="modalSearchAttendance" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Buscar Clases de {{ user }}</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
+                <!-- ------------ -->
+                <form action="{% url 'courses:search_attendance' %}" id="attendanceSearchForm" method="GET">
+                    {% csrf_token %}
+                    <input type="hidden" name="userID" value="{{ user.id }}">
+                    <input type="date" name="date" class="dateinput form-control" id="attendance_date" required> <br>
+                    <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
+                </form>
+                <!-- ------------ -->
+            </div>
+
+            <div class="col-10" style="margin-left: auto; margin-right: auto;">
+                <table id="resultsStudentsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Asistencia</th>
+                            <th scope="col">Clase</th>
+                        </tr>
+                    </thead>
+                    <tbody id="searchAttendancesTableBody"></tbody>
+                </table>
+            </div>
+            <br>
+
+        </div>
+    </div>
+</div>
 
 <!-- MODAL TO EDIT LEVEL -->
 <div class="modal fade" id="modalLevel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
