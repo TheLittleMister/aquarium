@@ -1,3 +1,6 @@
+var mysite = "http://127.0.0.1:8000";
+// var mysite = "https://aquariumschool.co";
+
 function showlevels() {
 	if (document.querySelector("#levelsDiv").style.display === "none") {
 		document.querySelector("#levelsDiv").style.display = "block";
@@ -15,7 +18,7 @@ function levels(userID) {
 	document.querySelector("#levelsBtn").style.display = "none";
 	document.querySelector("#showLevelsBtn").style.visibility = "visible";
 
-	fetch(`https://aquariumschool.co/courses/levels/${userID}`)
+	fetch(`${mysite}/courses/levels/${userID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -28,7 +31,7 @@ function levels(userID) {
 				} else {
 					$.ajax({
 						type: "GET",
-						url: "https://aquariumschool.co/courses/date_attendances/",
+						url: `${mysite}/courses/date_attendances/`,
 						data: {
 							date: response[level]["date"],
 							userID: userID,
@@ -86,7 +89,7 @@ function levels(userID) {
 }
 
 function editLevel(studentLevelID) {
-	fetch(`https://aquariumschool.co/courses/level_info/${studentLevelID}`)
+	fetch(`${mysite}/courses/level_info/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			document.querySelector("#levelFormMessages").classList.remove("alert");
@@ -122,7 +125,7 @@ $("#levelForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://aquariumschool.co${action}`,
+		url: `${mysite}${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#btnLevelSubmit").style.display = "none";
@@ -175,9 +178,7 @@ $("#levelForm").submit(function (e) {
 });
 
 function deactivateLevel(studentLevelID) {
-	fetch(
-		`https://aquariumschool.co/courses/deactivate_level/${studentLevelID}`
-	)
+	fetch(`${mysite}/courses/deactivate_level/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);
@@ -185,9 +186,7 @@ function deactivateLevel(studentLevelID) {
 }
 
 function generateCertificate(studentLevelID) {
-	fetch(
-		`https://aquariumschool.co/courses/generate_certificate/${studentLevelID}`
-	)
+	fetch(`${mysite}/courses/generate_certificate/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);
@@ -195,9 +194,7 @@ function generateCertificate(studentLevelID) {
 }
 
 function deleteCertificate(studentLevelID) {
-	fetch(
-		`https://aquariumschool.co/courses/delete_certificate/${studentLevelID}`
-	)
+	fetch(`${mysite}/courses/delete_certificate/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			levels(response["userID"]);

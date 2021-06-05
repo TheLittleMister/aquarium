@@ -45,7 +45,7 @@
             <div class="card-body">
                 <div class="row row-space">
                     <input style="display: none;" id="bar" type="range" value="" name="fz" min="10" max="30" onchange="fontsize(value)">
-                    <h3 style="width: 50%; float: left; margin-top: 30px;">{{ date|date:"l" }} {{ date }}</h3>
+                    <h3 style="width: 50%; float: left; margin-top: 30px;">{{ todayDate|date:"l" }} {{ todayDate }}</h3>
                     <div style="width: 50%; float: right;">
                         <img style="max-width: 100%; cursor: pointer;" src="{% static 'images/mainaq.webp' %}" onclick="showbar()">
                     </div>

@@ -1,3 +1,6 @@
+var mysite = "http://127.0.0.1:8000";
+// var mysite = "https://aquariumschool.co";
+
 function tConvert(time) {
 	// Check correct time format and split into components
 	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
@@ -16,7 +19,7 @@ function tConvert(time) {
 function getSchedule(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/create_schedule/",
+		url: `${mysite}/courses/create_schedule/`,
 		data: {
 			userID: user_id,
 		},
@@ -92,7 +95,7 @@ $("#editProfileForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://aquariumschool.co${action}`,
+		url: `${mysite}${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#editProfileButton").style.display = "none";
@@ -134,7 +137,7 @@ $("#editProfileForm").submit(function (e) {
 function studentStatistics(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/student_statistics/",
+		url: `${mysite}/courses/student_statistics/`,
 		data: {
 			userID: user_id,
 		},
