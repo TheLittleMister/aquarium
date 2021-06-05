@@ -37,7 +37,7 @@ function getSchedule(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			// console.log(response);
+			console.log(response);
 			for (
 				var scheduleID = 0;
 				scheduleID < response["schedule"].length;
