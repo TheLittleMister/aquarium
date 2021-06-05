@@ -6,8 +6,6 @@ from courses.models import *
 
 def get_schedule(courses):
 
-    # print("Let's Fix it!")
-
     schedule = []
     for course in courses:
 
@@ -20,10 +18,10 @@ def get_schedule(courses):
                 row_course[2 + weekday] += list(course.students.all().values(
                     'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
 
-                # row_course[2 + weekday] = [dict(s) for s in set(frozenset(d.items())
-                #                                                 for d in row_course[2 + weekday])]
+                row_course[2 + weekday] = [i for i in row_course[2 + weekday] if i != "-"]
+                row_course[2 + weekday] = [dict(s) for s in set(frozenset(d.items())
+                                                                 for d in row_course[2 + weekday])]
 
-                # What if row_course[2 + weekday] already had a list? then += list() and then SET!
                 check = True
 
         if check == False:
@@ -38,15 +36,12 @@ def get_schedule(courses):
             week[weekday] = list(course.students.all().values(
                 'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
 
-            # print(week[weekday])
-
             for i in range(7):  # 7 - Sunday
                 the_course.append(week[i])  # Week days
 
             if the_course not in schedule:
                 schedule.append(the_course)
 
-        # print(schedule)
-    #schedule.sort(key=lambda course: course[0])
+    schedule.sort(key=lambda course: course[0])
 
     return schedule
