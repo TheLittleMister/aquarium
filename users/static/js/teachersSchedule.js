@@ -60,7 +60,7 @@ function getSchedule(user_id) {
 				};
 
 				for (var i = 2; i < response["schedule"][scheduleID].length; i++) {
-					if (response["schedule"][scheduleID][i] !== ["-"]) {
+					if (response["schedule"][scheduleID][i] !== "-") {
 						$("#modalsDiv")
 							.append(`<div class="modal" id="scheduleModal${scheduleID}${i}" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">\
 						<div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">\

@@ -50,6 +50,5 @@ $(function () {
 		$("#id_height").val(cropData["height"]);
 		$("#id_width").val(cropData["width"]);
 		$("#formUpload").submit();
-		console.log("HI");
 	});
 });

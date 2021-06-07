@@ -40,7 +40,7 @@ function getSchedule(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			// console.log(response);
+			console.log(response);
 			for (
 				var scheduleID = 0;
 				scheduleID < response["schedule"].length;
@@ -60,7 +60,7 @@ function getSchedule(user_id) {
 				};
 
 				for (var i = 2; i < response["schedule"][scheduleID].length; i++) {
-					if (response["schedule"][scheduleID][i] !== ["-"]) {
+					if (response["schedule"][scheduleID][i] !== "-") {
 						$("#modalsDiv")
 							.append(`<div class="modal" id="scheduleModal${scheduleID}${i}" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">\
 						<div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">\
@@ -124,7 +124,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
                                                 </td>\
-                                                <td scope="row" data-label="Color">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Color">\
                                                     <button onclick="changeStudentColor(${response["schedule"][scheduleID][i][objID]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i][objID]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
                                                 </td>\
                                             </tr>`);
@@ -158,7 +158,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
                                                 </td>\
-												<td scope="row" data-label="Color">\
+												<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Color">\
 													<button onclick="changeStudentColor(${response["schedule"][scheduleID][i]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
                                                 </td>\
 
@@ -194,7 +194,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Sábado">\
                                                     ${response["schedule"][scheduleID][7]}\
                                                 </td>\
-                                                <td scope="row" data-label="Domingo">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Domingo">\
                                                     ${response["schedule"][scheduleID][8]}\
                                                 </td>\
                                             </tr>`);
@@ -289,7 +289,7 @@ function load_students_levels(levelID) {
 									<td scope="row" data-label="Tel/Cel (1)">\
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (2)">\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
@@ -346,7 +346,7 @@ $("#levelSearch").keyup(
 									<td scope="row" data-label="Tel/Cel (1)">\
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (2)">\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
@@ -365,7 +365,7 @@ $("#levelSearch").keyup(
 									<td scope="row" data-label="Tel/Cel (1)">\
 										<a href="#">-</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (2)">\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
 										<a href="#">-</a>\
 									</td>\
 								</tr>`);
