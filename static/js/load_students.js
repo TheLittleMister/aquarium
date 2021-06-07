@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", load_students);
 
 $(window).scroll(function () {
 	if (
-		$(window).scrollTop() + $(window).height() == $(document).height() - 200 &&
+		$(window).scrollTop() + $(window).height() >= $(document).height() - 200 &&
 		all_students === false
 	) {
 		load_students();
