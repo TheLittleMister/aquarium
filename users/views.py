@@ -256,7 +256,11 @@ def cancel_request(request, user_id):
         user.newrequest = False
         user.save()
 
-    return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
+    if request.user.is_admin:
+        return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
+
+    else:
+        return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
 
 
 @staff_member_required(login_url=mysite)
@@ -278,7 +282,7 @@ def approve_request(request, user_id):
     user.newrequest = False
     user.save()
 
-    return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
+    return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
 
 # TEACHER FUNCTIONS
 
