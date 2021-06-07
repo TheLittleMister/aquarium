@@ -1,5 +1,5 @@
 // var mysite = "http://127.0.0.1:8000";
-var mysite = "https://aquariumschool.co";
+// var mysite = "https://aquariumschool.co";
 
 // ---------THIS FUNCTION DELAYS OUR AJAX DABATASE QUERIES----------
 function delay(fn, ms) {
