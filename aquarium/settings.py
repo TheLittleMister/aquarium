@@ -14,8 +14,8 @@ from pathlib import Path
 import os
 import json
 
-# with open('/etc/config.json') as config_file:
-#     config = json.load(config_file)
+with open('/etc/config.json') as config_file:
+    config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,13 +26,13 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "config.get('SECRET_KEY')"
+SECRET_KEY = config.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '172.104.13.4',
-                 'aquariumschool.co', 'www.aquariumschool.co', '127.0.0.1']
+                 'aquariumschool.co', 'www.aquariumschool.co']
 
 
 # Application definition
@@ -50,11 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
 ]
-
 # MIDDLEWARE_CLASSES = [
 #    'djangosecure.middleware.SecurityMiddleware',
 # ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -91,23 +89,17 @@ AUTH_USER_MODEL = "users.Account"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'aquarium',
-#         'USER': 'franklin',
-#         'PASSWORD': config.get('DBPASSWORD'),
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'aquarium',
+        'USER': 'franklin',
+        'PASSWORD': config.get('DBPASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -175,19 +167,22 @@ RECAPTCHA_SITE_KEY = "6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"
 RECAPTCHA_SECRET_KEY = "6LfvUi4aAAAAAMNeZ1Uaradte3Rcg8V9F66bNpCH"
 
 # AUTHENTICATION (LOGIN)
+
 AUTHENTICATION_BACKENDS = ('users.backends.AuthBackend',)
 
 
 # EMAIL STMP
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aquariumschool@gmail.com'
-EMAIL_HOST_PASSWORD = "config.get('GPASS')"
+EMAIL_HOST_PASSWORD = config.get('GPASS')
 EMAIL_USE_TLS = True
 SERVER_EMAIL = 'aquariumschool@gmail.com'
 DEFAULT_FROM_EMAIL = 'aquariumschool@gmail.com'
 
 
 # CRISPY
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
