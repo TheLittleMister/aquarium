@@ -126,7 +126,7 @@
                     <br>
                     {% endfor %}
                     <br>
-                    <a class="btn btn-warning" href="{% url 'courses:print_course' course.id %}">Imprimir</a>
+                    <a class="btn btn-warning" href="{% url 'courses:print_course' course.id %}" onclick="this.style.display = 'none';">Imprimir</a>
                     <br><br>
                 </div>
             </div><br>

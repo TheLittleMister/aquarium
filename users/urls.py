@@ -21,6 +21,9 @@ urlpatterns = [
     path('create_schedule/', create_schedule, name="create_schedule"),
     path('redirection/', redirection, name="redirection"),
 
+    path('change_student_color/<int:user_id>',
+         change_student_color, name="change_student_color"),
+
     # USER AUTHENTICATION PATHS
     path('available/', available, name="available"),
     path('login/', login_view, name="login"),

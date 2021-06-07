@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 function showlevels() {
 	if (document.querySelector("#levelsDiv").style.display === "none") {
@@ -14,9 +14,8 @@ function showlevels() {
 function levels(userID) {
 	// console.log(userID);
 
-	document.querySelector("#levelsDiv").style.display = "block";
 	document.querySelector("#levelsBtn").style.display = "none";
-	document.querySelector("#showLevelsBtn").style.visibility = "visible";
+	document.querySelector("#loadStudentLevels").classList.add("loader");
 
 	fetch(`${mysite}/courses/levels/${userID}`)
 		.then((response) => response.json())
@@ -61,7 +60,7 @@ function levels(userID) {
 								<a class="btn btn-sm btn-primary mb-2" href="${ajaxResponse["certificate_img"]}">CERTIFICADO PNG</a>\
 								<a class="btn btn-sm btn-primary mb-2" href="${ajaxResponse["certificate_pdf"]}">CERTIFICADO PDF</a>\
                                 <br>\
-								<button onclick="deleteCertificate(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-danger mb-2" href="#">BORRAR CERTIFICADO</button>\
+								<button onclick="this.style.display='none'; deleteCertificate(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-danger mb-2" href="#">BORRAR CERTIFICADO</button>\
                                 <br>\
                                 <div class="w3-white w3-round-xlarge">\
                                     <div class="w3-round-xlarge w3-center w3-orange" style="height:24px;width:${ajaxResponse["percentage"]}%">${ajaxResponse["percentage"]}%</div>\
@@ -75,7 +74,7 @@ function levels(userID) {
                                     <br>\
                                     <strong>Asistencias:</strong> ${ajaxResponse["attendances_count"]}/${ajaxResponse["levelAttendances"]}\
                                 </div>\
-								<button onclick="generateCertificate(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-warning mb-2" href="#">GENERAR CERTIFICADO</button>\
+								<button onclick="this.style.display='none'; generateCertificate(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-warning mb-2" href="#">GENERAR CERTIFICADO</button>\
                                 <br>\
                                 <div class="w3-white w3-round-xlarge">\
                                     <div class="w3-round-xlarge w3-center w3-orange" style="height:24px;width:${ajaxResponse["percentage"]}%">${ajaxResponse["percentage"]}%</div>\
@@ -85,6 +84,9 @@ function levels(userID) {
 					});
 				}
 			}
+			document.querySelector("#loadStudentLevels").classList.remove("loader");
+			document.querySelector("#levelsDiv").style.display = "block";
+			document.querySelector("#showLevelsBtn").style.visibility = "visible";
 		});
 }
 
@@ -145,6 +147,7 @@ $("#levelForm").submit(function (e) {
 			// console.log(response);
 
 			levels(response["userID"]);
+			document.querySelector("#loadStudentLevels").classList.remove("loader");
 
 			if (response["edited"] === true) {
 				document.querySelector("#btnLevelLoader").classList.remove("loader");

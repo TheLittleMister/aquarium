@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 // ---------THIS FUNCTION DELAYS OUR AJAX DABATASE QUERIES----------
 function delay(fn, ms) {
@@ -80,6 +80,7 @@ function getSchedule(user_id) {
 												<th scope="col">Apellidos</th>\
 												<th scope="col">Tel/Cel (1)</th>\
 												<th scope="col">Tel/Cel (2)</th>\
+												<th scope="col">Color</th>\
 											</tr>\
 										</thead>\
 										<tbody id="scheduleModalBody${scheduleID}${i}"></tbody>\
@@ -94,6 +95,18 @@ function getSchedule(user_id) {
 								objID < response["schedule"][scheduleID][i].length;
 								objID++
 							) {
+								var color = "lightgrey";
+
+								if (
+									response["schedule"][scheduleID][i][objID][
+										"color__hex_code"
+									] !== null
+								) {
+									color =
+										response["schedule"][scheduleID][i][objID][
+											"color__hex_code"
+										];
+								}
 								// console.log(response["schedule"][scheduleID][i][objID]);
 								$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
@@ -111,6 +124,9 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
                                                 </td>\
+                                                <td scope="row" data-label="Color">\
+                                                    <button onclick="changeStudentColor(${response["schedule"][scheduleID][i][objID]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i][objID]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
+                                                </td>\
                                             </tr>`);
 							}
 
@@ -118,6 +134,14 @@ function getSchedule(user_id) {
 								i
 							] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
 						} else {
+							var color = "lightgrey";
+
+							if (
+								response["schedule"][scheduleID][i]["color__hex_code"] !== null
+							) {
+								color = response["schedule"][scheduleID][i]["color__hex_code"];
+							}
+
 							$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
@@ -134,6 +158,10 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
                                                 </td>\
+												<td scope="row" data-label="Color">\
+													<button onclick="changeStudentColor(${response["schedule"][scheduleID][i]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
+                                                </td>\
+
                                             </tr>`);
 
 							// response["schedule"][scheduleID][
@@ -189,6 +217,18 @@ function showSchedule() {
 		document.querySelector("#studentSchedule").style.display = "none";
 		document.querySelector("#showScheduleButton").innerHTML = "Abrir";
 	}
+}
+
+function changeStudentColor(userID) {
+	fetch(`${mysite}/users/change_student_color/${userID}`)
+		.then((response) => response.json())
+		.then((response) => {
+			document
+				.querySelectorAll(`#studentColorBtn${userID}`)
+				.forEach(function (button) {
+					button.style.backgroundColor = response["color"];
+				});
+		});
 }
 
 // LEVEL LOAD FUNCTIONS
@@ -440,7 +480,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Recuperó">\
                                                     ${response["recovered"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Puede Recuperar">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);

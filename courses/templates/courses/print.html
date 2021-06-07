@@ -8,7 +8,7 @@
     document.addEventListener("DOMContentLoaded", () => {
 
         async function print() {
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 2000));
             window.print();
         }
 
@@ -141,7 +141,7 @@
                                                 <span style="font-size: small; font-weight: bold;">RECUPERA</span>
                                                 {% endif %}
                                                 {% if attendance.note %}
-                                                
+
                                                 <span style="font-style: italic; font-size: small;">
                                                     {{ attendance.note }}
                                                 </span>
@@ -178,7 +178,7 @@
                                                 <span style="font-size: small; font-weight: bold;">RECUPERA</span>
                                                 {% endif %}
                                                 {% if attendance.note %}
-                                                
+
                                                 <span style="font-style: italic; font-size: small;">
                                                     {{ attendance.note }}
                                                 </span>

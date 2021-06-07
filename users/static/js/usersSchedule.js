@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 function tConvert(time) {
 	// Check correct time format and split into components
@@ -65,7 +65,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Sábado">\
                                                     ${response["schedule"][scheduleID][7]}\
                                                 </td>\
-                                                <td scope="row" data-label="Domingo">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Domingo">\
                                                     ${response["schedule"][scheduleID][8]}\
                                                 </td>\
                                             </tr>`);
@@ -150,7 +150,7 @@ function studentStatistics(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			// console.log(response);
+			console.log(response);
 			document
 				.querySelector("#loadStudentStatistics")
 				.classList.remove("loader");
@@ -168,7 +168,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Recuperó">\
                                                     ${response["recovered"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Puede Recuperar">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);

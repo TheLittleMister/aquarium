@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 function showlevels() {
 	if (document.querySelector("#levelsDiv").style.display === "none") {
@@ -14,6 +14,7 @@ function showlevels() {
 function levels(userID) {
 	// console.log(userID);
 	document.querySelector("#levelsBtn").style.display = "none";
+	document.querySelector("#loadStudentLevels").classList.add("loader");
 
 	fetch(`${mysite}/courses/levels/${userID}`)
 		.then((response) => response.json())
@@ -69,6 +70,7 @@ function levels(userID) {
 					});
 				}
 			}
+			document.querySelector("#loadStudentLevels").classList.remove("loader");
 			document.querySelector("#levelsDiv").style.display = "block";
 			document.querySelector("#showLevelsBtn").style.visibility = "visible";
 		});

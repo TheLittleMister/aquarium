@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import datetime
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, response
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -10,13 +10,15 @@ from users.models import *
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Q
+from PIL import Image
 
 from courses.forms import *
 from .forms import *
 from .utils import *
+from .labels import *
 
-# mysite = "https://aquariumschool.co/"
-mysite = "http://172.0.0.1:8000/"
+mysite = "https://aquariumschool.co/"
+# mysite = "http://172.0.0.1:8000/"
 
 # USER AUTHENTICATION
 
@@ -133,8 +135,13 @@ def profile(request, user_id):
     if request.user.is_authenticated:
 
         if request.user.is_teacher or request.user.is_admin or request.user == user:
+
+            age = round((datetime.date.today() - user.date_birth).days //
+                        365.25) if user.date_birth else None
+
             return render(request, 'users/profile.html', {
                 'user': user,
+                'age': age,
                 'profileForm': ProfileForm(instance=user),
                 'userBar': True,
             })
@@ -284,6 +291,29 @@ def create_schedule(request):
             date__gte=datetime.datetime.now()).order_by('date', 'start_time')
 
         return JsonResponse({'schedule': get_schedule(courses)}, status=200)
+
+    else:
+        return JsonResponse({"Privilege": "Restricted"}, status=200)
+
+
+def change_student_color(request, user_id):
+
+    response = dict()
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        student = Account.objects.get(pk=user_id)
+
+        color_id = student.color.id if student.color else 0
+
+        student.color = Color.objects.get(
+            pk=(color_id + 1)) if Color.objects.filter(pk=(color_id + 1)).exists() else None
+
+        response["color"] = student.color.hex_code if student.color else 'lightgrey'
+
+        student.save()
+
+        return JsonResponse(response, status=200)
 
     else:
         return JsonResponse({"Privilege": "Restricted"}, status=200)

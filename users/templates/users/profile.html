@@ -58,8 +58,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Atrás</button>
-                <button type="submit" class="btn btn-outline-dark js-crop-and-upload">Subir Foto</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atrás</button>
+                <button type="submit" class="btn btn-outline-primary js-crop-and-upload">Subir Foto</button>
             </div>
         </div>
     </div>
@@ -83,6 +83,7 @@
                     <input type="hidden" name="userID" value="{{ user.id }}">
                     <input type="date" name="date" class="dateinput form-control" id="attendance_date" required> <br>
                     <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
+                    <div id="searchDateLoader"></div>
                 </form>
                 <!-- ------------ -->
             </div>
@@ -222,7 +223,7 @@
                     <p><i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.id_type }}: {{ user.identity_document }}</p>
                     <p><i class="fas fa-venus-mars fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.sex }}
                     </p>
-                    <p><i class="fas fa-birthday-cake fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.date_birth }}</p>
+                    <p><i class="fas fa-birthday-cake fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.date_birth }} - Edad: {{ age }}</p>
                     <p><i class="fas fa-envelope fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.email }}</p>
                     <p><i class="fas fa-user fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>Acudiente: {{ user.parent }}</p>
                     <p><i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i>{{ user.phone_1 }}</p>
@@ -230,7 +231,7 @@
                     <br>
                     {% if user.newrequest %}
                     <h3>Por aprobar:</h3>
-                    <a style="float: right;" type="button" class="btn btn-outline-danger rounded-pill" href="{% url 'users:cancel_request' user.id %}">Cancelar</a>
+                    <a onclick="this.style.display = 'none';" style="float: right;" type="button" class="btn btn-outline-danger rounded-pill" href="{% url 'users:cancel_request' user.id %}">Cancelar</a>
                     <br>
                     <p><i class="fas fa-signature fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.first_name_1 }} {{ user.last_name_1 }}</p>
 
@@ -327,16 +328,24 @@
                     <button id="levelsBtn" class="btn btn-outline-primary" onclick="levels({{ user.id }});">Abrir</button>
                     <button id="showLevelsBtn" class="btn btn-outline-primary" onclick="showlevels();" style="visibility: hidden;">Cerrar</button>
                     {% endif %}
-
                 </h2>
+                <div id="loadStudentLevels"></div>
                 {% if user.is_teacher %}
                 <div id="levelsDiv" class="w3-container" style="display: block;">
                     {% else %}
                     <div id="levelsDiv" class="w3-container" style="display: none;">
                         {% endif %}
                         <div class="w3-row-padding">
-                            <div class="w3-content">
 
+                            <div class="w3-half">
+                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación Básica</h2>
+                                <div id="level11" class="w3-container">
+                                    <button onclick="setLevel(11);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                </div>
+                                <br>
+                            </div>
+
+                            <div class="w3-half">
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación Inicial</h2>
                                 <div id="level1" class="w3-container">
                                     <button onclick="setLevel(1);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>

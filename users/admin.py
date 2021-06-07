@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Account, Id_Type, Sex, Nationality
+from .labels import *
 
 # Register your models here.
 
@@ -20,3 +21,4 @@ admin.site.register(Account, AccountAdmin)
 admin.site.register(Id_Type)
 admin.site.register(Sex)
 admin.site.register(Nationality)
+admin.site.register(Color)

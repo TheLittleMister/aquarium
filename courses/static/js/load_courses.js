@@ -191,6 +191,8 @@ $("#courseSearchForm").submit(function (e) {
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchCoursesTableBody").innerHTML = "";
+			document.querySelector("#searchDateButton").style.display = "none";
+			document.querySelector("#searchDateLoader").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -235,9 +237,11 @@ $("#courseSearchForm").submit(function (e) {
 			} else {
 				$("#searchCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No.">-</td>\
-                                                <td scope="row" data-label="Clase">SIN RESULTADOS</td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">SIN RESULTADOS</td>\
                                             </tr>`);
 			}
+			document.querySelector("#searchDateLoader").classList.remove("loader");
+			document.querySelector("#searchDateButton").style.display = "block";
 		},
 	});
 });

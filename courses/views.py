@@ -5,9 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.conf import settings
 from django.db.models import Q
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
+from PIL import Image, ImageFont, ImageDraw
 import datetime
 from io import BytesIO
 from django.core.files import File
@@ -20,11 +18,12 @@ from users.models import *
 # FORMS
 from .forms import *
 from .utils import *
+from .labels import *
 
 # Create your views here.
 
-# mysite = "https://aquariumschool.co/"
-mysite = "http://172.0.0.1:8000/"
+mysite = "https://aquariumschool.co/"
+# mysite = "http://172.0.0.1:8000/"
 
 # USERS FUNCTIONS
 
@@ -109,8 +108,12 @@ def student(request, student_id):
 
     student = Account.objects.get(pk=student_id)
 
+    age = round((datetime.date.today() -
+                 student.date_birth).days // 365.25) if student.date_birth else None
+
     return render(request, 'courses/student.html', {
         'user': student,
+        'age': age,
         'studentForm': StudentForm(instance=student),
         'coursesForm': CoursesForm(initial={
             'courses': student.courses.filter(

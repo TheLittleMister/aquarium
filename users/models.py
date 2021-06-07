@@ -1,28 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from .labels import *
 
 # Create your models here.
-
-
-class Id_Type(models.Model):
-    id_type = models.CharField(max_length=60)
-
-    def __str__(self):
-        return f"{self.id_type}"
-
-
-class Sex(models.Model):
-    sex_name = models.CharField(max_length=60)
-
-    def __str__(self):
-        return f"{self.sex_name}"
-
-
-class Nationality(models.Model):
-    nationality_name = models.CharField(max_length=60)  # identity_document
-
-    def __str__(self):
-        return f"{self.nationality_name}"
 
 
 class Manager(BaseUserManager):
@@ -46,7 +26,7 @@ class Manager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
-    # verbose_name="username"
+
     username = models.CharField("Usuario", max_length=60, unique=True)
     email = models.EmailField("Correo Electrónico",
                               max_length=60, unique=True, null=True, blank=True)
@@ -68,6 +48,9 @@ class Account(AbstractBaseUser):
                             related_name="users", null=True, blank=True, verbose_name="Sexo Biológico")
     date_birth = models.DateField("Fecha de Nacimiento", null=True, blank=True)
     note = models.CharField("Nota", max_length=280, blank=True, null=True)
+
+    color = models.ForeignKey(
+        Color, on_delete=models.SET_NULL, related_name="users", null=True, blank=True)
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
@@ -101,7 +84,7 @@ class Account(AbstractBaseUser):
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
-    def has_perm(self, perm,  obj=None):
+    def has_perm(self, perm, obj=None):
         return self.is_admin
 
     def has_module_perms(self, app_label):

@@ -16,11 +16,16 @@ def get_schedule(courses):
             if row_course[0] == course.start_time and row_course[1] == course.end_time:
 
                 row_course[2 + weekday] += list(course.students.all().values(
-                    'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
+                    'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'color__hex_code'))
 
-                row_course[2 + weekday] = [i for i in row_course[2 + weekday] if i != "-"]
+                row_course[2 + weekday] = [i for i in row_course[2 +
+                                                                 weekday] if i != "-"]
+
                 row_course[2 + weekday] = [dict(s) for s in set(frozenset(d.items())
-                                                                 for d in row_course[2 + weekday])]
+                                                                for d in row_course[2 + weekday])]
+
+                row_course[2 + weekday] = sorted(
+                    row_course[2 + weekday], key=lambda k: k['color__hex_code'] if k['color__hex_code'] else 'z')
 
                 check = True
 
@@ -34,7 +39,10 @@ def get_schedule(courses):
             the_course.append(course.start_time)
             the_course.append(course.end_time)
             week[weekday] = list(course.students.all().values(
-                'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
+                'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'color__hex_code'))
+
+            week[weekday] = sorted(
+                week[weekday], key=lambda k: k['color__hex_code'] if k['color__hex_code'] else 'z')
 
             for i in range(7):  # 7 - Sunday
                 the_course.append(week[i])  # Week days

@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 /* Template: Aria - Business HTML Landing Page Template
    Author: Inovatik
@@ -434,6 +434,8 @@ $(document).ready(function () {
 			data: form.serialize(),
 			beforeSend: function () {
 				document.querySelector("#loginMessage").innerHTML = "";
+				document.querySelector("#loginButton").style.display = "none";
+				document.querySelector("#loadLogin").classList.add("loader");
 			},
 			error: function (error) {
 				console.error(error);
@@ -444,6 +446,8 @@ $(document).ready(function () {
 				} else {
 					document.querySelector("#loginMessage").innerHTML =
 						"Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";
+					document.querySelector("#loadLogin").classList.remove("loader");
+					document.querySelector("#loginButton").style.display = "block";
 				}
 			},
 		});

@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 // START LOAD FUTURE ATTENDANCES
 
@@ -242,6 +242,8 @@ $("#attendanceSearchForm").submit(function (e) {
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchAttendancesTableBody").innerHTML = "";
+			document.querySelector("#searchDateButton").style.display = "none";
+			document.querySelector("#searchDateLoader").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -313,6 +315,8 @@ $("#attendanceSearchForm").submit(function (e) {
 												</td>\
                                             </tr>`);
 			}
+			document.querySelector("#searchDateLoader").classList.remove("loader");
+			document.querySelector("#searchDateButton").style.display = "block";
 		},
 	});
 });

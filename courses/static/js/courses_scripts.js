@@ -1,5 +1,5 @@
-var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
 
 // ---------THIS FUNCTION DELAYS OUR AJAX DABATASE QUERIES----------
 function delay(fn, ms) {
@@ -708,6 +708,8 @@ $("#attendanceSearchForm").submit(function (e) {
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchAttendancesTableBody").innerHTML = "";
+			document.querySelector("#searchDateButton").style.display = "none";
+			document.querySelector("#searchDateLoader").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -826,9 +828,11 @@ $("#attendanceSearchForm").submit(function (e) {
                                                 </td>\
                                                 <td scope="row" data-label="Nota">-\
                                                 </td>\
-                                                <td scope="row" data-label="Editar">-</td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Editar">-</td>\
                                             </tr>`);
 			}
+			document.querySelector("#searchDateLoader").classList.remove("loader");
+			document.querySelector("#searchDateButton").style.display = "block";
 		},
 	});
 });
@@ -948,7 +952,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Sábado">\
                                                     ${response["schedule"][scheduleID][7]}\
                                                 </td>\
-                                                <td scope="row" data-label="Domingo">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Domingo">\
                                                     ${response["schedule"][scheduleID][8]}\
                                                 </td>\
                                             </tr>`);
@@ -1003,7 +1007,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Recuperó">\
                                                     ${response["recovered"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Puede Recuperar">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);
@@ -1021,7 +1025,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Separado">\
                                                     ${response["sep"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Total">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Total">\
                                                     ${response["total"]}\
                                                 </td>\
                                             </tr>`);
@@ -1079,7 +1083,7 @@ function get_inconsistencies() {
                                                 <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
-                                                <td id="tdException${response["students"][studentID]["id"]}" scope="row" data-label="Excepción">\
+                                                <td style="border-bottom: 2px solid steelblue;" id="tdException${response["students"][studentID]["id"]}" scope="row" data-label="Excepción">\
                                                     <button onclick="changeException(${response["students"][studentID]["id"]});" class="btn btn-sm ${btnExceptionClass}">${btnException}</button>\
                                                 </td>\
                                             </tr>`);
@@ -1131,7 +1135,7 @@ function get_plus() {
                                                 <td scope="row" data-label="Tel/Cel (1)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
-                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
@@ -1177,7 +1181,7 @@ function get_change() {
                                                 <td scope="row" data-label="Tel/Cel (1)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
-                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
@@ -1213,7 +1217,7 @@ function get_teachers() {
                                                 <td scope="row" data-label="Tel/Cel (1)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
-                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
@@ -1226,3 +1230,10 @@ function setDefaultPassword() {
 	$("#id_password1").val("AquariumSchool");
 	$("#id_password2").val("AquariumSchool");
 }
+
+$("#coursePrintForm").submit(function () {
+	document.querySelector("#printDateButton").innerHTML = "";
+	document.querySelector("#printDateButton").classList.remove("btn");
+	// document.querySelector("#printDateButton").classList.remove("btn-warning");
+	document.querySelector("#printDateButton").classList.add("loader");
+});
