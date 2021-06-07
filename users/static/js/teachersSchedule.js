@@ -133,7 +133,7 @@ function getSchedule(user_id) {
 							response["schedule"][scheduleID][
 								i
 							] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
-						} else {
+						} else if (response["schedule"][scheduleID][i].length === 1) {
 							var color = "lightgrey";
 
 							if (
