@@ -89,7 +89,7 @@ function getSchedule(user_id) {
 							</div>\
 						</div>\
 					</div>`);
-						if (response["schedule"][scheduleID][i].length > 1) {
+						if (response["schedule"][scheduleID][i] !== ["-"]) {
 							for (
 								var objID = 0;
 								objID < response["schedule"][scheduleID][i].length;
@@ -129,40 +129,6 @@ function getSchedule(user_id) {
                                                 </td>\
                                             </tr>`);
 							}
-
-							response["schedule"][scheduleID][
-								i
-							] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
-						} else if (response["schedule"][scheduleID][i].length === 1) {
-							var color = "lightgrey";
-
-							if (
-								response["schedule"][scheduleID][i]["color__hex_code"] !== null
-							) {
-								color = response["schedule"][scheduleID][i]["color__hex_code"];
-							}
-
-							$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
-                                                <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
-                                                </td>\
-                                                <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["first_name"]}</a>\
-                                                </td>\
-                                                <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["last_name"]}</a>\
-                                                </td>\
-                                                <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_1"]}</a>\
-                                                </td>\
-                                                <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
-                                                </td>\
-												<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Color">\
-													<button onclick="changeStudentColor(${response["schedule"][scheduleID][i]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
-                                                </td>\
-
-                                            </tr>`);
 
 							response["schedule"][scheduleID][
 								i
