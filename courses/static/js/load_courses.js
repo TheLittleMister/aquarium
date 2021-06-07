@@ -1,5 +1,5 @@
 // var mysite = "http://127.0.0.1:8000";
-var mysite = "https://aquariumschool.co";
+// var mysite = "https://aquariumschool.co";
 
 // Start with first past course
 let pastCourseCounter = 0;
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", load_past_courses);
 
 $(window).scroll(function () {
 	if (
-		$(window).scrollTop() + $(window).height() == $(document).height() &&
+		$(window).scrollTop() + $(window).height() == $(document).height() - 200 &&
 		allPastCoursesLoaded === false
 	) {
 		load_past_courses();
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", load_future_courses);
 
 $(window).scroll(function () {
 	if (
-		$(window).scrollTop() + $(window).height() == $(document).height() &&
+		$(window).scrollTop() + $(window).height() == $(document).height() - 200 &&
 		allFutureCoursesLoaded === false
 	) {
 		load_future_courses();

@@ -1,5 +1,5 @@
 // var mysite = "http://127.0.0.1:8000";
-var mysite = "https://aquariumschool.co";
+// var mysite = "https://aquariumschool.co";
 
 // START LOAD FUTURE ATTENDANCES
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", load_future_attendances);
 
 $(window).scroll(function () {
 	if (
-		$(window).scrollTop() + $(window).height() == $(document).height() &&
+		$(window).scrollTop() + $(window).height() == $(document).height() - 200 &&
 		allFutureAttendancesLoaded === false
 	) {
 		load_future_attendances();
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", load_past_attendances);
 
 $(window).scroll(function () {
 	if (
-		$(window).scrollTop() + $(window).height() == $(document).height() &&
+		$(window).scrollTop() + $(window).height() == $(document).height() - 200 &&
 		allPastAttendancesLoaded === false
 	) {
 		load_past_attendances();
