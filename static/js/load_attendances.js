@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 // START LOAD FUTURE ATTENDANCES
 
 // Start with first future attendance
@@ -38,7 +41,7 @@ function load_future_attendaces() {
 	// Fetch new future attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_future_attendances/",
+		url: `${mysite}/courses/load_future_attendances/`,
 		data: {
 			start: start,
 			end: end,
@@ -110,7 +113,7 @@ function load_future_attendaces() {
 
 				$("#futureAttendancesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Clase"> \
-                                                    <a id="courseName${response["attendances"][studentID]["course__id"]}" href="https://aquariumschool.co/courses/course/${response["attendances"][studentID]["course__id"]}"></a> <br>\
+                                                    <a id="courseName${response["attendances"][studentID]["course__id"]}" href="${mysite}/courses/course/${response["attendances"][studentID]["course__id"]}"></a> <br>\
 													<span id="count${response["attendances"][studentID]["course__id"]}" class="badge bg-info" style="font-size: small; color: white;"></span>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="cycle${response["attendances"][studentID]["id"]}" class="badge bg-warning" style="font-size: small;">${cycle}</span>\
@@ -133,7 +136,7 @@ function load_future_attendaces() {
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -194,7 +197,7 @@ function load_past_attendances() {
 	// Fetch new past attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_past_attendances/",
+		url: `${mysite}/courses/load_past_attendances/`,
 		data: {
 			start: start,
 			end: end,
@@ -266,7 +269,7 @@ function load_past_attendances() {
 
 				$("#pastAttendancesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Clase"> \
-                                                    <a id="courseName${response["attendances"][studentID]["course__id"]}" href="https://aquariumschool.co/courses/course/${response["attendances"][studentID]["course__id"]}"></a> <br>\
+                                                    <a id="courseName${response["attendances"][studentID]["course__id"]}" href="${mysite}/courses/course/${response["attendances"][studentID]["course__id"]}"></a> <br>\
 													<span id="count${response["attendances"][studentID]["course__id"]}" class="badge bg-info" style="font-size: small; color: white;"></span>\
 													<span id="cycle${response["attendances"][studentID]["id"]}" class="badge bg-warning" style="font-size: small;">${cycle}</span>\
 													<span id="day${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
@@ -288,7 +291,7 @@ function load_past_attendances() {
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {

@@ -1,3 +1,6 @@
+var mysite = "http://127.0.0.1:8000";
+// var mysite = "https://aquariumschool.co";
+
 // Start with first past course
 let pastCourseCounter = 0;
 
@@ -33,7 +36,7 @@ function load_past_courses() {
 
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_past_courses/",
+		url: `${mysite}/courses/load_past_courses/`,
 		data: {
 			start: start,
 			end: end,
@@ -60,15 +63,15 @@ function load_past_courses() {
 			) {
 				$("#pastCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-                                                    <a id="count${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+                                                    <a id="count${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
-                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
                                                 </td>\
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["courses"][courseID]["id"]}`
+					`${mysite}/courses/course_info/${response["courses"][courseID]["id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -118,7 +121,7 @@ function load_future_courses() {
 
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_future_courses/",
+		url: `${mysite}/courses/load_future_courses/`,
 		data: {
 			start: start,
 			end: end,
@@ -147,16 +150,16 @@ function load_future_courses() {
 			) {
 				$("#futureCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+													<a id="count${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
 													<span id="today${response["courses"][courseID]["id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
-                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
                                                 </td>\
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["courses"][courseID]["id"]}`
+					`${mysite}/courses/course_info/${response["courses"][courseID]["id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -184,10 +187,12 @@ $("#courseSearchForm").submit(function (e) {
 
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/search_course/",
+		url: `${mysite}/courses/search_course/`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchCoursesTableBody").innerHTML = "";
+			document.querySelector("#searchDateButton").style.display = "none";
+			document.querySelector("#searchDateLoader").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -203,16 +208,16 @@ $("#courseSearchForm").submit(function (e) {
 				) {
 					$("#searchCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+													<a id="count${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
 													<span id="today${response["courses"][courseID]["id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
-                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}"></a>\
+                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}"></a>\
                                                 </td>\
                                             </tr>`);
 
 					fetch(
-						`https://aquariumschool.co/courses/course_info/${response["courses"][courseID]["id"]}`
+						`${mysite}/courses/course_info/${response["courses"][courseID]["id"]}`
 					)
 						.then((data) => data.json())
 						.then((data) => {
@@ -232,9 +237,11 @@ $("#courseSearchForm").submit(function (e) {
 			} else {
 				$("#searchCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No.">-</td>\
-                                                <td scope="row" data-label="Clase">SIN RESULTADOS</td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">SIN RESULTADOS</td>\
                                             </tr>`);
 			}
+			document.querySelector("#searchDateLoader").classList.remove("loader");
+			document.querySelector("#searchDateButton").style.display = "block";
 		},
 	});
 });
@@ -248,7 +255,7 @@ $("#createCoursesForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: "https://aquariumschool.co/courses/create_courses/",
+		url: `${mysite}/courses/create_courses/`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#createCoursesButton").style.display = "none";
@@ -293,10 +300,10 @@ $("#createCoursesForm").submit(function (e) {
 				) {
 					$("#createdCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}">${response["courses"][courseID]["count"]}</a>\
+													<a id="count${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}">${response["courses"][courseID]["count"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
-                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="https://aquariumschool.co/courses/course/${response["courses"][courseID]["id"]}">${response["courses"][courseID]["str"]}</a>\
+                                                    <a id="courseName${response["courses"][courseID]["id"]}" href="${mysite}/courses/course/${response["courses"][courseID]["id"]}">${response["courses"][courseID]["str"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}

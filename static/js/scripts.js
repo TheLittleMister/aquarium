@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 /* Template: Aria - Business HTML Landing Page Template
    Author: Inovatik
    Created: Jul 2019
@@ -427,10 +430,12 @@ $(document).ready(function () {
 
 		$.ajax({
 			type: "POST",
-			url: "https://aquariumschool.co/users/login/",
+			url: `${mysite}/users/login/`,
 			data: form.serialize(),
 			beforeSend: function () {
 				document.querySelector("#loginMessage").innerHTML = "";
+				document.querySelector("#loginButton").style.display = "none";
+				document.querySelector("#loadLogin").classList.add("loader");
 			},
 			error: function (error) {
 				console.error(error);
@@ -441,6 +446,8 @@ $(document).ready(function () {
 				} else {
 					document.querySelector("#loginMessage").innerHTML =
 						"Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";
+					document.querySelector("#loadLogin").classList.remove("loader");
+					document.querySelector("#loginButton").style.display = "block";
 				}
 			},
 		});
@@ -462,7 +469,7 @@ $(document).ready(function () {
 
 // 			$.ajax({
 // 				type: "POST",
-// 				url: "https://aquariumschool.co/users/login/",
+// 				url: `${mysite}/users/login/`,
 // 				data: form.serialize(),
 // 				beforeSend: function () {
 // 					document.querySelector("#loginMessage").innerHTML = "";
@@ -489,7 +496,7 @@ $("#id_username").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/available/",
+			url: `${mysite}/users/available/`,
 			data: {
 				username: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -544,7 +551,7 @@ $("#id_email").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/available/",
+			url: `${mysite}/users/available/`,
 			data: {
 				email: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -599,7 +606,7 @@ $("#id_identity_document").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/available/",
+			url: `${mysite}/users/available/`,
 			data: {
 				identity_document: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -664,7 +671,7 @@ $("#id_identity_document_1").keyup(
 	delay(function () {
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/available/",
+			url: `${mysite}/users/available/`,
 			data: {
 				identity_document: $(this).val(),
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),

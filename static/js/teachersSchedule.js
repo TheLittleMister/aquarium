@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 // ---------THIS FUNCTION DELAYS OUR AJAX DABATASE QUERIES----------
 function delay(fn, ms) {
 	let timer = 0;
@@ -25,7 +28,7 @@ function tConvert(time) {
 function getSchedule(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/users/create_schedule/",
+		url: `${mysite}/users/create_schedule/`,
 		data: {
 			userID: user_id,
 		},
@@ -77,6 +80,7 @@ function getSchedule(user_id) {
 												<th scope="col">Apellidos</th>\
 												<th scope="col">Tel/Cel (1)</th>\
 												<th scope="col">Tel/Cel (2)</th>\
+												<th scope="col">Color</th>\
 											</tr>\
 										</thead>\
 										<tbody id="scheduleModalBody${scheduleID}${i}"></tbody>\
@@ -91,22 +95,37 @@ function getSchedule(user_id) {
 								objID < response["schedule"][scheduleID][i].length;
 								objID++
 							) {
+								var color = "lightgrey";
+
+								if (
+									response["schedule"][scheduleID][i][objID][
+										"color__hex_code"
+									] !== null
+								) {
+									color =
+										response["schedule"][scheduleID][i][objID][
+											"color__hex_code"
+										];
+								}
 								// console.log(response["schedule"][scheduleID][i][objID]);
 								$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Color">\
+                                                    <button onclick="changeStudentColor(${response["schedule"][scheduleID][i][objID]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i][objID]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
                                                 </td>\
                                             </tr>`);
 							}
@@ -115,22 +134,34 @@ function getSchedule(user_id) {
 								i
 							] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
 						} else {
+							var color = "lightgrey";
+
+							if (
+								response["schedule"][scheduleID][i]["color__hex_code"] !== null
+							) {
+								color = response["schedule"][scheduleID][i]["color__hex_code"];
+							}
+
 							$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["first_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["last_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_1"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="https://aquariumschool.co/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i]["id"]}">${response["schedule"][scheduleID][i]["phone_2"]}</a>\
                                                 </td>\
+												<td scope="row" data-label="Color">\
+													<button onclick="changeStudentColor(${response["schedule"][scheduleID][i]["id"]});" id="studentColorBtn${response["schedule"][scheduleID][i]["id"]}" class="btn btn-lg" style="background-color: ${color};"></button>\
+                                                </td>\
+
                                             </tr>`);
 
 							// response["schedule"][scheduleID][
@@ -188,6 +219,18 @@ function showSchedule() {
 	}
 }
 
+function changeStudentColor(userID) {
+	fetch(`${mysite}/users/change_student_color/${userID}`)
+		.then((response) => response.json())
+		.then((response) => {
+			document
+				.querySelectorAll(`#studentColorBtn${userID}`)
+				.forEach(function (button) {
+					button.style.backgroundColor = response["color"];
+				});
+		});
+}
+
 // LEVEL LOAD FUNCTIONS
 
 // Start first level student
@@ -207,7 +250,7 @@ function load_students_levels(levelID) {
 	if (allLevelStudentsLoaded === false) {
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/load_level_students/",
+			url: `${mysite}/users/load_level_students/`,
 			data: {
 				start: start,
 				end: end,
@@ -235,19 +278,19 @@ function load_students_levels(levelID) {
 				) {
 					$(`#levelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (2)">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
 				}
@@ -268,7 +311,7 @@ $("#levelSearch").keyup(
 
 		$.ajax({
 			type: "GET",
-			url: "https://aquariumschool.co/users/search_level_students/",
+			url: `${mysite}/users/search_level_students/`,
 			data: {
 				student: $(this).val(),
 				levelID: levelID,
@@ -292,19 +335,19 @@ $("#levelSearch").keyup(
 					) {
 						$(`#searchLevelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (2)">\
-										<a href="https://aquariumschool.co/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
 									</td>\
 								</tr>`);
 					}
@@ -364,7 +407,7 @@ $("#editProfileForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://aquariumschool.co${action}`,
+		url: `${mysite}${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#editProfileButton").style.display = "none";
@@ -406,7 +449,7 @@ $("#editProfileForm").submit(function (e) {
 function studentStatistics(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/student_statistics/",
+		url: `${mysite}/courses/student_statistics/`,
 		data: {
 			userID: user_id,
 		},
@@ -437,7 +480,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Recuperó">\
                                                     ${response["recovered"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Puede Recuperar">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);

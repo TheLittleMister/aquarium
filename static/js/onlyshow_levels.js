@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 function showlevels() {
 	if (document.querySelector("#levelsDiv").style.display === "none") {
 		document.querySelector("#levelsDiv").style.display = "block";
@@ -11,8 +14,9 @@ function showlevels() {
 function levels(userID) {
 	// console.log(userID);
 	document.querySelector("#levelsBtn").style.display = "none";
+	document.querySelector("#loadStudentLevels").classList.add("loader");
 
-	fetch(`https://aquariumschool.co/courses/levels/${userID}`)
+	fetch(`${mysite}/courses/levels/${userID}`)
 		.then((response) => response.json())
 		.then((response) => {
 			// console.log(response);
@@ -27,7 +31,7 @@ function levels(userID) {
 				} else {
 					$.ajax({
 						type: "GET",
-						url: "https://aquariumschool.co/courses/date_attendances/",
+						url: `${mysite}/courses/date_attendances/`,
 						data: {
 							date: response[level]["date"],
 							userID: userID,
@@ -66,6 +70,7 @@ function levels(userID) {
 					});
 				}
 			}
+			document.querySelector("#loadStudentLevels").classList.remove("loader");
 			document.querySelector("#levelsDiv").style.display = "block";
 			document.querySelector("#showLevelsBtn").style.visibility = "visible";
 		});

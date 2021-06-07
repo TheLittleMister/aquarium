@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 function tConvert(time) {
 	// Check correct time format and split into components
 	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
@@ -16,7 +19,7 @@ function tConvert(time) {
 function getSchedule(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/create_schedule/",
+		url: `${mysite}/courses/create_schedule/`,
 		data: {
 			userID: user_id,
 		},
@@ -62,7 +65,7 @@ function getSchedule(user_id) {
                                                 <td scope="row" data-label="Sábado">\
                                                     ${response["schedule"][scheduleID][7]}\
                                                 </td>\
-                                                <td scope="row" data-label="Domingo">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Domingo">\
                                                     ${response["schedule"][scheduleID][8]}\
                                                 </td>\
                                             </tr>`);
@@ -92,7 +95,7 @@ $("#editProfileForm").submit(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: `https://aquariumschool.co${action}`,
+		url: `${mysite}${action}`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#editProfileButton").style.display = "none";
@@ -134,7 +137,7 @@ $("#editProfileForm").submit(function (e) {
 function studentStatistics(user_id) {
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/student_statistics/",
+		url: `${mysite}/courses/student_statistics/`,
 		data: {
 			userID: user_id,
 		},
@@ -147,7 +150,7 @@ function studentStatistics(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			// console.log(response);
+			console.log(response);
 			document
 				.querySelector("#loadStudentStatistics")
 				.classList.remove("loader");
@@ -165,7 +168,7 @@ function studentStatistics(user_id) {
                                                 <td scope="row" data-label="Recuperó">\
                                                     ${response["recovered"]}\
                                                 </td>\
-                                                <td scope="row" data-label="Puede Recuperar">\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
                                                     ${response["can_recover"]}\
                                                 </td>\
                                             </tr>`);

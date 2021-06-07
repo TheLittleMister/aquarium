@@ -1,3 +1,6 @@
+// var mysite = "http://127.0.0.1:8000";
+var mysite = "https://aquariumschool.co";
+
 // START LOAD FUTURE ATTENDANCES
 
 // Start with first future attendance
@@ -38,7 +41,7 @@ function load_future_attendances() {
 	// Fetch new future attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_future_attendances/",
+		url: `${mysite}/courses/load_future_attendances/`,
 		data: {
 			start: start,
 			end: end,
@@ -97,7 +100,7 @@ function load_future_attendances() {
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -154,7 +157,7 @@ function load_past_attendances() {
 	// Fetch new past attendances and add them
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/load_past_attendances/",
+		url: `${mysite}/courses/load_past_attendances/`,
 		data: {
 			start: start,
 			end: end,
@@ -210,7 +213,7 @@ function load_past_attendances() {
                                             </tr>`);
 
 				fetch(
-					`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 				)
 					.then((data) => data.json())
 					.then((data) => {
@@ -235,10 +238,12 @@ $("#attendanceSearchForm").submit(function (e) {
 
 	$.ajax({
 		type: "GET",
-		url: "https://aquariumschool.co/courses/search_attendance/",
+		url: `${mysite}/courses/search_attendance/`,
 		data: form.serialize(),
 		beforeSend: function () {
 			document.querySelector("#searchAttendancesTableBody").innerHTML = "";
+			document.querySelector("#searchDateButton").style.display = "none";
+			document.querySelector("#searchDateLoader").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -288,7 +293,7 @@ $("#attendanceSearchForm").submit(function (e) {
                                             </tr>`);
 
 					fetch(
-						`https://aquariumschool.co/courses/course_info/${response["attendances"][studentID]["course__id"]}`
+						`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
 					)
 						.then((data) => data.json())
 						.then((data) => {
@@ -310,6 +315,8 @@ $("#attendanceSearchForm").submit(function (e) {
 												</td>\
                                             </tr>`);
 			}
+			document.querySelector("#searchDateLoader").classList.remove("loader");
+			document.querySelector("#searchDateButton").style.display = "block";
 		},
 	});
 });
@@ -332,7 +339,3 @@ function closePastCourses(button) {
 		button.innerHTML = "Cerrar";
 	}
 }
-
-
-
-
