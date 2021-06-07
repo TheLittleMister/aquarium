@@ -258,6 +258,7 @@
                     <button id="getScheduleButton" class="btn btn-outline-primary" onclick="getSchedule({{ user.id }});">Abrir</button>
                     <button id="showScheduleButton" class="btn btn-outline-primary" onclick="showSchedule();" style="visibility: hidden;">Cerrar</button>
                 </h2>
+                <div id="loadStudentSchedule"></div>
                 <div id="studentSchedule" class="w3-container" style="display: none;">
                     <table>
                         <thead>
@@ -275,7 +276,6 @@
                         <tbody id="studentScheduleBody">
                         </tbody>
                     </table>
-                    <div id="loadStudentSchedule"></div>
                     <br>
                 </div>
             </div>
