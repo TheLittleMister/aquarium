@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Q
 from PIL import Image
+from django.utils import timezone
 
 from courses.forms import *
 from .forms import *
@@ -43,6 +44,8 @@ def login_view(request):
     if form.is_valid():
         user = form.get_user()
         login(request, user)
+        user.real_last_login = timezone.now()
+        user.save()
         response['user'] = user.id
 
     return JsonResponse(response, status=200)

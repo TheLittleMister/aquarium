@@ -54,7 +54,7 @@ def load_students(request):
 
     # Generate list of students
     response['students'] += list(Account.objects.filter(is_admin=False, is_teacher=False).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').order_by('-last_login')[start:end])
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by('-real_last_login')[start:end])
 
     # Check if all is already loaded
     if end >= Account.objects.filter(is_admin=False, is_teacher=False).count():
@@ -111,7 +111,7 @@ def search_students(request):
 
     if len(search) > 1:
         response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
-            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').order_by('-last_login'))
+            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by('-real_last_login'))
 
     return JsonResponse(response, status=200)
 
@@ -259,7 +259,7 @@ def teachers(request):
     }
 
     response["students"] += list(Account.objects.filter(is_teacher=True).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login'))
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login'))
 
     return JsonResponse(response, status=200)
 
