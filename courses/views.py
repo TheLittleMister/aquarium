@@ -54,7 +54,7 @@ def load_students(request):
 
     # Generate list of students
     response['students'] += list(Account.objects.filter(is_admin=False, is_teacher=False).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('-real_last_login').desc(nulls_last=True))[start:end])
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('real_last_login').desc(nulls_last=True))[start:end])
 
     # Check if all is already loaded
     if end >= Account.objects.filter(is_admin=False, is_teacher=False).count():
@@ -111,7 +111,7 @@ def search_students(request):
 
     if len(search) > 1:
         response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
-            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('-real_last_login').desc(nulls_last=True)))
+            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('real_last_login').desc(nulls_last=True)))
 
     return JsonResponse(response, status=200)
 
