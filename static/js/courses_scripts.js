@@ -76,7 +76,9 @@ $("#searchStudents").keyup(
 					.classList.remove("loader");
 
 				for (studentID in response["students"]) {
-					login = prettyDate(response["students"][studentID]["last_login"]);
+					login = prettyDate(
+						response["students"][studentID]["real_last_login"]
+					);
 					$("#resultsStudentsTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
@@ -1273,7 +1275,9 @@ function get_teachers() {
 					studentID < response["students"].length;
 					studentID++
 				) {
-					login = prettyDate(response["students"][studentID]["last_login"]);
+					login = prettyDate(
+						response["students"][studentID]["real_last_login"]
+					);
 					$("#teachersTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
