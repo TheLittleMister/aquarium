@@ -97,7 +97,7 @@
     <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="changeStudentModalLabel">Cambio de información</h5>
+                <h5 class="modal-title" id="changeStudentModalLabel">Cambio de información - {{ changeCount }}</h5>
                 <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
                     &times;
                 </button>
@@ -141,6 +141,7 @@
                             <th scope="col">Apellidos</th>
                             <th scope="col">Tel/Cel (1)</th>
                             <th scope="col">Tel/Cel (2)</th>
+                            <th scope="col">Últ. vez</th>
                         </tr>
                     </thead>
                     <tbody id="teachersTableBody"></tbody>
@@ -150,6 +151,53 @@
         </div>
     </div>
 </div>
+
+<!-- -- Modal to show active students -- -->
+<div class="modal" id="activeStudentsModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Estudiantes Activos - {{ countActiveStudents }}</h5>
+                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
+                <input id="activeStudentsSearch" type="text" placeholder="Buscar Estudiante Activo" class="form-control">
+                <input id="activeStudentsSearchValue" type="hidden" value="">
+                <br>
+                <table id="searchActiveStudentsTable" style="visibility: hidden; background-color: lightgoldenrodyellow;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="searchActiveStudentsTableBody"></tbody>
+                </table>
+                <div id="searchLoadActiveStudents"></div> <br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Tel/Cel (1)</th>
+                            <th scope="col">Tel/Cel (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activeStudentsTableBody"></tbody>
+                </table>
+                <div id="loadActiveStudents"></div> <br>
+                <button id="loadMoreActiveStudentsBtn" onclick="load_active_students();" type="button" class="btn btn-outline-primary">Cargar Más</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Page Container -->
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
@@ -186,6 +234,10 @@
                             <span class="badge bg-primary" style="color: white;">{{ changeCount }}</span>
                             Cambio de Información
                         </button>
+                        <button onclick="load_active_students();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#activeStudentsModal">
+                            <span class="badge bg-primary" style="color: white;">{{ countActiveStudents }}</span>
+                            Estudiantes Activos
+                        </button>
                         <br>
                     </div>
                 </div>
@@ -199,7 +251,7 @@
 
             <div class="w3-container w3-card w3-margin-bottom">
                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-users fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                    Estudiantes
+                    {{ countStudents }} Estudiantes
                     <button class="btn btn-primary" style="float: right;" data-bs-toggle="modal" data-bs-target="#createStudentModal">
                         Crear Estudiante
                     </button>
@@ -216,6 +268,7 @@
                                 <th scope="col">Apellidos</th>
                                 <th scope="col">Tel/Cel (1)</th>
                                 <th scope="col">Tel/Cel (2)</th>
+                                <th scope="col">Últ. vez</th>
                             </tr>
                         </thead>
                         <tbody id="resultsStudentsTableBody"></tbody>
@@ -229,6 +282,7 @@
                                 <th scope="col">Apellidos</th>
                                 <th scope="col">Tel/Cel (1)</th>
                                 <th scope="col">Tel/Cel (2)</th>
+                                <th scope="col">Últ. vez</th>
                             </tr>
                         </thead>
                         <tbody id="students_table"></tbody>

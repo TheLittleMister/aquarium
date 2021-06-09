@@ -11,6 +11,10 @@ urlpatterns = [
     # Students Paths
     path('', students, name="students"),
     path('load_students/', load_students, name="load_students"),
+    path('load_active_students/', load_active_students,
+         name="load_active_students"),
+    path('search_active_students/', search_active_students,
+         name="search_active_students"),
     path('search_students/', search_students, name="search_students"),
     path('create_student/', create_student, name="create_student"),
     path('student/<int:student_id>', student, name="student"),

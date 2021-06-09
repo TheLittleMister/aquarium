@@ -9,6 +9,7 @@ from PIL import Image, ImageFont, ImageDraw
 import datetime
 from io import BytesIO
 from django.core.files import File
+from numerize import numerize
 #import locale
 
 # MODELS
@@ -33,7 +34,9 @@ def students(request):
     return render(request, 'courses/students.html', {
         'studentForm': RegistrationForm(),
         'adminBar': True,
-        'changeCount': Account.objects.filter(newrequest=True).count(),
+        'changeCount': numerize.numerize(Account.objects.filter(newrequest=True).count()),
+        'countStudents': numerize.numerize(Account.objects.all().count()),
+        'countActiveStudents': numerize.numerize(Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count()),
     })
 
 
@@ -51,13 +54,49 @@ def load_students(request):
 
     # Generate list of students
     response['students'] += list(Account.objects.filter(is_admin=False, is_teacher=False).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2')[start:end])
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').order_by('-last_login')[start:end])
 
     # Check if all is already loaded
-    if end >= Account.objects.filter(is_admin=False, is_teacher=False).values('id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').count():
+    if end >= Account.objects.filter(is_admin=False, is_teacher=False).count():
         response['all_loaded'] = True
 
     # Return serialized student's data
+    return JsonResponse(response, status=200)
+
+
+@staff_member_required(login_url=mysite)
+def load_active_students(request):
+
+    response = {
+        'students': list(),
+        'all_loaded': False,
+    }
+
+    start = int(request.GET.get("start"))
+    end = int(request.GET.get("end"))
+
+    response["students"] += list(Account.objects.filter(courses__date__gte=datetime.datetime.now()).values(
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').distinct()[start:end])
+
+    if end >= Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count():
+        response["all_loaded"] = True
+
+    return JsonResponse(response, status=200)
+
+
+@staff_member_required(login_url=mysite)
+def search_active_students(request):
+
+    response = {
+        'students': list(),
+    }
+
+    search = request.GET.get("student").strip()
+
+    if len(search) > 1:
+        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), courses__date__gte=datetime.datetime.now()).values(
+            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct())
+
     return JsonResponse(response, status=200)
 
 
@@ -72,7 +111,7 @@ def search_students(request):
 
     if len(search) > 1:
         response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
-            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
+            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').order_by('-last_login'))
 
     return JsonResponse(response, status=200)
 
@@ -108,8 +147,8 @@ def student(request, student_id):
 
     student = Account.objects.get(pk=student_id)
 
-    age = round((datetime.date.today() -
-                 student.date_birth).days // 365.25) if student.date_birth else None
+    age = round((datetime.date.today() - student.date_birth).days //
+                365.25) if student.date_birth else None
 
     return render(request, 'courses/student.html', {
         'user': student,
@@ -220,7 +259,7 @@ def teachers(request):
     }
 
     response["students"] += list(Account.objects.filter(is_teacher=True).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login'))
 
     return JsonResponse(response, status=200)
 
@@ -818,7 +857,8 @@ def generate_certificate(request, student_level_id):
         media_url = settings.MEDIA_URL
 
         # img_src = media_url + "certificate.png"
-        img_src = 'media/certificate.png'
+        img_src = 'media/certificate.png' if student_level.student.date_birth and round(
+            (datetime.date.today() - student_level.student.date_birth).days // 365.25) > 10 else 'media/certificate_kids.png'
 
         img = Image.open(img_src)
         draw = ImageDraw.Draw(img)
@@ -846,7 +886,7 @@ def generate_certificate(request, student_level_id):
         # font = ImageFont.truetype(<font-file>, <font-size>)
         font = ImageFont.truetype(font_src, 23)
 
-        text = f"POR HABER COMPLETADO EL NIVEL {student_level.level.name}".upper(
+        text = f"POR HABER COMPLETADO {student_level.level.name}".upper(
         )
 
         x, y = font.getsize(text)
