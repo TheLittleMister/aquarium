@@ -76,7 +76,7 @@ def load_active_students(request):
     end = int(request.GET.get("end"))
 
     response["students"] += list(Account.objects.filter(courses__date__gte=datetime.datetime.now()).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'last_login').distinct()[start:end])
+        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct()[start:end])
 
     if end >= Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count():
         response["all_loaded"] = True
