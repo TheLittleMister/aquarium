@@ -9,6 +9,37 @@ function delay(fn, ms) {
 		timer = setTimeout(fn.bind(this, ...args), ms || 0);
 	};
 }
+
+function prettyDate(time) {
+	var date = new Date(time),
+		diff = (new Date().getTime() - date.getTime()) / 1000,
+		day_diff = Math.floor(diff / 86400);
+	var year = date.getFullYear(),
+		month = date.getMonth() + 1,
+		day = date.getDate();
+
+	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31)
+		return (
+			year.toString() +
+			"-" +
+			(month < 10 ? "0" + month.toString() : month.toString()) +
+			"-" +
+			(day < 10 ? "0" + day.toString() : day.toString())
+		);
+
+	var r =
+		(day_diff == 0 &&
+			((diff < 60 && "justo ahora") ||
+				(diff < 120 && "Hace 1 minuto") ||
+				(diff < 3600 && "Hace " + Math.floor(diff / 60) + " minutos") ||
+				(diff < 7200 && "Hace 1 hora") ||
+				(diff < 86400 && "Hace " + Math.floor(diff / 3600) + " horas"))) ||
+		(day_diff == 1 && "Ayer") ||
+		(day_diff < 7 && "Hace " + day_diff + " días") ||
+		(day_diff < 31 && "Hace " + Math.ceil(day_diff / 7) + " semanas");
+	return r;
+}
+
 // THIS FUNCTION ACTIVATES TOOLTIPS
 
 function activateToolTip() {
@@ -45,6 +76,7 @@ $("#searchStudents").keyup(
 					.classList.remove("loader");
 
 				for (studentID in response["students"]) {
+					login = prettyDate(response["students"][studentID]["last_login"]);
 					$("#resultsStudentsTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
@@ -58,8 +90,11 @@ $("#searchStudents").keyup(
                                                 <td scope="row" data-label="Tel/Cel (1)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
+                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${login}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -78,7 +113,10 @@ $("#searchStudents").keyup(
                                                 <td scope="row" data-label="Tel/Cel (1)">\
                                                     <a href="#">-</a>\
                                                 </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
                                                     <a href="#">-</a>\
                                                 </td>\
                                             </tr>`);
@@ -888,6 +926,37 @@ $("#editCourseForm").submit(function (e) {
 	});
 });
 
+// Takes an ISO time and returns a string representing how
+// long ago the date represents.
+function prettyDate(time) {
+	var date = new Date((time || "").replace(/-/g, "/").replace(/[TZ]/g, " ")),
+		diff = (new Date().getTime() - date.getTime()) / 1000,
+		day_diff = Math.floor(diff / 86400);
+
+	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) return;
+
+	return (
+		(day_diff == 0 &&
+			((diff < 60 && "just now") ||
+				(diff < 120 && "1 minute ago") ||
+				(diff < 3600 && Math.floor(diff / 60) + " minutes ago") ||
+				(diff < 7200 && "1 hour ago") ||
+				(diff < 86400 && Math.floor(diff / 3600) + " hours ago"))) ||
+		(day_diff == 1 && "Yesterday") ||
+		(day_diff < 7 && day_diff + " days ago") ||
+		(day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago")
+	);
+}
+
+// If jQuery is included in the page, adds a jQuery plugin to handle it as well
+if (typeof jQuery != "undefined")
+	jQuery.fn.prettyDate = function () {
+		return this.each(function () {
+			var date = prettyDate(this.title);
+			if (date) jQuery(this).text(date);
+		});
+	};
+
 function tConvert(time) {
 	// Check correct time format and split into components
 	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
@@ -1204,21 +1273,25 @@ function get_teachers() {
 					studentID < response["students"].length;
 					studentID++
 				) {
+					login = prettyDate(response["students"][studentID]["last_login"]);
 					$("#teachersTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
+                                                    <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${login}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -1237,3 +1310,150 @@ $("#coursePrintForm").submit(function () {
 	// document.querySelector("#printDateButton").classList.remove("btn-warning");
 	document.querySelector("#printDateButton").classList.add("loader");
 });
+
+// LOAD ACTIVE STUDENTS
+
+// Start first active student
+let activeStudentsCounter = 0;
+
+// Load 20 active students at a time
+let activeStudentsQuantity = 20;
+
+// All active students loaded
+let allActiveStudentsLoaded = false;
+
+function load_active_students() {
+	const start = activeStudentsCounter;
+	const end = activeStudentsCounter + activeStudentsQuantity;
+	activeStudentsCounter = end + 1;
+
+	if (allActiveStudentsLoaded === false) {
+		$.ajax({
+			type: "GET",
+			url: `${mysite}/courses/load_active_students/`,
+			data: {
+				start: start,
+				end: end,
+			},
+			beforeSend: function () {
+				document.querySelector("#loadActiveStudents").classList.add("loader");
+				document.querySelector("#loadMoreActiveStudentsBtn").style.display =
+					"none";
+			},
+			error: function (error) {
+				console.log("Error!", error);
+			},
+			success: function (response) {
+				if (response["all_loaded"] == true) {
+					allActiveStudentsLoaded = true;
+				}
+
+				for (
+					var studentsID = 0;
+					studentsID < response["students"].length;
+					studentsID++
+				) {
+					$(`#activeStudentsTableBody`).append(`<tr> \
+									<td scope="row" data-label="Documento"> \
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
+									</td>\
+									<td scope="row" data-label="Tel/Cel (1)">\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
+									</td>\
+								</tr>`);
+				}
+				document
+					.querySelector("#loadActiveStudents")
+					.classList.remove("loader");
+				document.querySelector("#loadMoreActiveStudentsBtn").style.display =
+					"block";
+			},
+		});
+	} else {
+		document.querySelector("#loadMoreActiveStudentsBtn").style.display = "none";
+	}
+}
+
+// This AJAX function searches active students
+
+$("#activeStudentsSearch").keyup(
+	delay(function () {
+		$.ajax({
+			type: "GET",
+			url: `${mysite}/courses/search_active_students/`,
+			data: {
+				student: $(this).val(),
+			},
+			beforeSend: function () {
+				document
+					.querySelector("#searchLoadActiveStudents")
+					.classList.add("loader");
+				document.querySelector("#searchActiveStudentsTableBody").innerHTML = "";
+			},
+			error: function (error) {
+				console.log("Error!", error);
+			},
+			success: function (response) {
+				document.querySelector("#searchActiveStudentsTable").style.visibility =
+					"visible";
+
+				if (response["students"].length > 0) {
+					for (
+						var studentsID = 0;
+						studentsID < response["students"].length;
+						studentsID++
+					) {
+						$(`#searchActiveStudentsTableBody`).append(`<tr> \
+									<td scope="row" data-label="Documento"> \
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
+									</td>\
+									<td scope="row" data-label="Tel/Cel (1)">\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
+									</td>\
+								</tr>`);
+					}
+				} else {
+					$(`#searchActiveStudentsTableBody`).append(`<tr> \
+									<td scope="row" data-label="Documento"> \
+										<a href="#">SIN RESULTADOS</a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="#">-</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="#">-</a>\
+									</td>\
+									<td scope="row" data-label="Tel/Cel (1)">\
+										<a href="#">-</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+										<a href="#">-</a>\
+									</td>\
+								</tr>`);
+				}
+
+				document
+					.querySelector("#searchLoadActiveStudents")
+					.classList.remove("loader");
+			},
+		});
+	}, 1000)
+);
