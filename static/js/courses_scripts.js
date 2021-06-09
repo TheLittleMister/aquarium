@@ -1414,19 +1414,19 @@ $("#activeStudentsSearch").keyup(
 					) {
 						$(`#searchActiveStudentsTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
+										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
 									</td>\
 								</tr>`);
 					}
