@@ -830,7 +830,6 @@ def print_courses(request):
 
     return render(request, 'courses/print.html', {
         'todayDate': datetime.datetime.strptime(date, "%Y-%m-%d").date(),
-        # 'date': date,
         'schedules': schedules,
         'adminBar': True,
     })
@@ -840,12 +839,10 @@ def print_courses(request):
 def print_course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
-    date = course.date
     schedules = get_schedules(courses)
 
     return render(request, 'courses/print.html', {
-        'todayDate': datetime.datetime.strptime(date, "%Y-%m-%d").date(),
-        # 'date': date,
+        'todayDate': course.date,
         'schedules': schedules,
         'adminBar': True,
     })
