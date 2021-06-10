@@ -130,7 +130,14 @@ def create_student(request):
         user = form.save()
         if not user.email:
             user.email = None
-            user.save()
+
+        user.first_name = str(user.first_name).upper()
+        user.last_name = str(user.last_name).upper()
+
+        if user.parent:
+            user.parent = str(user.parent).upper()
+
+        user.save()
 
         response["userID"] = user.id
 
@@ -823,7 +830,7 @@ def print_courses(request):
 
     return render(request, 'courses/print.html', {
         'todayDate': datetime.datetime.strptime(date, "%Y-%m-%d").date(),
-        'date': date,
+        # 'date': date,
         'schedules': schedules,
         'adminBar': True,
     })
@@ -832,11 +839,13 @@ def print_courses(request):
 @staff_member_required(login_url=mysite)
 def print_course(request, course_id):
 
-    courses = Course.objects.filter(pk=course_id)
+    course = Course.objects.get(pk=course_id)
+    date = course.date
     schedules = get_schedules(courses)
 
     return render(request, 'courses/print.html', {
-        'date': courses[0].date,
+        'todayDate': datetime.datetime.strptime(date, "%Y-%m-%d").date(),
+        # 'date': date,
         'schedules': schedules,
         'adminBar': True,
     })

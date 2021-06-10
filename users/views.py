@@ -199,7 +199,19 @@ def edit_student(request, user_id):
     studentform = StudentForm(request.POST, instance=user)
 
     if studentform.is_valid():
-        studentform.save()
+        user = studentform.save()
+
+        if not user.email:
+            user.email = None
+
+        user.first_name = str(user.first_name).upper()
+        user.last_name = str(user.last_name).upper()
+
+        if user.parent:
+            user.parent = str(user.parent).upper()
+
+        user.save()
+
         response["edited"] = True
 
     else:
@@ -241,6 +253,19 @@ def edit_profile(request, user_id):
         if profileform.is_valid():
             user = profileform.save()
             user.newrequest = True
+
+            if not user.email:
+                user.email = None
+
+            if user.first_name_1:
+                user.first_name_1 = str(user.first_name_1).upper()
+
+            if user.last_name_1:
+                user.last_name_1 = str(user.last_name_1).upper()
+
+            if user.parent:
+                user.parent = str(user.parent).upper()
+
             user.save()
             response["edited"] = True
 
