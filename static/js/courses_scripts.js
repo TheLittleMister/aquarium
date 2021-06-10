@@ -79,6 +79,9 @@ $("#searchStudents").keyup(
 					login = prettyDate(
 						response["students"][studentID]["real_last_login"]
 					);
+
+					login = login !== "1969-12-31" ? login : "-";
+
 					$("#resultsStudentsTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
@@ -1278,6 +1281,9 @@ function get_teachers() {
 					login = prettyDate(
 						response["students"][studentID]["real_last_login"]
 					);
+
+					login = login !== "1969-12-31" ? login : "-";
+
 					$("#teachersTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/users/profile/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\

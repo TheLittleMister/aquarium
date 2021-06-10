@@ -93,6 +93,8 @@ function load_students() {
 				studentID++
 			) {
 				login = prettyDate(response["students"][studentID]["real_last_login"]);
+				login = login !== "1969-12-31" ? login : "-";
+
 				$("#students_table").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
                                                     <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
