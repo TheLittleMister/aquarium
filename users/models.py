@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .labels import *
+from PIL import Image
 
 # Create your models here.
 
@@ -60,6 +61,8 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_teacher = models.BooleanField("Profesor", default=False)
+    signature = models.ImageField("Firma",
+                                  upload_to="signatures", null=True, blank=True)
 
     # User's request to change information
     newrequest = models.BooleanField(default=False)
@@ -90,3 +93,17 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.signature:
+            img = Image.open(self.signature.path)
+
+            if img.height != 80:
+
+                new_height = 80
+                new_width = int(new_height * img.width / img.height)
+
+                img = img.resize((new_width, new_height), Image.ANTIALIAS)
+                img.save(self.signature.path)

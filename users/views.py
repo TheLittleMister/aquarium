@@ -19,7 +19,7 @@ from .utils import *
 from .labels import *
 
 mysite = "https://aquariumschool.co/"
-# mysite = "http://172.0.0.1:8000/"
+# mysite = "http://127.0.0.1:8000/"
 
 # USER AUTHENTICATION
 
@@ -142,10 +142,14 @@ def profile(request, user_id):
             age = round((datetime.date.today() - user.date_birth).days //
                         365.25) if user.date_birth else None
 
+            signatureForm = SignatureForm(
+                instance=user) if request.user.is_admin else None
+
             return render(request, 'users/profile.html', {
                 'user': user,
                 'age': age,
                 'profileForm': ProfileForm(instance=user),
+                'signatureForm': signatureForm,
                 'userBar': True,
             })
 
@@ -324,6 +328,20 @@ def change_student_color(request, user_id):
 
     else:
         return JsonResponse({"Privilege": "Restricted"}, status=200)
+
+
+@staff_member_required(login_url=mysite)
+def signature(request, user_id):
+
+    teacher = Account.objects.get(pk=user_id)
+
+    signatureForm = SignatureForm(
+        request.POST, request.FILES, instance=teacher)
+
+    if signatureForm.is_valid():
+        signatureForm.save()
+
+    return HttpResponseRedirect(reverse('users:profile', args=(user_id,)))
 
 
 # LEVEL FUNCTIONS

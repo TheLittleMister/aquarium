@@ -24,7 +24,7 @@ from .labels import *
 # Create your views here.
 
 mysite = "https://aquariumschool.co/"
-# mysite = "http://172.0.0.1:8000/"
+# mysite = "http://127.0.0.1:8000/"
 
 # USERS FUNCTIONS
 
@@ -344,6 +344,8 @@ def deactivate_level(request, student_level_id):
     if request.user.is_admin or request.user.is_teacher:
         student_level = Student_Level.objects.get(pk=student_level_id)
         student_level.is_active = False
+        student_level.certificate_img.delete()
+        student_level.certificate_pdf.delete()
         response["userID"] = student_level.student.id
         student_level.save()
 
@@ -903,12 +905,24 @@ def generate_certificate(request, student_level_id):
         text = f"{request.user.first_name} {request.user.last_name}".upper()
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text((185, 610), text, (83, 83, 83), font=font)
+        draw.text((230, 620), text, (83, 83, 83), font=font)
+
+        teacher_signature = Image.open(Account.objects.get(
+            pk=request.user.id).signature.path) if Account.objects.get(pk=request.user.id).signature else None
+
+        if teacher_signature:
+            img.paste(teacher_signature, (230, 535))
 
         text = "ADRIANA PÉREZ"
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text((545, 610), text, (83, 83, 83), font=font)
+        draw.text((580, 620), text, (83, 83, 83), font=font)
+
+        admin_signature = Image.open(Account.objects.get(
+            pk=1).signature.path) if Account.objects.get(pk=1).signature else None
+
+        if admin_signature:
+            img.paste(admin_signature, (580, 535))
 
         # DATE
         # font = ImageFont.truetype(font_src, 15)

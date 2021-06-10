@@ -41,4 +41,7 @@ urlpatterns = [
     path("search_level_students/", search_level_students,
          name="search_level_students"),
 
+    # TEACHER PATHS
+    path('signature/<int:user_id>', signature, name="signature"),
+
 ]

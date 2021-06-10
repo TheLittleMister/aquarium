@@ -228,6 +228,19 @@
                     <p><i class="fas fa-user fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>Acudiente: {{ user.parent }}</p>
                     <p><i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i>{{ user.phone_1 }}</p>
                     <p><i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">2</i>{{ user.phone_2 }}</p>
+                    {% if user.signature %}
+                    <p><i class="fas fa-signature fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>Firma: <img src="{{ user.signature.url }}" style="max-width: 120px;"></p>
+                    {% endif %}
+                    {% if request.user.is_admin %}
+
+                    <form method='POST' action="{% url 'users:signature' user.id %}" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <i class="fas fa-signature fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>
+                        {{ signatureForm|crispy }}
+                        <button type="submit" class="btn btn-outline-dark">Actualizar</button>
+                    </form>
+                    </p>
+                    {% endif %}
                     <br>
                     {% if user.newrequest %}
                     <h3>Por aprobar:</h3>

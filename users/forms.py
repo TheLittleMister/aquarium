@@ -29,3 +29,12 @@ class ProfileForm(forms.ModelForm):
 
         user_valid = UnicodeUsernameValidator()
         user_valid(cleaned_data.get("username"))
+
+
+class SignatureForm(forms.ModelForm):
+
+    class Meta:
+        model = Account
+        fields = (
+            'signature',
+        )
