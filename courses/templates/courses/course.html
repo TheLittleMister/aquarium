@@ -122,7 +122,7 @@
                     <br><br>
                     Profesores: <br>
                     {% for teacher in course.teachers.all %}
-                    <a href="{% url 'courses:student' teacher.id %}">{{ teacher }}</a>
+                    <a href="{% url 'users:profile' teacher.id %}">{{ teacher }}</a>
                     <br>
                     {% endfor %}
                     <br>
