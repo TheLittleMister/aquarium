@@ -838,11 +838,11 @@ def print_courses(request):
 @staff_member_required(login_url=mysite)
 def print_course(request, course_id):
 
-    course = Course.objects.get(pk=course_id)
+    courses = Course.objects.filter(pk=course_id)
     schedules = get_schedules(courses)
 
     return render(request, 'courses/print.html', {
-        'todayDate': course.date,
+        'todayDate': courses[0].date,
         'schedules': schedules,
         'adminBar': True,
     })
