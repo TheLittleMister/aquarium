@@ -866,7 +866,7 @@ def generate_certificate(request, student_level_id):
 
         # img_src = media_url + "certificate.png"
         img_src = 'media/certificate.png' if student_level.student.date_birth and round(
-            (datetime.date.today() - student_level.student.date_birth).days // 365.25) > 10 else 'media/certificate_kids.png'
+            (datetime.date.today() - student_level.student.date_birth).days // 365.25) > 9 else 'media/certificate_kids.png'
 
         img = Image.open(img_src)
         draw = ImageDraw.Draw(img)
