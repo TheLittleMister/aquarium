@@ -35,8 +35,8 @@ def students(request):
         'studentForm': RegistrationForm(),
         'adminBar': True,
         'changeCount': numerize.numerize(Account.objects.filter(newrequest=True).count()),
-        'countStudents': numerize.numerize(Account.objects.all().count()),
-        'countActiveStudents': numerize.numerize(Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count()),
+        'countStudents': numerize.numerize(Account.objects.filter(is_teacher=False, is_admin=False).count()),
+        'countActiveStudents': numerize.numerize(Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").distinct().count()),
     })
 
 
@@ -75,7 +75,7 @@ def load_active_students(request):
     start = int(request.GET.get("start"))
     end = int(request.GET.get("end"))
 
-    response["students"] += list(Account.objects.filter(courses__date__gte=datetime.datetime.now()).values(
+    response["students"] += list(Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").values(
         'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct()[start:end])
 
     if end >= Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count():

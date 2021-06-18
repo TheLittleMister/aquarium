@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"></script>
+    <!-- <script src="https://www.google.com/recaptcha/api.js?render=6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"></script> -->
     <script data-ad-client="ca-pub-9848347625525796" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XTNLXDS27T"></script>
     <script>
@@ -55,26 +55,8 @@
 
 <body data-spy="scroll" data-target=".fixed-top">
 
-    <!-- Load Facebook SDK for JavaScript -->
-    <div id="fb-root"></div>
-    <script>
-        window.fbAsyncInit = function () {
-            FB.init({
-                xfbml: true,
-                version: 'v10.0'
-            });
-        };
-
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = 'https://connect.facebook.net/es_LA/sdk/xfbml.customerchat.js';
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
-
-    <!-- Your Chat Plugin code -->
-    <div class="fb-customerchat" attribution="setup_tool" page_id="104390134444348"></div>
+    {% block messenger %}
+    {% endblock %}
 
     <!-- Preloader -->
     <div class="spinner-wrapper">
