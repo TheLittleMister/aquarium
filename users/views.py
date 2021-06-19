@@ -12,6 +12,7 @@ from django.core.validators import validate_email
 from django.db.models import Q
 from PIL import Image
 from django.utils import timezone
+from unidecode import unidecode
 
 from courses.forms import *
 from .forms import *
@@ -204,11 +205,11 @@ def edit_student(request, user_id):
         if not user.email:
             user.email = None
 
-        user.first_name = str(user.first_name).upper()
-        user.last_name = str(user.last_name).upper()
+        user.first_name = unidecode(str(user.first_name).upper())
+        user.last_name = unidecode(str(user.last_name).upper())
 
         if user.parent:
-            user.parent = str(user.parent).upper()
+            user.parent = unidecode(str(user.parent).upper())
 
         user.save()
 
@@ -258,13 +259,13 @@ def edit_profile(request, user_id):
                 user.email = None
 
             if user.first_name_1:
-                user.first_name_1 = str(user.first_name_1).upper()
+                user.first_name_1 = unidecode(str(user.first_name_1).upper())
 
             if user.last_name_1:
-                user.last_name_1 = str(user.last_name_1).upper()
+                user.last_name_1 = unidecode(str(user.last_name_1).upper())
 
             if user.parent:
-                user.parent = str(user.parent).upper()
+                user.parent = unidecode(str(user.parent).upper())
 
             user.save()
             response["edited"] = True

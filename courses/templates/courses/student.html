@@ -257,14 +257,10 @@
                 <hr>
                 <div class="w3-container">
                     <button style="float: right;" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#modalProfile">Editar</button>
-                    <p><i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>
-                        {{ user.id_type }}: {{ user.identity_document }}
-                    </p>
+                    <p><i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.id_type }}: {{ user.identity_document }}</p>
                     <p><i class="fas fa-venus-mars fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.sex }}
                     </p>
-                    <p><i class="fas fa-birthday-cake fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>
-                        {{ user.date_birth }} - Edad: {{ age }}
-                    </p>
+                    <p><i class="fas fa-birthday-cake fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.date_birth }} - Edad: {{ age }}</p>
                     <p><i class="fas fa-envelope fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.email }}</p>
                     <p><i class="fas fa-user fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>Acudiente: {{ user.parent }}</p>
                     <p><i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i>
@@ -283,9 +279,7 @@
                     <br><br>
                     <p><i class="fas fa-signature fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.first_name_1 }} {{ user.last_name_1 }}</p>
 
-                    <p><i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>
-                        {{ user.id_type }}: {{ user.identity_document_1 }}
-                    </p>
+                    <p><i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>{{ user.id_type }}: {{ user.identity_document_1 }}</p>
 
                     <p><i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i>
                         <a target="_blank" href="https://api.whatsapp.com/send?phone=57{{ user.phone_1_1 }}">{{ user.phone_1_1 }}</a>

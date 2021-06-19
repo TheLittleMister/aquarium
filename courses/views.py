@@ -10,6 +10,7 @@ import datetime
 from io import BytesIO
 from django.core.files import File
 from numerize import numerize
+from unidecode import unidecode
 #import locale
 
 # MODELS
@@ -94,7 +95,7 @@ def search_active_students(request):
     search = request.GET.get("student").strip()
 
     if len(search) > 1:
-        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), courses__date__gte=datetime.datetime.now()).values(
+        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(parent__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").values(
             'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct())
 
     return JsonResponse(response, status=200)
@@ -110,7 +111,7 @@ def search_students(request):
     search = request.GET.get("student").strip()
 
     if len(search) > 1:
-        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
+        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(parent__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
             'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('real_last_login').desc(nulls_last=True)))
 
     return JsonResponse(response, status=200)
@@ -131,11 +132,11 @@ def create_student(request):
         if not user.email:
             user.email = None
 
-        user.first_name = str(user.first_name).upper()
-        user.last_name = str(user.last_name).upper()
+        user.first_name = unidecode(str(user.first_name).upper())
+        user.last_name = unidecode(str(user.last_name).upper())
 
         if user.parent:
-            user.parent = str(user.parent).upper()
+            user.parent = unidecode(str(user.parent).upper())
 
         user.save()
 
