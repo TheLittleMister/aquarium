@@ -171,7 +171,7 @@
                     <form id="loginForm" action="#" method="POST" autocomplete="off" enctype="multipart/form-data">
                         {% csrf_token %}
                         <span id="loginMessage" style="color: crimson;"></span>
-                        <input id="loginUsername" type="text" class="form-control" placeholder="Documento / Correo electrónico" name="username" required style="text-transform: lowercase;"> <br>
+                        <input id="loginUsername" type="text" class="form-control" placeholder="Documento / Correo electrónico" name="username" required> <br>
                         <input id="loginPassword" type="password" class="form-control" placeholder="Contraseña" name="password" required>
                         <br>
                         <button id="loginButton" type="submit" class="btn btn-info js-crop-and-upload" form="loginForm">

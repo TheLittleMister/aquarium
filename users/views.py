@@ -41,7 +41,11 @@ def login_view(request):
         'user': None,
     }
 
-    form = AuthenticationForm(data=request.POST)
+    post = request.POST.copy()
+
+    post["username"] = str(post["username"]).lower()
+
+    form = AuthenticationForm(data=post)
 
     if form.is_valid():
         user = form.get_user()
