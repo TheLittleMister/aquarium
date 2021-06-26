@@ -13,6 +13,7 @@ from django.db.models import Q
 from PIL import Image
 from django.utils import timezone
 from unidecode import unidecode
+from django.contrib.auth.models import BaseUserManager
 
 from courses.forms import *
 from .forms import *
@@ -202,8 +203,8 @@ def edit_student(request, user_id):
     if studentform.is_valid():
         user = studentform.save()
 
-        if not user.email:
-            user.email = None
+        user.email = BaseUserManager.normalize_email(
+            user.email) if user.email else None
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())
@@ -255,8 +256,8 @@ def edit_profile(request, user_id):
             user = profileform.save()
             user.newrequest = True
 
-            if not user.email:
-                user.email = None
+            user.email = BaseUserManager.normalize_email(
+                user.email) if user.email else None
 
             if user.first_name_1:
                 user.first_name_1 = unidecode(str(user.first_name_1).upper())

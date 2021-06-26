@@ -11,6 +11,7 @@ from io import BytesIO
 from django.core.files import File
 from numerize import numerize
 from unidecode import unidecode
+from django.contrib.auth.models import BaseUserManager
 #import locale
 
 # MODELS
@@ -129,8 +130,9 @@ def create_student(request):
 
     if form.is_valid():
         user = form.save()
-        if not user.email:
-            user.email = None
+
+        user.email = BaseUserManager.normalize_email(
+            user.email) if user.email else None
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())
