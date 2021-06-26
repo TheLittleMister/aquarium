@@ -68,7 +68,7 @@ def available(request):
 
     if request.GET.get("email", ""):
 
-        email = request.GET["email"]
+        email = str(request.GET["email"]).lower()
 
         try:
             validate_email(email)
@@ -88,7 +88,7 @@ def available(request):
 
     if request.GET.get("username", ""):
 
-        username = request.GET["username"]
+        username = str(request.GET["username"]).lower()
         user_valid = UnicodeUsernameValidator()
 
         try:
@@ -203,8 +203,8 @@ def edit_student(request, user_id):
     if studentform.is_valid():
         user = studentform.save()
 
-        user.email = BaseUserManager.normalize_email(
-            user.email) if user.email else None
+        user.email = str(BaseUserManager.normalize_email(
+            user.email)).lower() if user.email else None
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())
@@ -256,8 +256,8 @@ def edit_profile(request, user_id):
             user = profileform.save()
             user.newrequest = True
 
-            user.email = BaseUserManager.normalize_email(
-                user.email) if user.email else None
+            user.email = str(BaseUserManager.normalize_email(
+                user.email)).lower() if user.email else None
 
             if user.first_name_1:
                 user.first_name_1 = unidecode(str(user.first_name_1).upper())

@@ -131,8 +131,8 @@ def create_student(request):
     if form.is_valid():
         user = form.save()
 
-        user.email = BaseUserManager.normalize_email(
-            user.email) if user.email else None
+        user.email = str(BaseUserManager.normalize_email(
+            user.email)).lower() if user.email else None
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())

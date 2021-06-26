@@ -31,9 +31,13 @@ class StudentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        username = cleaned_data.get("username")
 
         user_valid = UnicodeUsernameValidator()
-        user_valid(cleaned_data.get("username"))
+        user_valid(username)
+
+        if not username.islower():
+            raise forms.ValidationError("Usuarios deben estar en minúscula")
 
 
 class RegistrationForm(UserCreationForm):
@@ -62,9 +66,13 @@ class RegistrationForm(UserCreationForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        username = cleaned_data.get("username")
 
         user_valid = UnicodeUsernameValidator()
-        user_valid(cleaned_data.get("username"))
+        user_valid(username)
+
+        if not username.islower():
+            raise forms.ValidationError("Usuarios deben estar en minúscula")
 
 
 class AttendanceForm(forms.ModelForm):
