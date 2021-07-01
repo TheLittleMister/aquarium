@@ -112,3 +112,6 @@ class Student_Level(models.Model):
         upload_to="certificates", null=True, blank=True)
 
     is_active = models.BooleanField(default=False)
+
+    delivered = models.BooleanField(
+        default=True, null=True, blank=True)  # Inverted bool

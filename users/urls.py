@@ -40,6 +40,10 @@ urlpatterns = [
     path('load_level_students/', load_level_students, name="load_level_students"),
     path("search_level_students/", search_level_students,
          name="search_level_students"),
+    path('get_this_percentage/', get_this_percentage, name="get_this_percentage"),
+
+    path('change_delivered/<int:levelID>/<int:studentID>',
+         change_delivered, name="change_delivered"),
 
     # TEACHER PATHS
     path('signature/<int:user_id>', signature, name="signature"),

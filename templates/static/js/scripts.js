@@ -442,7 +442,11 @@ $(document).ready(function () {
 			},
 			success: function (response) {
 				if (response["user"] !== null) {
-					location.reload();
+					response["user"] === 1
+						? window.location.replace(`${mysite}/courses/`)
+						: window.location.replace(
+								`${mysite}/users/profile/${response["user"]}`
+						  );
 				} else {
 					document.querySelector("#loginMessage").innerHTML =
 						"Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";

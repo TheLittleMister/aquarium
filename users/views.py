@@ -9,7 +9,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from users.models import *
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Q
+from django.db.models import Q, F
 from PIL import Image
 from django.utils import timezone
 from unidecode import unidecode
@@ -19,6 +19,7 @@ from courses.forms import *
 from .forms import *
 from .utils import *
 from .labels import *
+from courses.models import *
 
 mysite = "https://aquariumschool.co/"
 # mysite = "http://127.0.0.1:8000/"
@@ -394,8 +395,32 @@ def load_level_students(request):
         level = Level.objects.get(pk=level_id)
         response["levelName"] = level.name
 
-        response["students"] += list(level.levels.filter(is_active=True).values("student__id", "student__identity_document",
-                                                                                "student__first_name", "student__last_name", "student__phone_1", "student__phone_2")[start:end])
+        filter = int(request.GET.get("filter"))
+
+        if filter == 0:  # TODOS
+            response["students"] += list(level.levels.filter(is_active=True).values("student__id", "student__identity_document",
+                                                                                    "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+        elif filter == 1:  # CERTIFICADOS
+            response["students"] += list(level.levels.exclude(is_active=False).exclude(certificate_img="").exclude(certificate_img__isnull=True).values("student__id", "student__identity_document",
+                                                                                                                                                        "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+        elif filter == 2:  # NO CERTIFICADOS
+            response["students"] += list(level.levels.filter(is_active=True, certificate_img="").values("student__id", "student__identity_document",
+                                                                                                        "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+        else:
+
+            deliver = None  # Pendiente
+
+            if filter == 3:  # Entregado
+                deliver = False
+
+            elif filter == 4:  # No Entregago
+                deliver = True
+
+            response["students"] += list(level.levels.filter(is_active=True, delivered=deliver).values("student__id", "student__identity_document",
+                                                                                                       "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
 
         if end >= level.levels.all().count():
             response["all_loaded"] = True
@@ -419,9 +444,53 @@ def search_level_students(request):
 
         if len(search) > 1:
             response["students"] += list(level.levels.filter(Q(student__username__icontains=search) | Q(student__email__icontains=search) | Q(student__first_name__icontains=search) | Q(student__last_name__icontains=search) | Q(student__identity_document__icontains=search) | Q(
-                student__phone_1__icontains=search) | Q(student__phone_2__icontains=search), is_active=True).values("student__id", "student__identity_document", "student__first_name", "student__last_name", "student__phone_1", "student__phone_2"))
+                student__phone_1__icontains=search) | Q(student__phone_2__icontains=search), is_active=True).values("student__id", "student__identity_document", "student__first_name", "student__last_name", "certificate_img", "delivered"))
 
     else:
         response["Privilege"] = "Restricted"
+
+    return JsonResponse(response, status=200)
+
+
+def get_this_percentage(request):
+
+    response = {
+        'percentage': 0,
+    }
+
+    student_level = Student_Level.objects.get(
+        student=request.GET.get("studentID"), level=request.GET.get("levelID"))
+
+    percentage = round(Attendance.objects.filter(course__date__gte=student_level.date, student=student_level.student,
+                                                 attendance=True).count() * 100 / student_level.attendances, 1)
+
+    response['percentage'] = percentage if percentage < 101 else 100
+
+    return JsonResponse(response, status=200)
+
+
+def change_delivered(request, levelID, studentID):
+
+    response = {
+        'delivered': False,
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        student_level = Student_Level.objects.get(
+            student=studentID, level=levelID)
+
+        if student_level.delivered:
+            student_level.delivered = False
+
+        elif student_level.delivered == False:
+            student_level.delivered = None
+
+        else:
+            student_level.delivered = True
+
+        student_level.save()
+
+        response["delivered"] = student_level.delivered
 
     return JsonResponse(response, status=200)

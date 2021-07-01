@@ -194,6 +194,70 @@ function changeStudentColor(userID) {
 		});
 }
 
+// FUNCTION TO GET STUDENT LEVEL PERCERNTAGE
+function getThisPercentage(levelID, studentID) {
+	$.ajax({
+		type: "GET",
+		url: `${mysite}/users/get_this_percentage/`,
+		data: {
+			levelID: levelID,
+			studentID: studentID,
+		},
+		beforeSend: function () {
+			// TODO
+		},
+		error: function (error) {
+			console.log("Error!", error);
+		},
+		success: function (response) {
+			document
+				.querySelectorAll(`.thisPercentage${studentID}`)
+				.forEach((element) => {
+					element.innerHTML = `${response["percentage"]}%`;
+				});
+		},
+	});
+}
+
+// FUNCTION TO CHANGE DELIVERED STATUS
+
+function changeDelivered(levelID, studentID) {
+	fetch(`${mysite}/users/change_delivered/${levelID}/${studentID}`)
+		.then((response) => response.json())
+		.then((response) => {
+			document
+				.querySelectorAll(`#btnDelivered${studentID}`)
+				.forEach((element) => {
+					let deliveredBtn;
+					let delivered;
+
+					if (response["delivered"]) {
+						deliveredBtn = "btn-danger";
+						delivered = "NO ENTREGADO";
+
+						element.classList.remove("btn-success");
+						element.classList.remove("btn-secondary");
+					} else if (response["delivered"] === false) {
+						deliveredBtn = "btn-success";
+						delivered = "ENTREGADO";
+
+						element.classList.remove("btn-danger");
+						element.classList.remove("btn-secondary");
+					} else {
+						// null
+						deliveredBtn = "btn-secondary";
+						delivered = "PENDIENTE";
+
+						element.classList.remove("btn-danger");
+						element.classList.remove("btn-success");
+					}
+
+					element.innerHTML = delivered;
+					element.classList.add(deliveredBtn);
+				});
+		});
+}
+
 // LEVEL LOAD FUNCTIONS
 
 // Start first level student
@@ -205,7 +269,14 @@ let levelStudentsQuantity = 20;
 // All level students loaded
 let allLevelStudentsLoaded = false;
 
-function load_students_levels(levelID) {
+// Save current levelID
+let currentLevelID = 0;
+
+function changeThisFilter(filter) {
+	setLevel(currentLevelID, filter);
+}
+
+function load_students_levels(levelID, filter) {
 	const start = levelStudentsCounter;
 	const end = levelStudentsCounter + levelStudentsQuantity;
 	levelStudentsCounter = end + 1;
@@ -218,6 +289,7 @@ function load_students_levels(levelID) {
 				start: start,
 				end: end,
 				levelID: levelID,
+				filter: filter,
 			},
 			beforeSend: function () {
 				document.querySelector("#loadLevel").classList.add("loader");
@@ -239,23 +311,68 @@ function load_students_levels(levelID) {
 					studentsID < response["students"].length;
 					studentsID++
 				) {
+					let deliveredBtn;
+					let delivered;
+
+					if (response["students"][studentsID]["delivered"]) {
+						deliveredBtn = "btn btn-sm btn-danger";
+						delivered = "NO ENTREGADO";
+					} else if (response["students"][studentsID]["delivered"] === false) {
+						deliveredBtn = "btn btn-sm btn-success";
+						delivered = "ENTREGADO";
+					} else {
+						// null
+						deliveredBtn = "btn btn-sm btn-secondary";
+						delivered = "PENDIENTE";
+					}
+
 					$(`#levelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="${mysite}/users/profile/${
+						response["students"][studentsID]["student__id"]
+					}">${
+						response["students"][studentsID]["student__identity_document"]
+					}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="${mysite}/users/profile/${
+						response["students"][studentsID]["student__id"]
+					}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="${mysite}/users/profile/${
+						response["students"][studentsID]["student__id"]
+					}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
-									</td>\
-									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
+										<a style="font-size: medium;" class="thisPercentage${
+											response["students"][studentsID]["student__id"]
+										}" href="${
+						response["students"][studentsID]["certificate_img"]
+							? mysite +
+							  "/media/" +
+							  response["students"][studentsID]["certificate_img"]
+							: mysite +
+							  "/users/profile/" +
+							  response["students"][studentsID]["student__id"]
+					}"><div class="loader"></div></a> <button id="btnDelivered${
+						response["students"][studentsID]["student__id"]
+					}" onclick="changeDelivered(${levelID}, ${
+						response["students"][studentsID]["student__id"]
+					});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
+
+					if (response["students"][studentsID]["certificate_img"]) {
+						document.querySelector(
+							`.thisPercentage${response["students"][studentsID]["student__id"]}`
+						).innerHTML = "✅";
+					} else {
+						getThisPercentage(
+							levelID,
+							response["students"][studentsID]["student__id"]
+						);
+					}
 				}
 				document.querySelector("#loadLevel").classList.remove("loader");
 				document.querySelector("#loadMoreLevelBtn").style.display = "block";
@@ -296,23 +413,69 @@ $("#levelSearch").keyup(
 						studentsID < response["students"].length;
 						studentsID++
 					) {
+						let deliveredBtn;
+						let delivered;
+
+						if (response["students"][studentsID]["delivered"]) {
+							deliveredBtn = "btn btn-sm btn-danger";
+							delivered = "NO ENTREGADO";
+						} else if (
+							response["students"][studentsID]["delivered"] === false
+						) {
+							deliveredBtn = "btn btn-sm btn-success";
+							delivered = "ENTREGADO";
+						} else {
+							// null
+							deliveredBtn = "btn btn-sm btn-secondary";
+							delivered = "PENDIENTE";
+						}
+
 						$(`#searchLevelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="${mysite}/users/profile/${
+							response["students"][studentsID]["student__id"]
+						}">${
+							response["students"][studentsID]["student__identity_document"]
+						}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="${mysite}/users/profile/${
+							response["students"][studentsID]["student__id"]
+						}">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="${mysite}/users/profile/${
+							response["students"][studentsID]["student__id"]
+						}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_1"]}</a>\
-									</td>\
-									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__phone_2"]}</a>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
+										<a style="font-size: medium;" class="thisPercentage${
+											response["students"][studentsID]["student__id"]
+										}" href="${
+							response["students"][studentsID]["certificate_img"]
+								? mysite +
+								  "/media/" +
+								  response["students"][studentsID]["certificate_img"]
+								: mysite +
+								  "/users/profile/" +
+								  response["students"][studentsID]["student__id"]
+						}"><div class="loader"></div></a> <button id="btnDelivered${
+							response["students"][studentsID]["student__id"]
+						}" onclick="changeDelivered(${levelID}, ${
+							response["students"][studentsID]["student__id"]
+						});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
+						if (response["students"][studentsID]["certificate_img"]) {
+							document.querySelector(
+								`.thisPercentage${response["students"][studentsID]["student__id"]}`
+							).innerHTML = "✅";
+						} else {
+							getThisPercentage(
+								levelID,
+								response["students"][studentsID]["student__id"]
+							);
+						}
 					}
 				} else {
 					$(`#searchLevelTableBody`).append(`<tr> \
@@ -325,10 +488,7 @@ $("#levelSearch").keyup(
 									<td scope="row" data-label="Apellidos">\
 										<a href="#">-</a>\
 									</td>\
-									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="#">-</a>\
-									</td>\
-									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
 										<a href="#">-</a>\
 									</td>\
 								</tr>`);
@@ -340,7 +500,7 @@ $("#levelSearch").keyup(
 	}, 1000)
 );
 
-function setLevel(levelID) {
+function setLevel(levelID, filter) {
 	// Start first level student
 	levelStudentsCounter = 0;
 
@@ -350,12 +510,23 @@ function setLevel(levelID) {
 	// All level students loaded
 	allLevelStudentsLoaded = false;
 
+	// Set current levelID
+	currentLevelID = Number(levelID);
+
+	if (filter === 0) {
+		document.querySelector("#fitlerSelection").value = 0;
+	}
+
 	document.querySelector("#levelSearchValue").value = levelID;
 	document
 		.querySelector("#loadMoreLevelBtn")
-		.setAttribute("onClick", `javascript: load_students_levels(${levelID});`);
+		.setAttribute(
+			"onClick",
+			`javascript: load_students_levels(${levelID}, ${filter});`
+		);
 
 	document.querySelector("#searchLevelTable").style.visibility = "hidden";
+	document.querySelector("#searchLevelTableBody").innerHTML = "";
 
 	document.querySelector("#levelTableBody").innerHTML = "";
 	document.querySelector("#loadMoreLevelBtn").style.display = "block";

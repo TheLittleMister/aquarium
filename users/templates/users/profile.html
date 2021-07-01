@@ -150,21 +150,27 @@
                             <th scope="col">Documento</th>
                             <th scope="col">Nombres</th>
                             <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
+                            <th scope="col">Certificado</th>
                         </tr>
                     </thead>
                     <tbody id="searchLevelTableBody"></tbody>
                 </table>
                 <div id="searchLoadLevel"></div> <br>
+                <select onchange="changeThisFilter(this.value);" name="fitlerSelection" id="fitlerSelection" class="form-control mb-2" style="background-color: lightcyan;">
+                    <option value="0" selected>Todos</option>
+                    <option value="1">Certificados</option>
+                    <option value="2">No Certificados</option>
+                    <option value="3">Entregado</option>
+                    <option value="4">No Entregado</option>
+                    <option value="5">Pendiente</option>
+                </select>
                 <table>
                     <thead>
                         <tr>
                             <th scope="col">Documento</th>
                             <th scope="col">Nombres</th>
                             <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
+                            <th scope="col">Certificado</th>
                         </tr>
                     </thead>
                     <tbody id="levelTableBody"></tbody>
@@ -233,7 +239,7 @@
                     {% endif %}
                     {% if request.user.is_admin %}
 
-                    <form method='POST' action="{% url 'users:signature' user.id %}" enctype='multipart/form-data'>
+                    <form method='POST' action="{% url 'users:signature' user.id %}" enctype='multipart/form-data' style="max-width: 100%;">
                         {% csrf_token %}
                         <i class="fas fa-signature fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>
                         {{ signatureForm|crispy }}
@@ -351,7 +357,7 @@
                             <div class="w3-half">
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación Básica</h2>
                                 <div id="level11" class="w3-container">
-                                    <button onclick="setLevel(11);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(11,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
                             </div>
@@ -359,7 +365,7 @@
                             <div class="w3-half">
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación</h2>
                                 <div id="level1" class="w3-container">
-                                    <button onclick="setLevel(1);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(1,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
                             </div>
@@ -370,38 +376,17 @@
 
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Espalda</h2>
                                 <div id="level2" class="w3-container">
-                                    <button onclick="setLevel(2);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(2,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
                             </div>
-                            <div class="w3-half">
-
-                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Espalda</h2>
-                                <div id="level6" class="w3-container">
-                                    <button onclick="setLevel(6);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
-                                </div>
-                                <br>
-
-                            </div>
-                        </div>
-                        <div class="w3-row-padding">
                             <div class="w3-half">
 
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Libre</h2>
                                 <div id="level3" class="w3-container">
-                                    <button onclick="setLevel(3);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(3,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
-                            </div>
-                            <div class="w3-half">
-
-
-                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Libre</h2>
-                                <div id="level7" class="w3-container">
-                                    <button onclick="setLevel(7);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
-                                </div>
-                                <br>
-
                             </div>
                         </div>
                         <div class="w3-row-padding">
@@ -409,16 +394,35 @@
 
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Pecho</h2>
                                 <div id="level4" class="w3-container">
-                                    <button onclick="setLevel(4);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(4,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
                             </div>
                             <div class="w3-half">
 
+                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Mariposa</h2>
+                                <div id="level5" class="w3-container">
+                                    <button onclick="setLevel(5,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="w3-row-padding">
+                            <div class="w3-half">
 
-                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Pecho</h2>
-                                <div id="level8" class="w3-container">
-                                    <button onclick="setLevel(8);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Espalda</h2>
+                                <div id="level6" class="w3-container">
+                                    <button onclick="setLevel(6,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                </div>
+                                <br>
+
+                            </div>
+                            <div class="w3-half">
+
+
+                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Libre</h2>
+                                <div id="level7" class="w3-container">
+                                    <button onclick="setLevel(7,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
 
@@ -427,18 +431,20 @@
                         <div class="w3-row-padding">
                             <div class="w3-half">
 
-                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Mariposa</h2>
-                                <div id="level5" class="w3-container">
-                                    <button onclick="setLevel(5);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+
+                                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Pecho</h2>
+                                <div id="level8" class="w3-container">
+                                    <button onclick="setLevel(8,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
+
                             </div>
                             <div class="w3-half">
 
 
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Mariposa</h2>
                                 <div id="level9" class="w3-container">
-                                    <button onclick="setLevel(9);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(9,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
 
@@ -449,7 +455,7 @@
 
                                 <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Mantenimiento</h2>
                                 <div id="level10" class="w3-container">
-                                    <button onclick="setLevel(10);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
+                                    <button onclick="setLevel(10,0);" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#levelModal">Ver Estudiantes</button>
                                 </div>
                                 <br>
                             </div>
