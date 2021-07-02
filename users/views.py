@@ -436,58 +436,115 @@ def load_level_students(request):
 
         if filter == 0:  # TODOS
 
-            response["students"] += list(
-                level.levels.filter(is_active=True, student__teacher=request.user)
-                .values(
-                    "student__teacher__color__hex_code",
-                    "student__teacher__username",
-                    "student__id",
-                    "student__identity_document",
-                    "student__first_name",
-                    "student__last_name",
-                    "certificate_img",
-                    "delivered",
+            if request.user.is_admin:
+                response["students"] += list(
+                    level.levels.filter(is_active=True)
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
-            )
+
+            else:
+                response["students"] += list(
+                    level.levels.filter(is_active=True, student__teacher=request.user)
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
+                )
 
         elif filter == 1:  # CERTIFICADOS
             # MyQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
 
-            response["students"] += list(
-                level.levels.filter(is_active=True, student__teacher=request.user)
-                .exclude(certificate_img="")
-                .exclude(certificate_img__isnull=True)
-                .values(
-                    "student__teacher__color__hex_code",
-                    "student__teacher__username",
-                    "student__id",
-                    "student__identity_document",
-                    "student__first_name",
-                    "student__last_name",
-                    "certificate_img",
-                    "delivered",
+            if request.user.is_admin:
+                response["students"] += list(
+                    level.levels.filter(is_active=True)
+                    .exclude(certificate_img="")
+                    .exclude(certificate_img__isnull=True)
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
-            )
+
+            else:
+                response["students"] += list(
+                    level.levels.filter(is_active=True, student__teacher=request.user)
+                    .exclude(certificate_img="")
+                    .exclude(certificate_img__isnull=True)
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
+                )
 
         elif filter == 2:  # NO CERTIFICADOS
-            response["students"] += list(
-                level.levels.filter(
-                    is_active=True, certificate_img="", student__teacher=request.user
+
+            if request.user.is_admin:
+                response["students"] += list(
+                    level.levels.filter(is_active=True, certificate_img="")
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .values(
-                    "student__teacher__color__hex_code",
-                    "student__teacher__username",
-                    "student__id",
-                    "student__identity_document",
-                    "student__first_name",
-                    "student__last_name",
-                    "certificate_img",
-                    "delivered",
+
+            else:
+
+                response["students"] += list(
+                    level.levels.filter(
+                        is_active=True,
+                        certificate_img="",
+                        student__teacher=request.user,
+                    )
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
-            )
 
         else:
 
@@ -499,22 +556,39 @@ def load_level_students(request):
             elif filter == 4:  # No Entregago
                 deliver = True
 
-            response["students"] += list(
-                level.levels.filter(
-                    is_active=True, delivered=deliver, student__teacher=request.user
+            if request.user.is_admin:
+                response["students"] += list(
+                    level.levels.filter(is_active=True, delivered=deliver)
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .values(
-                    "student__teacher__color__hex_code",
-                    "student__teacher__username",
-                    "student__id",
-                    "student__identity_document",
-                    "student__first_name",
-                    "student__last_name",
-                    "certificate_img",
-                    "delivered",
+
+            else:
+                response["students"] += list(
+                    level.levels.filter(
+                        is_active=True, delivered=deliver, student__teacher=request.user
+                    )
+                    .values(
+                        "student__teacher__color__hex_code",
+                        "student__teacher__username",
+                        "student__id",
+                        "student__identity_document",
+                        "student__first_name",
+                        "student__last_name",
+                        "certificate_img",
+                        "delivered",
+                    )
+                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
-            )
 
         if end >= level.levels.all().count():
             response["all_loaded"] = True
