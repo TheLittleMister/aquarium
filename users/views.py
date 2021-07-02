@@ -447,6 +447,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -463,6 +464,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -484,6 +486,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -502,6 +505,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -520,6 +524,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -541,6 +546,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -567,6 +573,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -585,6 +592,7 @@ def load_level_students(request):
                         "student__first_name",
                         "student__last_name",
                         "certificate_img",
+                        "certificate_pdf",
                         "delivered",
                     )
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
@@ -629,6 +637,7 @@ def search_level_students(request):
                     "student__first_name",
                     "student__last_name",
                     "certificate_img",
+                    "certificate_pdf",
                     "delivered",
                 )
             )

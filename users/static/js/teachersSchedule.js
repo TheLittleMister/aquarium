@@ -187,7 +187,7 @@ function getThisPercentage(levelID, studentID) {
 		},
 		success: function (response) {
 			document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
-				element.innerHTML = `${response["percentage"]}%`;
+				element.innerHTML = `<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`;
 			});
 		},
 	});
@@ -307,14 +307,14 @@ function load_students_levels(levelID, filter) {
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
-										<a style="font-size: medium;" class="thisPercentage${response["students"][studentsID]["student__id"]}" href="${
-						response["students"][studentsID]["certificate_img"] ? mysite + "/media/" + response["students"][studentsID]["certificate_img"] : mysite + "/users/profile/" + response["students"][studentsID]["student__id"]
-					}">✅</a> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
+										<span class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
 
 					if (response["students"][studentsID]["certificate_img"]) {
-						document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = "✅";
+						document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+							mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
+						}')">PDF</button>`;
 					} else {
 						getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 					}
@@ -382,13 +382,13 @@ $("#levelSearch").keyup(
 										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
-										<a style="font-size: medium;" class="thisPercentage${response["students"][studentsID]["student__id"]}" href="${
-							response["students"][studentsID]["certificate_img"] ? mysite + "/media/" + response["students"][studentsID]["certificate_img"] : mysite + "/users/profile/" + response["students"][studentsID]["student__id"]
-						}"><div class="loader"></div></a> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
+										<span class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
 						if (response["students"][studentsID]["certificate_img"]) {
-							document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = "✅";
+							document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+								mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
+							}')">PDF</button>`;
 						} else {
 							getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 						}
