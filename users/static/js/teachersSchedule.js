@@ -395,8 +395,11 @@ $("#levelSearch").keyup(
 					}
 				} else {
 					$(`#searchLevelTableBody`).append(`<tr> \
-									<td scope="row" data-label="Documento"> \
+									<td scope="row" data-label="Profesor"> \
 										<a href="#">SIN RESULTADOS</a>\
+									</td>\
+									<td scope="row" data-label="Documento"> \
+										<a href="#"></a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
 										<a href="#">-</a>\
