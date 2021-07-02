@@ -51,8 +51,7 @@ var mysite = "https://aquariumschool.co";
 
 	// closes the responsive menu on menu item click
 	$(".navbar-nav li a").on("click", function (event) {
-		if (!$(this).parent().hasClass("dropdown"))
-			$(".navbar-collapse").collapse("hide");
+		if (!$(this).parent().hasClass("dropdown")) $(".navbar-collapse").collapse("hide");
 	});
 
 	/* Rotating Text - Morphtext */
@@ -198,17 +197,7 @@ var mysite = "https://aquariumschool.co";
 		$.ajax({
 			type: "POST",
 			url: "php/callmeform-process.php",
-			data:
-				"name=" +
-				name +
-				"&phone=" +
-				phone +
-				"&email=" +
-				email +
-				"&select=" +
-				select +
-				"&terms=" +
-				terms,
+			data: "name=" + name + "&phone=" + phone + "&email=" + email + "&select=" + select + "&terms=" + terms,
 			success: function (text) {
 				if (text == "success") {
 					lformSuccess();
@@ -230,12 +219,9 @@ var mysite = "https://aquariumschool.co";
 		$("#callMeForm")
 			.removeClass()
 			.addClass("shake animated")
-			.one(
-				"webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-				function () {
-					$(this).removeClass();
-				}
-			);
+			.one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+				$(this).removeClass();
+			});
 	}
 
 	function lsubmitMSG(valid, msg) {
@@ -271,15 +257,7 @@ var mysite = "https://aquariumschool.co";
 		$.ajax({
 			type: "POST",
 			url: "php/contactform-process.php",
-			data:
-				"name=" +
-				name +
-				"&email=" +
-				email +
-				"&message=" +
-				message +
-				"&terms=" +
-				terms,
+			data: "name=" + name + "&email=" + email + "&message=" + message + "&terms=" + terms,
 			success: function (text) {
 				if (text == "success") {
 					cformSuccess();
@@ -302,12 +280,9 @@ var mysite = "https://aquariumschool.co";
 		$("#contactForm")
 			.removeClass()
 			.addClass("shake animated")
-			.one(
-				"webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-				function () {
-					$(this).removeClass();
-				}
-			);
+			.one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+				$(this).removeClass();
+			});
 	}
 
 	function csubmitMSG(valid, msg) {
@@ -344,15 +319,7 @@ var mysite = "https://aquariumschool.co";
 		$.ajax({
 			type: "POST",
 			url: "php/privacyform-process.php",
-			data:
-				"name=" +
-				name +
-				"&email=" +
-				email +
-				"&select=" +
-				select +
-				"&terms=" +
-				terms,
+			data: "name=" + name + "&email=" + email + "&select=" + select + "&terms=" + terms,
 			success: function (text) {
 				if (text == "success") {
 					pformSuccess();
@@ -374,12 +341,9 @@ var mysite = "https://aquariumschool.co";
 		$("#privacyForm")
 			.removeClass()
 			.addClass("shake animated")
-			.one(
-				"webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-				function () {
-					$(this).removeClass();
-				}
-			);
+			.one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+				$(this).removeClass();
+			});
 	}
 
 	function psubmitMSG(valid, msg) {
@@ -393,9 +357,7 @@ var mysite = "https://aquariumschool.co";
 
 	/* Back To Top Button */
 	// create the back to top button
-	$("body").prepend(
-		'<a href="body" class="back-to-top page-scroll">Back to Top</a>'
-	);
+	$("body").prepend('<a href="body" class="back-to-top page-scroll">Back to Top</a>');
 	var amountScrolled = 700;
 	$(window).scroll(function () {
 		if ($(window).scrollTop() > amountScrolled) {
@@ -442,14 +404,9 @@ $(document).ready(function () {
 			},
 			success: function (response) {
 				if (response["user"] !== null) {
-					response["user"] === 1
-						? window.location.replace(`${mysite}/courses/`)
-						: window.location.replace(
-								`${mysite}/users/profile/${response["user"]}`
-						  );
+					response["user"] === 1 ? window.location.replace(`${mysite}/courses/`) : window.location.replace(`${mysite}/users/profile/${response["user"]}`);
 				} else {
-					document.querySelector("#loginMessage").innerHTML =
-						"Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";
+					document.querySelector("#loginMessage").innerHTML = "Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";
 					document.querySelector("#loadLogin").classList.remove("loader");
 					document.querySelector("#loginButton").style.display = "block";
 				}
@@ -514,9 +471,7 @@ $("#id_username").keyup(
 					document.querySelector("#username_message").innerHTML = "";
 					document.querySelector("#username_message").classList.add("loader");
 				} else {
-					$("#div_id_username").append(
-						'<div class="loader" id="username_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>'
-					);
+					$("#div_id_username").append('<div class="loader" id="username_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>');
 				}
 			},
 			error: function (error) {
@@ -529,21 +484,17 @@ $("#id_username").keyup(
 				if (response["username"] === "Taken") {
 					// #div_id_username
 					document.querySelector("#username_message").style.color = "#dc3545";
-					document.querySelector("#username_message").innerHTML =
-						"Usuario no disponible";
+					document.querySelector("#username_message").innerHTML = "Usuario no disponible";
 				} else if (response["username"] === "Not taken") {
 					document.querySelector("#username_message").style.color = "green";
-					document.querySelector("#username_message").innerHTML =
-						"Usuario disponible";
+					document.querySelector("#username_message").innerHTML = "Usuario disponible";
 				} else if (response["username"] === "Invalid") {
 					document.querySelector("#username_message").style.color = "#dc3545";
-					document.querySelector("#username_message").innerHTML =
-						"Usuario inválido";
+					document.querySelector("#username_message").innerHTML = "Usuario inválido";
 				} else if (response["username"] === null) {
 					// null - username not provided
 					document.querySelector("#username_message").style.color = "grey";
-					document.querySelector("#username_message").innerHTML =
-						"Proporcione el nombre de usuario";
+					document.querySelector("#username_message").innerHTML = "Proporcione el nombre de usuario";
 				} // else - false - dont do anything
 			},
 		});
@@ -569,9 +520,7 @@ $("#id_email").keyup(
 					document.querySelector("#email_message").innerHTML = "";
 					document.querySelector("#email_message").classList.add("loader");
 				} else {
-					$("#div_id_email").append(
-						'<div class="loader" id="email_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>'
-					);
+					$("#div_id_email").append('<div class="loader" id="email_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>');
 				}
 			},
 			error: function (error) {
@@ -584,21 +533,17 @@ $("#id_email").keyup(
 				if (response["email"] === "Taken") {
 					// #div_id_email
 					document.querySelector("#email_message").style.color = "#dc3545";
-					document.querySelector("#email_message").innerHTML =
-						"Correo no disponible";
+					document.querySelector("#email_message").innerHTML = "Correo no disponible";
 				} else if (response["email"] === "Not taken") {
 					document.querySelector("#email_message").style.color = "green";
-					document.querySelector("#email_message").innerHTML =
-						"Correo disponible";
+					document.querySelector("#email_message").innerHTML = "Correo disponible";
 				} else if (response["email"] === "Invalid") {
 					document.querySelector("#email_message").style.color = "#dc3545";
-					document.querySelector("#email_message").innerHTML =
-						"Correo inválido";
+					document.querySelector("#email_message").innerHTML = "Correo inválido";
 				} else if (response["email"] == null) {
 					// null - email not provided
 					document.querySelector("#email_message").style.color = "grey";
-					document.querySelector("#email_message").innerHTML =
-						"Proporcione el correo eletrónico";
+					document.querySelector("#email_message").innerHTML = "Proporcione el correo eletrónico";
 				}
 			},
 		});
@@ -617,20 +562,14 @@ $("#id_identity_document").keyup(
 			},
 			beforeSend: function () {
 				if (document.querySelector("#error_1_id_identity_document") !== null) {
-					document.querySelector(
-						"#error_1_id_identity_document"
-					).style.display = "none";
+					document.querySelector("#error_1_id_identity_document").style.display = "none";
 				}
 
 				if (document.querySelector("#identity_document_message") !== null) {
 					document.querySelector("#identity_document_message").innerHTML = "";
-					document
-						.querySelector("#identity_document_message")
-						.classList.add("loader");
+					document.querySelector("#identity_document_message").classList.add("loader");
 				} else {
-					$("#div_id_identity_document").append(
-						'<div class="loader" id="identity_document_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>'
-					);
+					$("#div_id_identity_document").append('<div class="loader" id="identity_document_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>');
 				}
 			},
 			error: function (error) {
@@ -638,26 +577,18 @@ $("#id_identity_document").keyup(
 			},
 
 			success: function (response) {
-				document
-					.querySelector("#identity_document_message")
-					.classList.remove("loader");
+				document.querySelector("#identity_document_message").classList.remove("loader");
 
 				if (response["identity_document"] === "Taken") {
 					// #div_id_identity_document
-					document.querySelector("#identity_document_message").style.color =
-						"#dc3545";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento no disponible";
+					document.querySelector("#identity_document_message").style.color = "#dc3545";
+					document.querySelector("#identity_document_message").innerHTML = "Documento no disponible";
 				} else if (response["identity_document"] === "Not taken") {
-					document.querySelector("#identity_document_message").style.color =
-						"green";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento disponible";
+					document.querySelector("#identity_document_message").style.color = "green";
+					document.querySelector("#identity_document_message").innerHTML = "Documento disponible";
 				} else if (response["identity_document"] === "Invalid") {
-					document.querySelector("#identity_document_message").style.color =
-						"#dc3545";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento inválido";
+					document.querySelector("#identity_document_message").style.color = "#dc3545";
+					document.querySelector("#identity_document_message").innerHTML = "Documento inválido";
 				}
 				// else if (response["identity_document"] == null) {
 				// 	// null - identity_document not provided
@@ -681,23 +612,15 @@ $("#id_identity_document_1").keyup(
 				// csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
 			},
 			beforeSend: function () {
-				if (
-					document.querySelector("#error_1_id_identity_document_1") !== null
-				) {
-					document.querySelector(
-						"#error_1_id_identity_document_1"
-					).style.display = "none";
+				if (document.querySelector("#error_1_id_identity_document_1") !== null) {
+					document.querySelector("#error_1_id_identity_document_1").style.display = "none";
 				}
 
 				if (document.querySelector("#identity_document_message") !== null) {
 					document.querySelector("#identity_document_message").innerHTML = "";
-					document
-						.querySelector("#identity_document_message")
-						.classList.add("loader");
+					document.querySelector("#identity_document_message").classList.add("loader");
 				} else {
-					$("#div_id_identity_document_1").append(
-						'<div class="loader" id="identity_document_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>'
-					);
+					$("#div_id_identity_document_1").append('<div class="loader" id="identity_document_message" style="font-weight: bold; margin-left: auto; margin-right: auto;"></div>');
 				}
 			},
 			error: function (error) {
@@ -705,26 +628,18 @@ $("#id_identity_document_1").keyup(
 			},
 
 			success: function (response) {
-				document
-					.querySelector("#identity_document_message")
-					.classList.remove("loader");
+				document.querySelector("#identity_document_message").classList.remove("loader");
 
 				if (response["identity_document"] === "Taken") {
 					// #div_id_identity_document_1
-					document.querySelector("#identity_document_message").style.color =
-						"#dc3545";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento no disponible";
+					document.querySelector("#identity_document_message").style.color = "#dc3545";
+					document.querySelector("#identity_document_message").innerHTML = "Documento no disponible";
 				} else if (response["identity_document"] === "Not taken") {
-					document.querySelector("#identity_document_message").style.color =
-						"green";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento disponible";
+					document.querySelector("#identity_document_message").style.color = "green";
+					document.querySelector("#identity_document_message").innerHTML = "Documento disponible";
 				} else if (response["identity_document"] === "Invalid") {
-					document.querySelector("#identity_document_message").style.color =
-						"#dc3545";
-					document.querySelector("#identity_document_message").innerHTML =
-						"Documento inválido";
+					document.querySelector("#identity_document_message").style.color = "#dc3545";
+					document.querySelector("#identity_document_message").innerHTML = "Documento inválido";
 				}
 				// else if (response["identity_document"] == null) {
 				// 	// null - identity_document not provided

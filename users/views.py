@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import datetime
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse, response
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -371,7 +371,7 @@ def create_schedule(request):
         return JsonResponse({"Privilege": "Restricted"}, status=200)
 
 
-def change_student_color(request, user_id):
+def change_student_teacher(request, user_id):
 
     response = dict()
 
@@ -379,17 +379,19 @@ def change_student_color(request, user_id):
 
         student = Account.objects.get(pk=user_id)
 
-        color_id = student.color.id if student.color else 0
-
-        student.color = (
-            Color.objects.get(pk=(color_id + 1))
-            if Color.objects.filter(pk=(color_id + 1)).exists()
-            else None
-        )
-
-        response["color"] = student.color.hex_code if student.color else "lightgrey"
+        student.teacher = None if student.teacher else request.user
 
         student.save()
+
+        response["teacher"] = (
+            student.teacher.username if student.teacher else "Reclamar"
+        )
+
+        response["color"] = (
+            student.teacher.color.hex_code
+            if student.teacher and student.teacher.color
+            else None
+        )
 
         return JsonResponse(response, status=200)
 
@@ -434,10 +436,11 @@ def load_level_students(request):
 
         if filter == 0:  # TODOS
 
-            levelQuery = (
-                level.levels.filter(is_active=True)
+            response["students"] += list(
+                level.levels.filter(is_active=True, student__teacher=request.user)
                 .values(
-                    "student__color__hex_code",
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
                     "student__id",
                     "student__identity_document",
                     "student__first_name",
@@ -445,21 +448,19 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by("student__color__hex_code")[start:end]
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
             )
 
-            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
-
-            response["students"] += list(levelQuery)
-
         elif filter == 1:  # CERTIFICADOS
+            # MyQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
 
-            levelQuery = (
-                level.levels.exclude(is_active=False)
+            response["students"] += list(
+                level.levels.filter(is_active=True, student__teacher=request.user)
                 .exclude(certificate_img="")
                 .exclude(certificate_img__isnull=True)
                 .values(
-                    "student__color__hex_code",
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
                     "student__id",
                     "student__identity_document",
                     "student__first_name",
@@ -467,19 +468,17 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by("student__color__hex_code")[start:end]
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
             )
-
-            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
-
-            response["students"] += list(levelQuery)
 
         elif filter == 2:  # NO CERTIFICADOS
-
-            levelQuery = (
-                level.levels.filter(is_active=True, certificate_img="")
+            response["students"] += list(
+                level.levels.filter(
+                    is_active=True, certificate_img="", student__teacher=request.user
+                )
                 .values(
-                    "student__color__hex_code",
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
                     "student__id",
                     "student__identity_document",
                     "student__first_name",
@@ -487,12 +486,8 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by("student__color__hex_code")[start:end]
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
             )
-
-            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
-
-            response["students"] += list(levelQuery)
 
         else:
 
@@ -504,10 +499,13 @@ def load_level_students(request):
             elif filter == 4:  # No Entregago
                 deliver = True
 
-            levelQuery = (
-                level.levels.filter(is_active=True, delivered=deliver)
+            response["students"] += list(
+                level.levels.filter(
+                    is_active=True, delivered=deliver, student__teacher=request.user
+                )
                 .values(
-                    "student__color__hex_code",
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
                     "student__id",
                     "student__identity_document",
                     "student__first_name",
@@ -515,12 +513,8 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by("student__color__hex_code")[start:end]
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
             )
-
-            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
-
-            response["students"] += list(levelQuery)
 
         if end >= level.levels.all().count():
             response["all_loaded"] = True
@@ -554,7 +548,8 @@ def search_level_students(request):
                     | Q(student__phone_2__icontains=search),
                     is_active=True,
                 ).values(
-                    "student__color__hex_code",
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
                     "student__id",
                     "student__identity_document",
                     "student__first_name",
