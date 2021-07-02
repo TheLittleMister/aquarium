@@ -467,7 +467,7 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+                .order_by("student__color__hex_code")[start:end]
             )
 
             levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
@@ -487,7 +487,7 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+                .order_by("student__color__hex_code")[start:end]
             )
 
             levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
@@ -515,7 +515,7 @@ def load_level_students(request):
                     "certificate_img",
                     "delivered",
                 )
-                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+                .order_by("student__color__hex_code")[start:end]
             )
 
             levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
