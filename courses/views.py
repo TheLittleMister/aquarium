@@ -12,7 +12,8 @@ from django.core.files import File
 from numerize import numerize
 from unidecode import unidecode
 from django.contrib.auth.models import BaseUserManager
-#import locale
+
+# import locale
 
 # MODELS
 from .models import *
@@ -33,21 +34,36 @@ mysite = "https://aquariumschool.co/"
 
 @staff_member_required(login_url=mysite)
 def students(request):
-    return render(request, 'courses/students.html', {
-        'studentForm': RegistrationForm(),
-        'adminBar': True,
-        'changeCount': numerize.numerize(Account.objects.filter(newrequest=True).count()),
-        'countStudents': numerize.numerize(Account.objects.filter(is_teacher=False, is_admin=False).count()),
-        'countActiveStudents': numerize.numerize(Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").distinct().count()),
-    })
+    return render(
+        request,
+        "courses/students.html",
+        {
+            "studentForm": RegistrationForm(),
+            "adminBar": True,
+            "changeCount": numerize.numerize(
+                Account.objects.filter(newrequest=True).count()
+            ),
+            "countStudents": numerize.numerize(
+                Account.objects.filter(is_teacher=False, is_admin=False).count()
+            ),
+            "countActiveStudents": numerize.numerize(
+                Account.objects.filter(
+                    courses__date__gte=datetime.datetime.now(),
+                    attendances__quota="PAGO",
+                )
+                .distinct()
+                .count()
+            ),
+        },
+    )
 
 
 @staff_member_required(login_url=mysite)
 def load_students(request):
 
     response = {
-        'students': list(),
-        'all_loaded': False,
+        "students": list(),
+        "all_loaded": False,
     }
 
     # Get start and end points
@@ -55,12 +71,23 @@ def load_students(request):
     end = int(request.GET.get("end") or (start + 20))
 
     # Generate list of students
-    response['students'] += list(Account.objects.filter(is_admin=False, is_teacher=False).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('real_last_login').desc(nulls_last=True))[start:end])
+    response["students"] += list(
+        Account.objects.filter(is_admin=False, is_teacher=False)
+        .values(
+            "id",
+            "identity_document",
+            "first_name",
+            "last_name",
+            "phone_1",
+            "phone_2",
+            "real_last_login",
+        )
+        .order_by(F("real_last_login").desc(nulls_last=True))[start:end]
+    )
 
     # Check if all is already loaded
     if end >= Account.objects.filter(is_admin=False, is_teacher=False).count():
-        response['all_loaded'] = True
+        response["all_loaded"] = True
 
     # Return serialized student's data
     return JsonResponse(response, status=200)
@@ -70,17 +97,29 @@ def load_students(request):
 def load_active_students(request):
 
     response = {
-        'students': list(),
-        'all_loaded': False,
+        "students": list(),
+        "all_loaded": False,
     }
 
     start = int(request.GET.get("start"))
     end = int(request.GET.get("end"))
 
-    response["students"] += list(Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct()[start:end])
+    response["students"] += list(
+        Account.objects.filter(
+            courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO"
+        )
+        .values(
+            "id", "identity_document", "first_name", "last_name", "phone_1", "phone_2"
+        )
+        .distinct()[start:end]
+    )
 
-    if end >= Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct().count():
+    if (
+        end
+        >= Account.objects.filter(courses__date__gte=datetime.datetime.now())
+        .distinct()
+        .count()
+    ):
         response["all_loaded"] = True
 
     return JsonResponse(response, status=200)
@@ -90,14 +129,35 @@ def load_active_students(request):
 def search_active_students(request):
 
     response = {
-        'students': list(),
+        "students": list(),
     }
 
     search = request.GET.get("student").strip()
 
     if len(search) > 1:
-        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(parent__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").values(
-            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2').distinct())
+        response["students"] += list(
+            Account.objects.filter(
+                Q(username__icontains=search)
+                | Q(email__icontains=search)
+                | Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(identity_document__icontains=search)
+                | Q(parent__icontains=search)
+                | Q(phone_1__icontains=search)
+                | Q(phone_2__icontains=search),
+                courses__date__gte=datetime.datetime.now(),
+                attendances__quota="PAGO",
+            )
+            .values(
+                "id",
+                "identity_document",
+                "first_name",
+                "last_name",
+                "phone_1",
+                "phone_2",
+            )
+            .distinct()
+        )
 
     return JsonResponse(response, status=200)
 
@@ -105,15 +165,35 @@ def search_active_students(request):
 @staff_member_required(login_url=mysite)
 def search_students(request):
 
-    response = {
-        'students': list()
-    }
+    response = {"students": list()}
 
     search = request.GET.get("student").strip()
 
     if len(search) > 1:
-        response["students"] += list(Account.objects.filter(Q(username__icontains=search) | Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(identity_document__icontains=search) | Q(parent__icontains=search) | Q(phone_1__icontains=search) | Q(phone_2__icontains=search), is_admin=False, is_teacher=False).values(
-            'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login').order_by(F('real_last_login').desc(nulls_last=True)))
+        response["students"] += list(
+            Account.objects.filter(
+                Q(username__icontains=search)
+                | Q(email__icontains=search)
+                | Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(identity_document__icontains=search)
+                | Q(parent__icontains=search)
+                | Q(phone_1__icontains=search)
+                | Q(phone_2__icontains=search),
+                is_admin=False,
+                is_teacher=False,
+            )
+            .values(
+                "id",
+                "identity_document",
+                "first_name",
+                "last_name",
+                "phone_1",
+                "phone_2",
+                "real_last_login",
+            )
+            .order_by(F("real_last_login").desc(nulls_last=True))
+        )
 
     return JsonResponse(response, status=200)
 
@@ -122,8 +202,8 @@ def search_students(request):
 def create_student(request):
 
     response = {
-        'userID': None,
-        'messages': list(),
+        "userID": None,
+        "messages": list(),
     }
 
     form = RegistrationForm(request.POST)
@@ -131,8 +211,11 @@ def create_student(request):
     if form.is_valid():
         user = form.save()
 
-        user.email = str(BaseUserManager.normalize_email(
-            user.email)).lower() if user.email else None
+        user.email = (
+            str(BaseUserManager.normalize_email(user.email)).lower()
+            if user.email
+            else None
+        )
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())
@@ -147,7 +230,8 @@ def create_student(request):
     else:
         for key in form.errors.as_data():
             response["messages"].append(
-                str(form.errors.as_data()[key][0])[2:-2].replace('Account', 'cuenta'))
+                str(form.errors.as_data()[key][0])[2:-2].replace("Account", "cuenta")
+            )
 
     return JsonResponse(response, status=200)
 
@@ -157,51 +241,76 @@ def student(request, student_id):
 
     student = Account.objects.get(pk=student_id)
 
-    age = round((datetime.date.today() - student.date_birth).days //
-                365.25) if student.date_birth else None
+    age = (
+        round((datetime.date.today() - student.date_birth).days // 365.25)
+        if student.date_birth
+        else None
+    )
 
-    return render(request, 'courses/student.html', {
-        'user': student,
-        'age': age,
-        'studentForm': StudentForm(instance=student),
-        'coursesForm': CoursesForm(initial={
-            'courses': student.courses.filter(
-                date__gte=datetime.datetime.now()).order_by('date', 'start_time'),
-        }),
-        'adminBar': True,
-    })
+    return render(
+        request,
+        "courses/student.html",
+        {
+            "user": student,
+            "age": age,
+            "studentForm": StudentForm(instance=student),
+            "coursesForm": CoursesForm(
+                initial={
+                    "courses": student.courses.filter(
+                        date__gte=datetime.datetime.now()
+                    ).order_by("date", "start_time"),
+                }
+            ),
+            "adminBar": True,
+        },
+    )
 
 
 def create_schedule(request):
 
-    courses = Account.objects.get(pk=request.GET.get("userID")).courses.filter(
-        date__gte=datetime.datetime.now()).values('start_time', 'end_time', 'date').order_by('date', 'start_time')
+    courses = (
+        Account.objects.get(pk=request.GET.get("userID"))
+        .courses.filter(date__gte=datetime.datetime.now())
+        .values("start_time", "end_time", "date")
+        .order_by("date", "start_time")
+    )
 
-    return JsonResponse({'schedule': get_schedule(courses)}, status=200)
+    return JsonResponse({"schedule": get_schedule(courses)}, status=200)
 
 
 def student_statistics(request):
-    return JsonResponse(get_student_statistics(Account.objects.get(pk=request.GET.get("userID"))), status=200)
+    return JsonResponse(
+        get_student_statistics(Account.objects.get(pk=request.GET.get("userID"))),
+        status=200,
+    )
 
 
 @staff_member_required(login_url=mysite)
 def inconsistencies(request):
 
-    response = {
-        'students': list()
-    }
+    response = {"students": list()}
 
-    for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
-        if student.attendances.filter(quota="PAGO", recover=False, onlyday=False).count() % 4 != 0:
-            response["students"].append({
-                'id': student.id,
-                'document': student.identity_document,
-                'first_name': student.first_name,
-                'last_name': student.last_name,
-                'phone_1': student.phone_1,
-                'phone_2': student.phone_2,
-                'exception': student.ignore,
-            })
+    for student in Account.objects.filter(
+        courses__date__gte=datetime.datetime.now()
+    ).distinct():
+        if (
+            student.attendances.filter(
+                quota="PAGO", recover=False, onlyday=False
+            ).count()
+            % 4
+            != 0
+        ):
+            response["students"].append(
+                {
+                    "id": student.id,
+                    "document": student.identity_document,
+                    "first_name": student.first_name,
+                    "last_name": student.last_name,
+                    "phone_1": student.phone_1,
+                    "phone_2": student.phone_2,
+                    "exception": student.ignore,
+                }
+            )
 
     return JsonResponse(response, status=200)
 
@@ -213,36 +322,38 @@ def change_exception(request, student_id):
     student.ignore = False if student.ignore else True
     student.save()
 
-    return JsonResponse({'exception': student.ignore}, status=200)
+    return JsonResponse({"exception": student.ignore}, status=200)
 
 
 @staff_member_required(login_url=mysite)
 def plus(request):
 
-    response = {
-        'students': list()
-    }
+    response = {"students": list()}
 
-    for student in Account.objects.filter(courses__date__gte=datetime.datetime.now()).distinct():
+    for student in Account.objects.filter(
+        courses__date__gte=datetime.datetime.now()
+    ).distinct():
 
         week = set()
-        courses = student.courses.filter(date__gte=datetime.datetime.now(
-        ) - datetime.timedelta(30)).order_by('date', 'start_time')
+        courses = student.courses.filter(
+            date__gte=datetime.datetime.now() - datetime.timedelta(30)
+        ).order_by("date", "start_time")
 
         for course in courses:
 
             week.add(course.date.weekday())
 
             if len(week) > 1:
-                response["students"].append({
-                    'id': student.id,
-                    'document': student.identity_document,
-                    'first_name': student.first_name,
-                    'last_name': student.last_name,
-                    'phone_1': student.phone_1,
-                    'phone_2': student.phone_2,
-
-                })
+                response["students"].append(
+                    {
+                        "id": student.id,
+                        "document": student.identity_document,
+                        "first_name": student.first_name,
+                        "last_name": student.last_name,
+                        "phone_1": student.phone_1,
+                        "phone_2": student.phone_2,
+                    }
+                )
                 break
 
     return JsonResponse(response, status=200)
@@ -251,12 +362,13 @@ def plus(request):
 @staff_member_required(login_url=mysite)
 def change(request):
 
-    response = {
-        'students': list()
-    }
+    response = {"students": list()}
 
-    response["students"] += list(Account.objects.filter(newrequest=True).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2'))
+    response["students"] += list(
+        Account.objects.filter(newrequest=True).values(
+            "id", "identity_document", "first_name", "last_name", "phone_1", "phone_2"
+        )
+    )
 
     return JsonResponse(response, status=200)
 
@@ -264,12 +376,19 @@ def change(request):
 @staff_member_required(login_url=mysite)
 def teachers(request):
 
-    response = {
-        'students': list()
-    }
+    response = {"students": list()}
 
-    response["students"] += list(Account.objects.filter(is_teacher=True).values(
-        'id', 'identity_document', 'first_name', 'last_name', 'phone_1', 'phone_2', 'real_last_login'))
+    response["students"] += list(
+        Account.objects.filter(is_teacher=True).values(
+            "id",
+            "identity_document",
+            "first_name",
+            "last_name",
+            "phone_1",
+            "phone_2",
+            "real_last_login",
+        )
+    )
 
     return JsonResponse(response, status=200)
 
@@ -284,14 +403,15 @@ def levels(request, student_id):
         for level in Level.objects.all():
 
             student_level, created = Student_Level.objects.get_or_create(
-                student=student, level=level)
+                student=student, level=level
+            )
 
             response[level.name] = {
-                'studentLevelID': student_level.id,
-                'levelID': student_level.level.id,
-                'date': student_level.date,
-                'attendances': student_level.attendances,
-                'is_active': student_level.is_active,
+                "studentLevelID": student_level.id,
+                "levelID": student_level.level.id,
+                "date": student_level.date,
+                "attendances": student_level.attendances,
+                "is_active": student_level.is_active,
             }
 
     else:
@@ -303,16 +423,19 @@ def levels(request, student_id):
 def level_info(request, student_level_id):
 
     if request.user.is_admin or request.user.is_teacher:
-        student_level = Student_Level.objects.filter(
-            pk=student_level_id).values("level__name")
+        student_level = Student_Level.objects.filter(pk=student_level_id).values(
+            "level__name"
+        )
 
-        form = StudentLevelForm(
-            instance=Student_Level.objects.get(pk=student_level_id))
+        form = StudentLevelForm(instance=Student_Level.objects.get(pk=student_level_id))
 
-        return JsonResponse({
-            'form': form.as_p(),
-            'name': student_level[0]["level__name"],
-        }, status=200)
+        return JsonResponse(
+            {
+                "form": form.as_p(),
+                "name": student_level[0]["level__name"],
+            },
+            status=200,
+        )
     else:
         return JsonResponse({"Privilege": "Restricted"}, status=200)
 
@@ -320,8 +443,8 @@ def level_info(request, student_level_id):
 def edit_level(request, student_level_id):
 
     response = {
-        'edited': False,
-        'messages': list(),
+        "edited": False,
+        "messages": list(),
     }
 
     if request.user.is_admin or request.user.is_teacher:
@@ -337,8 +460,7 @@ def edit_level(request, student_level_id):
 
         else:
             for key in form.errors.as_data():
-                response["messages"].append(
-                    str(form.errors.as_data()[key][0])[2:-2])
+                response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
     else:
         response["Privilege"] = "Restricted"
 
@@ -348,7 +470,7 @@ def edit_level(request, student_level_id):
 def deactivate_level(request, student_level_id):
 
     response = {
-        'userID': None,
+        "userID": None,
     }
 
     if request.user.is_admin or request.user.is_teacher:
@@ -369,11 +491,12 @@ def deactivate_level(request, student_level_id):
 
 # ATTENDANCES FUNCTIONS
 
+
 def load_future_attendances(request):
 
     response = {
-        'attendances': list(),
-        'all_loaded': False,
+        "attendances": list(),
+        "all_loaded": False,
     }
 
     # Get start and end points / and user id
@@ -383,12 +506,32 @@ def load_future_attendances(request):
 
     # Generate list of future attendances
 
-    response['attendances'] += list(Attendance.objects.filter(student=user_id, course__date__gte=datetime.datetime.now(
-    )).values('id', 'course__id', 'cycle', 'end_cycle', 'recover', 'onlyday', 'attendance', 'quota', 'note').order_by('course__date')[start:end])
+    response["attendances"] += list(
+        Attendance.objects.filter(
+            student=user_id, course__date__gte=datetime.datetime.now()
+        )
+        .values(
+            "id",
+            "course__id",
+            "cycle",
+            "end_cycle",
+            "recover",
+            "onlyday",
+            "attendance",
+            "quota",
+            "note",
+        )
+        .order_by("course__date")[start:end]
+    )
 
     # Check if all is already loaded
-    if end >= Attendance.objects.filter(student=user_id, course__date__gte=datetime.datetime.now()).count():
-        response['all_loaded'] = True
+    if (
+        end
+        >= Attendance.objects.filter(
+            student=user_id, course__date__gte=datetime.datetime.now()
+        ).count()
+    ):
+        response["all_loaded"] = True
 
     # Return serialized student attendances data
     return JsonResponse(response, status=200)
@@ -397,8 +540,8 @@ def load_future_attendances(request):
 def load_past_attendances(request):
 
     response = {
-        'attendances': list(),
-        'all_loaded': False,
+        "attendances": list(),
+        "all_loaded": False,
     }
 
     # Get start and end points / and user id
@@ -408,12 +551,32 @@ def load_past_attendances(request):
 
     # Generate list of past attendances
 
-    response['attendances'] += list(Attendance.objects.filter(student=user_id, course__date__lt=datetime.datetime.now(
-    )).values('id', 'course__id', 'cycle', 'end_cycle', 'recover', 'onlyday', 'attendance', 'quota', 'note').order_by('-course__date')[start:end])
+    response["attendances"] += list(
+        Attendance.objects.filter(
+            student=user_id, course__date__lt=datetime.datetime.now()
+        )
+        .values(
+            "id",
+            "course__id",
+            "cycle",
+            "end_cycle",
+            "recover",
+            "onlyday",
+            "attendance",
+            "quota",
+            "note",
+        )
+        .order_by("-course__date")[start:end]
+    )
 
     # Check if all is already loaded
-    if end >= Attendance.objects.filter(student=user_id, course__date__gte=datetime.datetime.now()).count():
-        response['all_loaded'] = True
+    if (
+        end
+        >= Attendance.objects.filter(
+            student=user_id, course__date__gte=datetime.datetime.now()
+        ).count()
+    ):
+        response["all_loaded"] = True
 
     # Return serialized student attendances data
     return JsonResponse(response, status=200)
@@ -423,8 +586,8 @@ def load_past_attendances(request):
 def change_attendance(request, attendance_id):
 
     response = {
-        'attendance': None,
-        'past': False,
+        "attendance": None,
+        "past": False,
     }
 
     attendance = Attendance.objects.get(pk=int(attendance_id))
@@ -442,24 +605,27 @@ def change_attendance(request, attendance_id):
 def change_quota(request, attendance_id):
 
     attendance = Attendance.objects.get(pk=int(attendance_id))
-    attendance.quota = 'PAGO' if attendance.quota == 'SEPARADO' else 'SEPARADO'
+    attendance.quota = "PAGO" if attendance.quota == "SEPARADO" else "SEPARADO"
     attendance.save()
 
-    return JsonResponse({'quota': attendance.quota}, status=200)
+    return JsonResponse({"quota": attendance.quota}, status=200)
 
 
 @staff_member_required(login_url=mysite)
 def attendance_info(request, attendance_id):
 
-    form = AttendanceForm(
-        instance=Attendance.objects.get(pk=int(attendance_id)))
+    form = AttendanceForm(instance=Attendance.objects.get(pk=int(attendance_id)))
 
     return JsonResponse(
         {
-            'attendance': list(Attendance.objects.filter(pk=int(attendance_id)).values('cycle', 'end_cycle', 'recover', 'onlyday', 'note', 'image')),
-            'form': form.as_p(),
+            "attendance": list(
+                Attendance.objects.filter(pk=int(attendance_id)).values(
+                    "cycle", "end_cycle", "recover", "onlyday", "note", "image"
+                )
+            ),
+            "form": form.as_p(),
         },
-        status=200
+        status=200,
     )
 
 
@@ -481,7 +647,9 @@ def change_cycle(request, attendance_id):
 
     attendance.save()
 
-    return JsonResponse({'cycle': attendance.cycle, 'end_cycle': attendance.end_cycle}, status=200)
+    return JsonResponse(
+        {"cycle": attendance.cycle, "end_cycle": attendance.end_cycle}, status=200
+    )
 
 
 @staff_member_required(login_url=mysite)
@@ -502,23 +670,25 @@ def change_day(request, attendance_id):
 
     attendance.save()
 
-    return JsonResponse({'onlyday': attendance.onlyday, 'recover': attendance.recover}, status=200)
+    return JsonResponse(
+        {"onlyday": attendance.onlyday, "recover": attendance.recover}, status=200
+    )
 
 
 @staff_member_required(login_url=mysite)
 def edit_attendance(request, attendance_id):
 
     response = {
-        'note': None,
-        'attendanceID': attendance_id,
-        'edited': False,
-        'form': None,
-        'messages': list(),
+        "note": None,
+        "attendanceID": attendance_id,
+        "edited": False,
+        "form": None,
+        "messages": list(),
     }
 
     attendance = Attendance.objects.get(pk=attendance_id)
 
-    form = AttendanceForm(request.POST, request.FILES,  instance=attendance)
+    form = AttendanceForm(request.POST, request.FILES, instance=attendance)
 
     if form.is_valid():
         attendance = form.save()
@@ -530,8 +700,7 @@ def edit_attendance(request, attendance_id):
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(
-                str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -539,19 +708,32 @@ def edit_attendance(request, attendance_id):
 def search_attendance(request):
 
     response = {
-        'attendances': list(),
-        'past': False,
+        "attendances": list(),
+        "past": False,
     }
 
     date = request.GET.get("date", "")
     userID = request.GET.get("userID")
 
     if date:
-        response["attendances"] += list(Attendance.objects.filter(course__date=date, student=userID).values(
-            'id', 'course__id', 'cycle', 'end_cycle', 'recover', 'onlyday', 'attendance', 'quota', 'note').order_by('course__date'))
+        response["attendances"] += list(
+            Attendance.objects.filter(course__date=date, student=userID)
+            .values(
+                "id",
+                "course__id",
+                "cycle",
+                "end_cycle",
+                "recover",
+                "onlyday",
+                "attendance",
+                "quota",
+                "note",
+            )
+            .order_by("course__date")
+        )
 
     if datetime.datetime.strptime(date, "%Y-%m-%d").date() < datetime.date.today():
-        response['past'] = True
+        response["past"] = True
 
     return JsonResponse(response, status=200)
 
@@ -559,18 +741,17 @@ def search_attendance(request):
 def date_attendances(request):
 
     response = {
-        'attendances_count': 0,
-        'percentage': None,
-        'studentLevelID': request.GET.get("studentLevelID"),
-        'levelID': request.GET.get("levelID"),
-        'date': request.GET.get('date'),
-        'levelAttendances': request.GET.get('levelAttendances'),
-        'certificate_img': None,
-        'certificate_pdf': None,
+        "attendances_count": 0,
+        "percentage": None,
+        "studentLevelID": request.GET.get("studentLevelID"),
+        "levelID": request.GET.get("levelID"),
+        "date": request.GET.get("date"),
+        "levelAttendances": request.GET.get("levelAttendances"),
+        "certificate_img": None,
+        "certificate_pdf": None,
     }
 
-    student_level = Student_Level.objects.get(
-        pk=int(response["studentLevelID"]))
+    student_level = Student_Level.objects.get(pk=int(response["studentLevelID"]))
 
     if student_level.certificate_img and student_level.certificate_pdf:
         response["certificate_img"] = student_level.certificate_img.url
@@ -578,18 +759,30 @@ def date_attendances(request):
 
     try:
 
-        response["attendances_count"] = Attendance.objects.filter(course__date__gte=request.GET.get(
-            'date'), student=request.GET.get("userID"), attendance=True).count()
+        response["attendances_count"] = Attendance.objects.filter(
+            course__date__gte=request.GET.get("date"),
+            student=request.GET.get("userID"),
+            attendance=True,
+        ).count()
 
-        percentage = round(Attendance.objects.filter(course__date__gte=request.GET.get('date'), student=request.GET.get("userID"), attendance=True).count(
-        ) * 100 / int(request.GET.get("levelAttendances")), 1)
+        percentage = round(
+            Attendance.objects.filter(
+                course__date__gte=request.GET.get("date"),
+                student=request.GET.get("userID"),
+                attendance=True,
+            ).count()
+            * 100
+            / int(request.GET.get("levelAttendances")),
+            1,
+        )
 
-        response['percentage'] = percentage if percentage < 101 else 100
+        response["percentage"] = percentage if percentage < 101 else 100
 
     except:
-        response['percentage'] = 0
+        response["percentage"] = 0
 
     return JsonResponse(response, status=200)
+
 
 # COURSES FUNCTION
 
@@ -597,10 +790,10 @@ def date_attendances(request):
 def course_info(request, course_id):
 
     response = {
-        'course_id': course_id,
-        'courseStr': None,
-        'courseCount': None,
-        'today': False,
+        "course_id": course_id,
+        "courseStr": None,
+        "courseCount": None,
+        "today": False,
     }
 
     course = Course.objects.get(pk=course_id)
@@ -635,23 +828,27 @@ def edit_courses(request, user_id):
             Attendance.objects.create(student=student, course=course)
             student.courses.add(course)
 
-    return HttpResponseRedirect(reverse('courses:student', args=(user_id,)))
+    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
 
 
 @staff_member_required(login_url=mysite)
 def courses(request):
-    return render(request, 'courses/courses.html', {
-        'createCoursesForm': CreateCoursesForm(),
-        'adminBar': True,
-    })
+    return render(
+        request,
+        "courses/courses.html",
+        {
+            "createCoursesForm": CreateCoursesForm(),
+            "adminBar": True,
+        },
+    )
 
 
 @staff_member_required(login_url=mysite)
 def load_past_courses(request):
 
     response = {
-        'courses': list(),
-        'all_loaded': False,
+        "courses": list(),
+        "all_loaded": False,
     }
 
     # Get start and end points
@@ -660,8 +857,11 @@ def load_past_courses(request):
 
     # Generate list of old courses
 
-    response["courses"] += list(Course.objects.filter(
-        date__lt=datetime.datetime.now()).values('id').order_by("-date")[start:end])
+    response["courses"] += list(
+        Course.objects.filter(date__lt=datetime.datetime.now())
+        .values("id")
+        .order_by("-date")[start:end]
+    )
 
     # Check if all is already loaded
     if end >= Course.objects.filter(date__lt=datetime.datetime.now()).count():
@@ -674,8 +874,8 @@ def load_past_courses(request):
 def load_future_courses(request):
 
     response = {
-        'courses': list(),
-        'all_loaded': False,
+        "courses": list(),
+        "all_loaded": False,
     }
 
     # Get start and end points
@@ -684,8 +884,11 @@ def load_future_courses(request):
 
     # Generate list of future courses
 
-    response["courses"] += list(Course.objects.filter(
-        date__gte=datetime.datetime.now()).values('id').order_by("date", "start_time")[start:end])
+    response["courses"] += list(
+        Course.objects.filter(date__gte=datetime.datetime.now())
+        .values("id")
+        .order_by("date", "start_time")[start:end]
+    )
 
     # Check if all is already loaded
     if end >= Course.objects.filter(date__gte=datetime.datetime.now()).count():
@@ -704,8 +907,7 @@ def search_course(request):
     date = request.GET.get("date", "")
 
     if date:
-        response["courses"] += list(
-            Course.objects.filter(date=date).values("id"))
+        response["courses"] += list(Course.objects.filter(date=date).values("id"))
 
     return JsonResponse(response, status=200)
 
@@ -714,8 +916,8 @@ def search_course(request):
 def create_courses(request):
 
     response = {
-        'courses': list(),
-        'messages': list(),
+        "courses": list(),
+        "messages": list(),
     }
 
     form = CreateCoursesForm(request.POST)
@@ -729,11 +931,14 @@ def create_courses(request):
         for date in dates:
 
             course, created = Course.objects.get_or_create(
-                start_time=start_time, end_time=end_time, date=date)
+                start_time=start_time, end_time=end_time, date=date
+            )
 
             for student in form.cleaned_data["students"]:
 
-                if not Attendance.objects.filter(student=student, course=course).exists():
+                if not Attendance.objects.filter(
+                    student=student, course=course
+                ).exists():
                     Attendance.objects.create(student=student, course=course)
 
                 course.students.add(student)
@@ -744,15 +949,16 @@ def create_courses(request):
             response["courses"] += [
                 {
                     "id": course.id,
-                    "str": Course.objects.get(start_time=start_time, end_time=end_time, date=date).__str__(),
+                    "str": Course.objects.get(
+                        start_time=start_time, end_time=end_time, date=date
+                    ).__str__(),
                     "count": course.students.count(),
                 }
             ]
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(
-                str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -762,21 +968,22 @@ def course(request, course_id):
 
     course = Course.objects.get(pk=course_id)
 
-    return render(request, 'courses/course.html', {
-        'course': course,
-        'past':  course.date < datetime.date.today(),
-        'editCourseForm': EditCourseForm(instance=course),
-        'adminBar': True,
-    })
+    return render(
+        request,
+        "courses/course.html",
+        {
+            "course": course,
+            "past": course.date < datetime.date.today(),
+            "editCourseForm": EditCourseForm(instance=course),
+            "adminBar": True,
+        },
+    )
 
 
 @staff_member_required(login_url=mysite)
 def edit_course(request, course_id):
 
-    response = {
-        'edited': False,
-        'messages': list()
-    }
+    response = {"edited": False, "messages": list()}
 
     course = Course.objects.get(pk=course_id)
 
@@ -789,7 +996,8 @@ def edit_course(request, course_id):
         date = form.cleaned_data["date"]
 
         courses = Course.objects.filter(
-            start_time=start_time, end_time=end_time, date=date)
+            start_time=start_time, end_time=end_time, date=date
+        )
 
         if not courses or courses[0] == course:
 
@@ -812,8 +1020,7 @@ def edit_course(request, course_id):
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(
-                str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -827,15 +1034,19 @@ def delete_course(request, course_id):
 @staff_member_required(login_url=mysite)
 def print_courses(request):
 
-    date = request.GET.get('date')
+    date = request.GET.get("date")
     courses = Course.objects.filter(date=date)
     schedules = get_schedules(courses)
 
-    return render(request, 'courses/print.html', {
-        'todayDate': datetime.datetime.strptime(date, "%Y-%m-%d").date(),
-        'schedules': schedules,
-        'adminBar': True,
-    })
+    return render(
+        request,
+        "courses/print.html",
+        {
+            "todayDate": datetime.datetime.strptime(date, "%Y-%m-%d").date(),
+            "schedules": schedules,
+            "adminBar": True,
+        },
+    )
 
 
 @staff_member_required(login_url=mysite)
@@ -844,19 +1055,20 @@ def print_course(request, course_id):
     courses = Course.objects.filter(pk=course_id)
     schedules = get_schedules(courses)
 
-    return render(request, 'courses/print.html', {
-        'todayDate': courses[0].date,
-        'schedules': schedules,
-        'adminBar': True,
-    })
+    return render(
+        request,
+        "courses/print.html",
+        {
+            "todayDate": courses[0].date,
+            "schedules": schedules,
+            "adminBar": True,
+        },
+    )
 
 
 def generate_certificate(request, student_level_id):
 
-    response = {
-        'generated': False,
-        'userID': None
-    }
+    response = {"generated": False, "userID": None}
 
     student_level = Student_Level.objects.get(pk=student_level_id)
 
@@ -864,12 +1076,20 @@ def generate_certificate(request, student_level_id):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        #locale.setlocale(locale.LC_TIME, 'es')
+        # locale.setlocale(locale.LC_TIME, 'es')
         media_url = settings.MEDIA_URL
 
         # img_src = media_url + "certificate.png"
-        img_src = 'media/certificate.png' if student_level.student.date_birth and round(
-            (datetime.date.today() - student_level.student.date_birth).days // 365.25) > 9 else 'media/certificate_kids.png'
+        img_src = (
+            "media/certificate.png"
+            if student_level.student.date_birth
+            and round(
+                (datetime.date.today() - student_level.student.date_birth).days
+                // 365.25
+            )
+            > 9
+            else "media/certificate_kids.png"
+        )
 
         img = Image.open(img_src)
         draw = ImageDraw.Draw(img)
@@ -886,8 +1106,7 @@ def generate_certificate(request, student_level_id):
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 370),
-                  text, (24, 57, 100), font=font)
+        draw.text(((img.width // 2) - (x // 2), 370), text, (24, 57, 100), font=font)
 
         # LEVEL NAME
 
@@ -897,14 +1116,12 @@ def generate_certificate(request, student_level_id):
         # font = ImageFont.truetype(<font-file>, <font-size>)
         font = ImageFont.truetype(font_src, 23)
 
-        text = f"POR HABER COMPLETADO {student_level.level.name}".upper(
-        )
+        text = f"POR HABER COMPLETADO {student_level.level.name}".upper()
 
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 450),
-                  text, (83, 83, 83), font=font)
+        draw.text(((img.width // 2) - (x // 2), 450), text, (83, 83, 83), font=font)
 
         # TEACHER AND ADMIN NAMES
 
@@ -916,8 +1133,11 @@ def generate_certificate(request, student_level_id):
         # draw.text((x, y),"Sample Text",(r,g,b))
         draw.text((230, 620), text, (83, 83, 83), font=font)
 
-        teacher_signature = Image.open(Account.objects.get(
-            pk=request.user.id).signature.path) if Account.objects.get(pk=request.user.id).signature else None
+        teacher_signature = (
+            Image.open(Account.objects.get(pk=request.user.id).signature.path)
+            if Account.objects.get(pk=request.user.id).signature
+            else None
+        )
 
         if teacher_signature:
             img.paste(teacher_signature, (230, 535))
@@ -927,8 +1147,11 @@ def generate_certificate(request, student_level_id):
         # draw.text((x, y),"Sample Text",(r,g,b))
         draw.text((580, 620), text, (83, 83, 83), font=font)
 
-        admin_signature = Image.open(Account.objects.get(
-            pk=1).signature.path) if Account.objects.get(pk=1).signature else None
+        admin_signature = (
+            Image.open(Account.objects.get(pk=1).signature.path)
+            if Account.objects.get(pk=1).signature
+            else None
+        )
 
         if admin_signature:
             img.paste(admin_signature, (580, 535))
@@ -936,24 +1159,23 @@ def generate_certificate(request, student_level_id):
         # DATE
         # font = ImageFont.truetype(font_src, 15)
 
-        day = str(datetime.date.today().strftime('%d')).upper()
-        month = get_month(str(datetime.date.today().strftime('%B').upper()))
-        year = str(datetime.date.today().strftime('%Y')).upper()
+        day = str(datetime.date.today().strftime("%d")).upper()
+        month = get_month(str(datetime.date.today().strftime("%B").upper()))
+        year = str(datetime.date.today().strftime("%Y")).upper()
 
         text = day + " DE " + month + " DEL " + year
 
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 695),
-                  text, (83, 83, 83), font=font)
+        draw.text(((img.width // 2) - (x // 2), 695), text, (83, 83, 83), font=font)
 
         blob = BytesIO()
-        img.save(blob, 'PNG')
+        img.save(blob, "PNG")
         student_level.certificate_img.save("certificate.png", File(blob))
 
         blob = BytesIO()
-        img.save(blob, 'PDF')
+        img.save(blob, "PDF")
         student_level.certificate_pdf.save("certificate.pdf", File(blob))
 
         response["generated"] = True
@@ -966,10 +1188,7 @@ def generate_certificate(request, student_level_id):
 
 def delete_certificate(request, student_level_id):
 
-    response = {
-        'deleted': False,
-        'userID': None
-    }
+    response = {"deleted": False, "userID": None}
 
     student_level = Student_Level.objects.get(pk=student_level_id)
     response["userID"] = student_level.student.id

@@ -326,8 +326,24 @@ function load_students_levels(levelID, filter) {
 						delivered = "PENDIENTE";
 					}
 
+					var color = "lightgrey";
+
+					if (
+						response["students"][studentsID]["student__color__hex_code"] !==
+						null
+					) {
+						color =
+							response["students"][studentsID]["student__color__hex_code"];
+					}
+
 					$(`#levelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
+						<button onclick="changeStudentColor(${
+							response["students"][studentsID]["student__id"]
+						});" id="studentColorBtn${
+						response["students"][studentsID]["student__id"]
+					}" class="btn btn-lg" style="background-color: ${color};"></button>\
+
 										<a href="${mysite}/users/profile/${
 						response["students"][studentsID]["student__id"]
 					}">${
@@ -355,7 +371,7 @@ function load_students_levels(levelID, filter) {
 							: mysite +
 							  "/users/profile/" +
 							  response["students"][studentsID]["student__id"]
-					}"><div class="loader"></div></a> <button id="btnDelivered${
+					}">✅</a> <button id="btnDelivered${
 						response["students"][studentsID]["student__id"]
 					}" onclick="changeDelivered(${levelID}, ${
 						response["students"][studentsID]["student__id"]
@@ -430,8 +446,24 @@ $("#levelSearch").keyup(
 							delivered = "PENDIENTE";
 						}
 
+						var color = "lightgrey";
+
+						if (
+							response["students"][studentsID]["student__color__hex_code"] !==
+							null
+						) {
+							color =
+								response["students"][studentsID]["student__color__hex_code"];
+						}
+
 						$(`#searchLevelTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
+															<button onclick="changeStudentColor(${
+																response["students"][studentsID]["student__id"]
+															});" id="studentColorBtn${
+							response["students"][studentsID]["student__id"]
+						}" class="btn btn-lg" style="background-color: ${color};"></button>\
+
 										<a href="${mysite}/users/profile/${
 							response["students"][studentsID]["student__id"]
 						}">${

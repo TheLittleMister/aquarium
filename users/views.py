@@ -39,7 +39,7 @@ def redirection(request):
 def login_view(request):
 
     response = {
-        'user': None,
+        "user": None,
     }
 
     post = request.POST.copy()
@@ -53,7 +53,7 @@ def login_view(request):
         login(request, user)
         user.real_last_login = timezone.now()
         user.save()
-        response['user'] = user.id
+        response["user"] = user.id
 
     return JsonResponse(response, status=200)
 
@@ -66,9 +66,9 @@ def logout_view(request):
 def available(request):
 
     response = {
-        'email': None,
-        'username': None,
-        'identity_document': None,
+        "email": None,
+        "username": None,
+        "identity_document": None,
     }
 
     if request.GET.get("email", ""):
@@ -79,17 +79,17 @@ def available(request):
             validate_email(email)
 
             if Account.objects.filter(email=email).exists():
-                response['email'] = "Taken"
+                response["email"] = "Taken"
 
             else:
-                response['email'] = "Not taken"
+                response["email"] = "Not taken"
 
             if not request.user.is_anonymous:
                 if request.user.email == email:
-                    response['email'] = False
+                    response["email"] = False
 
         except:
-            response['email'] = "Invalid"
+            response["email"] = "Invalid"
 
     if request.GET.get("username", ""):
 
@@ -100,19 +100,21 @@ def available(request):
             user_valid(username)
 
             if Account.objects.filter(username=username).exists():
-                response['username'] = "Taken"
+                response["username"] = "Taken"
 
             else:
-                response['username'] = "Not taken"
+                response["username"] = "Not taken"
 
             if not request.user.is_anonymous:
                 if request.user.username == username:
-                    response['username'] = False
+                    response["username"] = False
 
         except:
-            response['username'] = "Invalid"
+            response["username"] = "Invalid"
 
-    if request.GET.get('identity_document', '') or request.GET.get('identity_document_1', ''):
+    if request.GET.get("identity_document", "") or request.GET.get(
+        "identity_document_1", ""
+    ):
 
         identity_document = int(request.GET["identity_document"])
 
@@ -121,19 +123,20 @@ def available(request):
                 raise ValidationError()
 
             if Account.objects.filter(identity_document=identity_document).exists():
-                response['identity_document'] = 'Taken'
+                response["identity_document"] = "Taken"
 
             else:
-                response['identity_document'] = 'Not taken'
+                response["identity_document"] = "Not taken"
 
             if not request.user.is_anonymous:
                 if request.user.identity_document == identity_document:
-                    response['identity_document'] = False
+                    response["identity_document"] = False
 
         except:
-            response['identity_document'] = 'Invalid'
+            response["identity_document"] = "Invalid"
 
     return JsonResponse(response, status=200)
+
 
 # USER PROFILE
 
@@ -146,19 +149,27 @@ def profile(request, user_id):
 
         if request.user.is_teacher or request.user.is_admin or request.user == user:
 
-            age = round((datetime.date.today() - user.date_birth).days //
-                        365.25) if user.date_birth else None
+            age = (
+                round((datetime.date.today() - user.date_birth).days // 365.25)
+                if user.date_birth
+                else None
+            )
 
-            signatureForm = SignatureForm(
-                instance=user) if request.user.is_admin else None
+            signatureForm = (
+                SignatureForm(instance=user) if request.user.is_admin else None
+            )
 
-            return render(request, 'users/profile.html', {
-                'user': user,
-                'age': age,
-                'profileForm': ProfileForm(instance=user),
-                'signatureForm': signatureForm,
-                'userBar': True,
-            })
+            return render(
+                request,
+                "users/profile.html",
+                {
+                    "user": user,
+                    "age": age,
+                    "profileForm": ProfileForm(instance=user),
+                    "signatureForm": signatureForm,
+                    "userBar": True,
+                },
+            )
 
     return HttpResponseRedirect("/")
 
@@ -169,9 +180,12 @@ def profile_photo(request, user_id):
 
     if request.user.is_admin or request.user == user:
 
-        if request.FILES.get("image", False) != False and 'image' in request.FILES["image"].content_type:
+        if (
+            request.FILES.get("image", False) != False
+            and "image" in request.FILES["image"].content_type
+        ):
 
-            if user.image != 'default-profile.png':
+            if user.image != "default-profile.png":
                 user.image.delete()
 
             user.image = request.FILES["image"]
@@ -184,22 +198,22 @@ def profile_photo(request, user_id):
             h = float(request.POST["h"])
             w = float(request.POST["w"])
 
-            img = img.crop((x, y, w+x, h+y))
+            img = img.crop((x, y, w + x, h + y))
             img.save(user.image.path)
 
     if request.user.is_admin:
-        return HttpResponseRedirect(reverse('courses:student', args=(user.id,)))
+        return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
 
     else:
-        return HttpResponseRedirect(reverse('users:profile', args=(user.id,)))
+        return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
 
 
 @staff_member_required(login_url=mysite)
 def edit_student(request, user_id):
 
     response = {
-        'edited': False,
-        'messages': list(),
+        "edited": False,
+        "messages": list(),
     }
 
     user = Account.objects.get(pk=user_id)
@@ -208,8 +222,11 @@ def edit_student(request, user_id):
     if studentform.is_valid():
         user = studentform.save()
 
-        user.email = str(BaseUserManager.normalize_email(
-            user.email)).lower() if user.email else None
+        user.email = (
+            str(BaseUserManager.normalize_email(user.email)).lower()
+            if user.email
+            else None
+        )
 
         user.first_name = unidecode(str(user.first_name).upper())
         user.last_name = unidecode(str(user.last_name).upper())
@@ -223,8 +240,11 @@ def edit_student(request, user_id):
 
     else:
         for key in studentform.errors.as_data():
-            response["messages"].append(str(studentform.errors.as_data()[key][0])[
-                                        2:-2].replace("Account", "cuenta"))
+            response["messages"].append(
+                str(studentform.errors.as_data()[key][0])[2:-2].replace(
+                    "Account", "cuenta"
+                )
+            )
 
     return JsonResponse(response, status=200)
 
@@ -248,8 +268,8 @@ def delete_student(request, user_id):
 def edit_profile(request, user_id):
 
     response = {
-        'edited': False,
-        'messages': list(),
+        "edited": False,
+        "messages": list(),
     }
 
     user = Account.objects.get(pk=user_id)
@@ -261,8 +281,11 @@ def edit_profile(request, user_id):
             user = profileform.save()
             user.newrequest = True
 
-            user.email = str(BaseUserManager.normalize_email(
-                user.email)).lower() if user.email else None
+            user.email = (
+                str(BaseUserManager.normalize_email(user.email)).lower()
+                if user.email
+                else None
+            )
 
             if user.first_name_1:
                 user.first_name_1 = unidecode(str(user.first_name_1).upper())
@@ -278,8 +301,11 @@ def edit_profile(request, user_id):
 
         else:
             for key in profileform.errors.as_data():
-                response["messages"].append(str(profileform.errors.as_data()[key][0])[
-                    2:-2].replace("Account", "cuenta"))
+                response["messages"].append(
+                    str(profileform.errors.as_data()[key][0])[2:-2].replace(
+                        "Account", "cuenta"
+                    )
+                )
 
     else:
         response["Privilege"] = "Restricted"
@@ -323,6 +349,7 @@ def approve_request(request, user_id):
 
     return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
 
+
 # TEACHER FUNCTIONS
 
 
@@ -330,10 +357,15 @@ def create_schedule(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        courses = Account.objects.get(pk=request.GET.get("userID")).teacher_courses.filter(
-            date__gte=datetime.datetime.now() - datetime.timedelta(15)).order_by('date', 'start_time')
+        courses = (
+            Account.objects.get(pk=request.GET.get("userID"))
+            .teacher_courses.filter(
+                date__gte=datetime.datetime.now() - datetime.timedelta(15)
+            )
+            .order_by("date", "start_time")
+        )
 
-        return JsonResponse({'schedule': get_schedule(courses)}, status=200)
+        return JsonResponse({"schedule": get_schedule(courses)}, status=200)
 
     else:
         return JsonResponse({"Privilege": "Restricted"}, status=200)
@@ -349,10 +381,13 @@ def change_student_color(request, user_id):
 
         color_id = student.color.id if student.color else 0
 
-        student.color = Color.objects.get(
-            pk=(color_id + 1)) if Color.objects.filter(pk=(color_id + 1)).exists() else None
+        student.color = (
+            Color.objects.get(pk=(color_id + 1))
+            if Color.objects.filter(pk=(color_id + 1)).exists()
+            else None
+        )
 
-        response["color"] = student.color.hex_code if student.color else 'lightgrey'
+        response["color"] = student.color.hex_code if student.color else "lightgrey"
 
         student.save()
 
@@ -367,23 +402,23 @@ def signature(request, user_id):
 
     teacher = Account.objects.get(pk=user_id)
 
-    signatureForm = SignatureForm(
-        request.POST, request.FILES, instance=teacher)
+    signatureForm = SignatureForm(request.POST, request.FILES, instance=teacher)
 
     if signatureForm.is_valid():
         signatureForm.save()
 
-    return HttpResponseRedirect(reverse('users:profile', args=(user_id,)))
+    return HttpResponseRedirect(reverse("users:profile", args=(user_id,)))
 
 
 # LEVEL FUNCTIONS
 
+
 def load_level_students(request):
 
     response = {
-        'students': list(),
-        'all_loaded': False,
-        'levelName': None,
+        "students": list(),
+        "all_loaded": False,
+        "levelName": None,
     }
 
     if request.user.is_admin or request.user.is_teacher:
@@ -398,16 +433,66 @@ def load_level_students(request):
         filter = int(request.GET.get("filter"))
 
         if filter == 0:  # TODOS
-            response["students"] += list(level.levels.filter(is_active=True).values("student__id", "student__identity_document",
-                                                                                    "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+            levelQuery = (
+                level.levels.filter(is_active=True)
+                .values(
+                    "student__color__hex_code",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "delivered",
+                )
+                .order_by("student__color__hex_code")[start:end]
+            )
+
+            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
+
+            response["students"] += list(levelQuery)
 
         elif filter == 1:  # CERTIFICADOS
-            response["students"] += list(level.levels.exclude(is_active=False).exclude(certificate_img="").exclude(certificate_img__isnull=True).values("student__id", "student__identity_document",
-                                                                                                                                                        "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+            levelQuery = (
+                level.levels.exclude(is_active=False)
+                .exclude(certificate_img="")
+                .exclude(certificate_img__isnull=True)
+                .values(
+                    "student__color__hex_code",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "delivered",
+                )
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
+
+            response["students"] += list(levelQuery)
 
         elif filter == 2:  # NO CERTIFICADOS
-            response["students"] += list(level.levels.filter(is_active=True, certificate_img="").values("student__id", "student__identity_document",
-                                                                                                        "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+
+            levelQuery = (
+                level.levels.filter(is_active=True, certificate_img="")
+                .values(
+                    "student__color__hex_code",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "delivered",
+                )
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
+
+            response["students"] += list(levelQuery)
 
         else:
 
@@ -419,8 +504,23 @@ def load_level_students(request):
             elif filter == 4:  # No Entregago
                 deliver = True
 
-            response["students"] += list(level.levels.filter(is_active=True, delivered=deliver).values("student__id", "student__identity_document",
-                                                                                                       "student__first_name", "student__last_name", "certificate_img", "delivered").order_by(F('delivered').desc(nulls_last=True))[start:end])
+            levelQuery = (
+                level.levels.filter(is_active=True, delivered=deliver)
+                .values(
+                    "student__color__hex_code",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "delivered",
+                )
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+            levelQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
+
+            response["students"] += list(levelQuery)
 
         if end >= level.levels.all().count():
             response["all_loaded"] = True
@@ -434,7 +534,7 @@ def load_level_students(request):
 def search_level_students(request):
 
     response = {
-        'students': list(),
+        "students": list(),
     }
 
     if request.user.is_admin or request.user.is_teacher:
@@ -443,8 +543,26 @@ def search_level_students(request):
         level = Level.objects.get(pk=level_id)
 
         if len(search) > 1:
-            response["students"] += list(level.levels.filter(Q(student__username__icontains=search) | Q(student__email__icontains=search) | Q(student__first_name__icontains=search) | Q(student__last_name__icontains=search) | Q(student__identity_document__icontains=search) | Q(
-                student__phone_1__icontains=search) | Q(student__phone_2__icontains=search), is_active=True).values("student__id", "student__identity_document", "student__first_name", "student__last_name", "certificate_img", "delivered"))
+            response["students"] += list(
+                level.levels.filter(
+                    Q(student__username__icontains=search)
+                    | Q(student__email__icontains=search)
+                    | Q(student__first_name__icontains=search)
+                    | Q(student__last_name__icontains=search)
+                    | Q(student__identity_document__icontains=search)
+                    | Q(student__phone_1__icontains=search)
+                    | Q(student__phone_2__icontains=search),
+                    is_active=True,
+                ).values(
+                    "student__color__hex_code",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "delivered",
+                )
+            )
 
     else:
         response["Privilege"] = "Restricted"
@@ -455,16 +573,25 @@ def search_level_students(request):
 def get_this_percentage(request):
 
     response = {
-        'percentage': 0,
+        "percentage": 0,
     }
 
     student_level = Student_Level.objects.get(
-        student=request.GET.get("studentID"), level=request.GET.get("levelID"))
+        student=request.GET.get("studentID"), level=request.GET.get("levelID")
+    )
 
-    percentage = round(Attendance.objects.filter(course__date__gte=student_level.date, student=student_level.student,
-                                                 attendance=True).count() * 100 / student_level.attendances, 1)
+    percentage = round(
+        Attendance.objects.filter(
+            course__date__gte=student_level.date,
+            student=student_level.student,
+            attendance=True,
+        ).count()
+        * 100
+        / student_level.attendances,
+        1,
+    )
 
-    response['percentage'] = percentage if percentage < 101 else 100
+    response["percentage"] = percentage if percentage < 101 else 100
 
     return JsonResponse(response, status=200)
 
@@ -472,13 +599,12 @@ def get_this_percentage(request):
 def change_delivered(request, levelID, studentID):
 
     response = {
-        'delivered': False,
+        "delivered": False,
     }
 
     if request.user.is_admin or request.user.is_teacher:
 
-        student_level = Student_Level.objects.get(
-            student=studentID, level=levelID)
+        student_level = Student_Level.objects.get(student=studentID, level=levelID)
 
         if student_level.delivered:
             student_level.delivered = False
