@@ -187,7 +187,7 @@ function getThisPercentage(levelID, studentID) {
 		},
 		success: function (response) {
 			document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
-				element.append(`<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`);
+				element.innerHTML += `<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`;
 			});
 		},
 	});
