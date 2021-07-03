@@ -454,6 +454,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -476,6 +477,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -502,6 +504,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -526,6 +529,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -550,6 +554,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -574,6 +579,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -606,6 +612,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
@@ -629,6 +636,7 @@ def load_level_students(request):
                         "certificate_pdf",
                         "delivered",
                     )
+                    .distinct()
                     .order_by(F("delivered").desc(nulls_last=True))[start:end]
                 )
 
