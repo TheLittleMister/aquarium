@@ -440,7 +440,8 @@ def load_level_students(request):
                 response["students"] += list(
                     level.levels.filter(
                         is_active=True,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
@@ -463,7 +464,8 @@ def load_level_students(request):
                     level.levels.filter(
                         is_active=True,
                         student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
@@ -488,7 +490,8 @@ def load_level_students(request):
                 response["students"] += list(
                     level.levels.filter(
                         is_active=True,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .exclude(certificate_img="")
@@ -513,7 +516,8 @@ def load_level_students(request):
                     level.levels.filter(
                         is_active=True,
                         student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .exclude(certificate_img="")
@@ -540,7 +544,8 @@ def load_level_students(request):
                     level.levels.filter(
                         is_active=True,
                         certificate_img="",
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
@@ -565,7 +570,8 @@ def load_level_students(request):
                         is_active=True,
                         certificate_img="",
                         student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
@@ -598,7 +604,8 @@ def load_level_students(request):
                     level.levels.filter(
                         is_active=True,
                         delivered=deliver,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
@@ -622,7 +629,8 @@ def load_level_students(request):
                         is_active=True,
                         delivered=deliver,
                         student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now(),
+                        student__courses__date__gte=datetime.datetime.now()
+                        - datetime.timedelta(15),
                         student__attendances__quota="PAGO",
                     )
                     .values(
