@@ -438,7 +438,11 @@ def load_level_students(request):
 
             if request.user.is_admin:
                 response["students"] += list(
-                    level.levels.filter(is_active=True)
+                    level.levels.filter(
+                        is_active=True,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .values(
                         "student__teacher__color__hex_code",
                         "student__teacher__username",
@@ -455,7 +459,12 @@ def load_level_students(request):
 
             else:
                 response["students"] += list(
-                    level.levels.filter(is_active=True, student__teacher=request.user)
+                    level.levels.filter(
+                        is_active=True,
+                        student__teacher=request.user,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .values(
                         "student__teacher__color__hex_code",
                         "student__teacher__username",
@@ -475,7 +484,11 @@ def load_level_students(request):
 
             if request.user.is_admin:
                 response["students"] += list(
-                    level.levels.filter(is_active=True)
+                    level.levels.filter(
+                        is_active=True,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .exclude(certificate_img="")
                     .exclude(certificate_img__isnull=True)
                     .values(
@@ -494,7 +507,12 @@ def load_level_students(request):
 
             else:
                 response["students"] += list(
-                    level.levels.filter(is_active=True, student__teacher=request.user)
+                    level.levels.filter(
+                        is_active=True,
+                        student__teacher=request.user,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .exclude(certificate_img="")
                     .exclude(certificate_img__isnull=True)
                     .values(
@@ -515,7 +533,12 @@ def load_level_students(request):
 
             if request.user.is_admin:
                 response["students"] += list(
-                    level.levels.filter(is_active=True, certificate_img="")
+                    level.levels.filter(
+                        is_active=True,
+                        certificate_img="",
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .values(
                         "student__teacher__color__hex_code",
                         "student__teacher__username",
@@ -537,6 +560,8 @@ def load_level_students(request):
                         is_active=True,
                         certificate_img="",
                         student__teacher=request.user,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
                     )
                     .values(
                         "student__teacher__color__hex_code",
@@ -564,7 +589,12 @@ def load_level_students(request):
 
             if request.user.is_admin:
                 response["students"] += list(
-                    level.levels.filter(is_active=True, delivered=deliver)
+                    level.levels.filter(
+                        is_active=True,
+                        delivered=deliver,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
+                    )
                     .values(
                         "student__teacher__color__hex_code",
                         "student__teacher__username",
@@ -582,7 +612,11 @@ def load_level_students(request):
             else:
                 response["students"] += list(
                     level.levels.filter(
-                        is_active=True, delivered=deliver, student__teacher=request.user
+                        is_active=True,
+                        delivered=deliver,
+                        student__teacher=request.user,
+                        student__courses__date__gte=datetime.datetime.now(),
+                        student__attendances__quota="PAGO",
                     )
                     .values(
                         "student__teacher__color__hex_code",
