@@ -11,6 +11,43 @@ function showlevels() {
 	}
 }
 
+// FUNCTION TO CHANGE DELIVERED STATUS
+
+function changeThisDelivered(levelID, studentID) {
+	fetch(`${mysite}/users/change_delivered/${levelID}/${studentID}`)
+		.then((response) => response.json())
+		.then((response) => {
+			document.querySelectorAll(`#btnDelivered${studentID}${levelID}`).forEach((element) => {
+				let deliveredBtn;
+				let delivered;
+
+				if (response["delivered"]) {
+					deliveredBtn = "btn-danger";
+					delivered = "NO ENTREGADO";
+
+					element.classList.remove("btn-success");
+					element.classList.remove("btn-secondary");
+				} else if (response["delivered"] === false) {
+					deliveredBtn = "btn-success";
+					delivered = "ENTREGADO";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-secondary");
+				} else {
+					// null
+					deliveredBtn = "btn-secondary";
+					delivered = "PENDIENTE";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-success");
+				}
+
+				element.innerHTML = delivered;
+				element.classList.add(deliveredBtn);
+			});
+		});
+}
+
 function levels(userID) {
 	// console.log(userID);
 
@@ -24,9 +61,7 @@ function levels(userID) {
 
 			for (level in response) {
 				if (response[level]["is_active"] === false) {
-					document.querySelector(
-						`#level${response[level]["levelID"]}`
-					).innerHTML = `<button onclick="editLevel(${response[level]["studentLevelID"]});" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#modalLevel">Activar</button>`;
+					document.querySelector(`#level${response[level]["levelID"]}`).innerHTML = `<button onclick="editLevel(${response[level]["studentLevelID"]});" type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#modalLevel">Activar</button>`;
 				} else {
 					$.ajax({
 						type: "GET",
@@ -45,18 +80,30 @@ function levels(userID) {
 							console.log("Error!", error);
 						},
 						success: function (ajaxResponse) {
-							if (
-								ajaxResponse["certificate_img"] !== null &&
-								ajaxResponse["certificate_pdf"] !== null
-							) {
-								document.querySelector(
-									`#level${ajaxResponse["levelID"]}`
-								).innerHTML = `<div> \
+							let deliveredBtn;
+							let delivered;
+
+							console.log(ajaxResponse);
+							if (ajaxResponse["delivered"]) {
+								deliveredBtn = "btn btn-sm btn-danger";
+								delivered = "NO ENTREGADO";
+							} else if (ajaxResponse["delivered"] === false) {
+								deliveredBtn = "btn btn-sm btn-success";
+								delivered = "ENTREGADO";
+							} else {
+								// null
+								deliveredBtn = "btn btn-sm btn-secondary";
+								delivered = "PENDIENTE";
+							}
+
+							if (ajaxResponse["certificate_img"] !== null && ajaxResponse["certificate_pdf"] !== null) {
+								document.querySelector(`#level${ajaxResponse["levelID"]}`).innerHTML = `<div> \
                                     <button onclick="editLevel(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-outline-primary mb-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalLevel">EDITAR</button>\
                                     <strong>Desde:</strong> ${ajaxResponse["date"]}\
                                     <br>\
                                     <strong>Asistencias:</strong> ${ajaxResponse["attendances_count"]}/${ajaxResponse["levelAttendances"]}\
                                 </div>\
+								<button id="btnDelivered${userID}${ajaxResponse["levelID"]}" onclick="changeThisDelivered(${ajaxResponse["levelID"]}, ${userID});" class="${deliveredBtn}">${delivered}</button><br><br>\
 								<a class="btn btn-sm btn-primary mb-2" href="${ajaxResponse["certificate_img"]}">CERTIFICADO PNG</a>\
 								<a class="btn btn-sm btn-primary mb-2" href="${ajaxResponse["certificate_pdf"]}">CERTIFICADO PDF</a>\
                                 <br>\
@@ -66,14 +113,13 @@ function levels(userID) {
                                     <div class="w3-round-xlarge w3-center w3-orange" style="height:24px;width:${ajaxResponse["percentage"]}%">${ajaxResponse["percentage"]}%</div>\
                                 </div>`;
 							} else {
-								document.querySelector(
-									`#level${ajaxResponse["levelID"]}`
-								).innerHTML = `<div> \
+								document.querySelector(`#level${ajaxResponse["levelID"]}`).innerHTML = `<div> \
                                     <button onclick="editLevel(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-outline-primary mb-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalLevel">EDITAR</button>\
                                     <strong>Desde:</strong> ${ajaxResponse["date"]}\
                                     <br>\
                                     <strong>Asistencias:</strong> ${ajaxResponse["attendances_count"]}/${ajaxResponse["levelAttendances"]}\
                                 </div>\
+								<button id="btnDelivered${userID}${ajaxResponse["levelID"]}" onclick="changeThisDelivered(${ajaxResponse["levelID"]}, ${userID});" class="${deliveredBtn}">${delivered}</button><br><br>\
 								<button onclick="this.style.display='none'; generateCertificate(${ajaxResponse["studentLevelID"]});" class="btn btn-sm btn-warning mb-2" href="#">GENERAR CERTIFICADO</button>\
                                 <br>\
                                 <div class="w3-white w3-round-xlarge">\
@@ -96,19 +142,12 @@ function editLevel(studentLevelID) {
 		.then((response) => {
 			document.querySelector("#levelFormMessages").classList.remove("alert");
 
-			document
-				.querySelector("#levelFormMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#levelFormMessages").classList.remove("alert-danger");
 
 			document.querySelector("#levelFormMessages").innerHTML = "";
 
 			document.querySelector("#levelName").innerHTML = `${response["name"]}`;
-			document
-				.querySelector("#deactivateLevel")
-				.setAttribute(
-					"onClick",
-					`javascript: deactivateLevel(${studentLevelID});`
-				);
+			document.querySelector("#deactivateLevel").setAttribute("onClick", `javascript: deactivateLevel(${studentLevelID});`);
 
 			$("#levelFormDiv").html(response["form"]);
 			$("#levelForm").attr("action", `/courses/edit_level/${studentLevelID}`);
@@ -134,9 +173,7 @@ $("#levelForm").submit(function (e) {
 			document.querySelector("#btnLevelLoader").classList.add("loader");
 			document.querySelector("#levelFormMessages").classList.remove("alert");
 
-			document
-				.querySelector("#levelFormMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#levelFormMessages").classList.remove("alert-danger");
 
 			document.querySelector("#levelFormMessages").innerHTML = "";
 		},
@@ -154,26 +191,18 @@ $("#levelForm").submit(function (e) {
 				document.querySelector("#btnLevelSubmit").style.display = "block";
 
 				document.querySelector("#levelFormMessages").classList.add("alert");
-				document
-					.querySelector("#levelFormMessages")
-					.classList.add("alert-success");
+				document.querySelector("#levelFormMessages").classList.add("alert-success");
 
-				$("#levelFormMessages").append(
-					`<li class="ml-2">Cambios Guardados!</li>`
-				);
+				$("#levelFormMessages").append(`<li class="ml-2">Cambios Guardados!</li>`);
 			} else {
 				document.querySelector("#btnLevelLoader").classList.remove("loader");
 				document.querySelector("#btnLevelSubmit").style.display = "block";
 
 				document.querySelector("#levelFormMessages").classList.add("alert");
-				document
-					.querySelector("#levelFormMessages")
-					.classList.add("alert-danger");
+				document.querySelector("#levelFormMessages").classList.add("alert-danger");
 
 				for (messageID in response["messages"]) {
-					$("#levelFormMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					$("#levelFormMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			}
 		},

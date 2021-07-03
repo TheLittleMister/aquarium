@@ -412,6 +412,7 @@ def levels(request, student_id):
                 "date": student_level.date,
                 "attendances": student_level.attendances,
                 "is_active": student_level.is_active,
+                "delivered": student_level.delivered,
             }
 
     else:
@@ -749,9 +750,11 @@ def date_attendances(request):
         "levelAttendances": request.GET.get("levelAttendances"),
         "certificate_img": None,
         "certificate_pdf": None,
+        "delivered": True,
     }
 
     student_level = Student_Level.objects.get(pk=int(response["studentLevelID"]))
+    response["delivered"] = student_level.delivered
 
     if student_level.certificate_img and student_level.certificate_pdf:
         response["certificate_img"] = student_level.certificate_img.url
