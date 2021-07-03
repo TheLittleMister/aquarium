@@ -680,7 +680,7 @@ def change_delivered(request, levelID, studentID):
         "delivered": False,
     }
 
-    if request.user.is_admin or request.user.is_teacher:
+    if request.user.is_admin:
 
         student_level = Student_Level.objects.get(student=studentID, level=levelID)
 
