@@ -127,6 +127,7 @@
                                         <tr>
                                             {% for attendance in cycle.cycle|slice:":8" %}
                                             <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                <span style="font-size: large; font-weight: bold;">{{ attendance.course.date }} == {{ course.date }} == {{ todayDate }}</span>
                                                 {% if attendance.attendance == True %}
                                                 <span style="font-size: large; font-weight: bold;">✓</span>
 
@@ -164,13 +165,14 @@
                                         <tr>
                                             {% for attendance in cycle.cycle|slice:"8:" %}
                                             <td scope="row" data-label="{{attendance.course.date|date:'l'}} {{attendance.course.date}}">
+                                                <span style="font-size: large; font-weight: bold;">{{ attendance.course.date }} == {{ course.date }} == {{ todayDate }}</span>
                                                 {% if attendance.attendance == True %}
                                                 <span style="font-size: large; font-weight: bold;">✓</span>
 
                                                 {% else %}
                                                 {% if attendance.course.is_past_due %}
                                                 <span style="font-size: large; font-weight: bold;">✗</span>
-                                                {% elif attendance.course.date == todayDate %}
+                                                {% elif attendance.course.date == course.date %}
                                                 <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
                                                 {% endif %}
