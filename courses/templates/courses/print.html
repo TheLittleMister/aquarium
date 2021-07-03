@@ -136,6 +136,7 @@
                                                 {% if attendance.recover == True %}
                                                 <span style="font-size: small; font-weight: bold;">RECUPERA</span>
                                                 {% endif %}
+                                                {{attendance.course == course.date}}
                                                 {% if attendance.course == course.date %}
                                                 <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
@@ -172,6 +173,7 @@
                                                 {% if attendance.recover == True %}
                                                 <span style="font-size: small; font-weight: bold;">RECUPERA</span>
                                                 {% endif %}
+                                                {{attendance.course == course.date}}
                                                 {% if attendance.course == course.date %}
                                                 <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
