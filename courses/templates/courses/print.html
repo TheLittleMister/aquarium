@@ -133,7 +133,7 @@
                                                 {% else %}
                                                 {% if attendance.course.is_past_due %}
                                                 <span style="font-size: large; font-weight: bold;">✗</span>
-                                                {% elif attendance.course == course.date %}
+                                                {% elif attendance.course == todayDate %}
                                                 <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
                                                 {% endif %}
@@ -170,7 +170,7 @@
                                                 {% else %}
                                                 {% if attendance.course.is_past_due %}
                                                 <span style="font-size: large; font-weight: bold;">✗</span>
-                                                {% elif attendance.course.date == course.date %}
+                                                {% elif attendance.course.date == todayDate %}
                                                 <span style="font-size: small; font-weight: bold;">ESTE DÍA</span>
                                                 {% endif %}
                                                 {% endif %}
