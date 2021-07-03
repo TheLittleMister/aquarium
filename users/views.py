@@ -685,13 +685,13 @@ def change_delivered(request, levelID, studentID):
         student_level = Student_Level.objects.get(student=studentID, level=levelID)
 
         if student_level.delivered:
-            student_level.delivered = False
-
-        elif student_level.delivered == False:
             student_level.delivered = None
 
-        else:
+        elif student_level.delivered == False:  # ENTR ==> PEN ==> NO ENTR
             student_level.delivered = True
+
+        else:
+            student_level.delivered = False
 
         student_level.save()
 
