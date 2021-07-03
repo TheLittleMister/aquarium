@@ -187,7 +187,7 @@ function getThisPercentage(levelID, studentID) {
 		},
 		success: function (response) {
 			document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
-				element.innerHTML = `<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`;
+				element.append(`<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`);
 			});
 		},
 	});
@@ -315,9 +315,8 @@ function load_students_levels(levelID, filter) {
 						document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
 							mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
 						}')">PDF</button>`;
-					} else {
-						getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 					}
+					getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 				}
 				document.querySelector("#loadLevel").classList.remove("loader");
 				document.querySelector("#loadMoreLevelBtn").style.display = "block";
@@ -389,9 +388,8 @@ $("#levelSearch").keyup(
 							document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
 								mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
 							}')">PDF</button>`;
-						} else {
-							getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 						}
+						getThisPercentage(levelID, response["students"][studentsID]["student__id"]);
 					}
 				} else {
 					$(`#searchLevelTableBody`).append(`<tr> \
