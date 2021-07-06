@@ -1090,7 +1090,7 @@ def generate_certificate(request, student_level_id):
                 (datetime.date.today() - student_level.student.date_birth).days
                 // 365.25
             )
-            > 8
+            > 6
             else "media/certificate_kids.png"
         )
 
