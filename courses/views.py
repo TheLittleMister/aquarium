@@ -32,6 +32,37 @@ mysite = "https://aquariumschool.co/"
 # USERS FUNCTIONS
 
 
+def user_data(request):
+
+    response = {"user": list()}
+
+    userID = request.GET.get("userID")
+
+    response["user"] += list(
+        Account.objects.filter(pk=userID).values(
+            "id",
+            "username",
+            "image",
+            "is_admin",
+            "is_teacher",
+            "first_name",
+            "last_name",
+            "id_type",
+            "identity_document",
+            "sex",
+            "date_birth",
+            "email",
+            "parent",
+            "phone_1",
+            "phone_2",
+            "note",
+            "teacher__username",
+        )
+    )
+
+    return JsonResponse(response, status=200)
+
+
 @staff_member_required(login_url=mysite)
 def students(request):
     return render(
@@ -162,14 +193,13 @@ def search_active_students(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url=mysite)
 def search_students(request):
 
     response = {"students": list()}
 
     search = request.GET.get("student").strip()
 
-    if len(search) > 1:
+    if request.user.is_admin or request.user.is_teacher and len(search) > 1:
         response["students"] += list(
             Account.objects.filter(
                 Q(username__icontains=search)
@@ -236,34 +266,42 @@ def create_student(request):
     return JsonResponse(response, status=200)
 
 
-@staff_member_required(login_url=mysite)
+# @staff_member_required(login_url=mysite)
 def student(request, student_id):
 
-    student = Account.objects.get(pk=student_id)
+    if request.user.is_authenticated:
 
-    age = (
-        round((datetime.date.today() - student.date_birth).days // 365.25)
-        if student.date_birth
-        else None
-    )
+        if request.user.is_admin:
 
-    return render(
-        request,
-        "courses/student.html",
-        {
-            "user": student,
-            "age": age,
-            "studentForm": StudentForm(instance=student),
-            "coursesForm": CoursesForm(
-                initial={
-                    "courses": student.courses.filter(
-                        date__gte=datetime.datetime.now()
-                    ).order_by("date", "start_time"),
-                }
-            ),
-            "adminBar": True,
-        },
-    )
+            student = Account.objects.get(pk=student_id)
+
+            age = (
+                round((datetime.date.today() - student.date_birth).days // 365.25)
+                if student.date_birth
+                else None
+            )
+
+            return render(
+                request,
+                "courses/student.html",
+                {
+                    "user": student,
+                    "age": age,
+                    "studentForm": StudentForm(instance=student),
+                    "coursesForm": CoursesForm(
+                        initial={
+                            "courses": student.courses.filter(
+                                date__gte=datetime.datetime.now()
+                            ).order_by("date", "start_time"),
+                        }
+                    ),
+                    "adminBar": True,
+                },
+            )
+
+        return HttpResponseRedirect(reverse("users:profile", args=(student_id,)))
+
+    return HttpResponseRedirect("/")
 
 
 def create_schedule(request):

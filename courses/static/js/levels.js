@@ -45,6 +45,62 @@ function changeThisDelivered(levelID, studentID) {
 				element.innerHTML = delivered;
 				element.classList.add(deliveredBtn);
 			});
+			document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+				let deliveredBtn;
+				let delivered;
+
+				if (response["delivered"]) {
+					deliveredBtn = "btn-danger";
+					delivered = "NO ENTREGADO";
+
+					element.classList.remove("btn-success");
+					element.classList.remove("btn-secondary");
+				} else if (response["delivered"] === false) {
+					deliveredBtn = "btn-success";
+					delivered = "ENTREGADO";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-secondary");
+				} else {
+					// null
+					deliveredBtn = "btn-secondary";
+					delivered = "PENDIENTE";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-success");
+				}
+
+				element.innerHTML = delivered;
+				element.classList.add(deliveredBtn);
+			});
+			document.querySelectorAll(`#btnDelivered${studentID}${levelID}Modal`).forEach((element) => {
+				let deliveredBtn;
+				let delivered;
+
+				if (response["delivered"]) {
+					deliveredBtn = "btn-danger";
+					delivered = "NO ENTREGADO";
+
+					element.classList.remove("btn-success");
+					element.classList.remove("btn-secondary");
+				} else if (response["delivered"] === false) {
+					deliveredBtn = "btn-success";
+					delivered = "ENTREGADO";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-secondary");
+				} else {
+					// null
+					deliveredBtn = "btn-secondary";
+					delivered = "PENDIENTE";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-success");
+				}
+
+				element.innerHTML = delivered;
+				element.classList.add(deliveredBtn);
+			});
 		});
 }
 
@@ -83,7 +139,7 @@ function levels(userID) {
 							let deliveredBtn;
 							let delivered;
 
-							console.log(ajaxResponse);
+							// console.log(ajaxResponse);
 							if (ajaxResponse["delivered"]) {
 								deliveredBtn = "btn btn-sm btn-danger";
 								delivered = "NO ENTREGADO";
@@ -133,6 +189,12 @@ function levels(userID) {
 			document.querySelector("#loadStudentLevels").classList.remove("loader");
 			document.querySelector("#levelsDiv").style.display = "block";
 			document.querySelector("#showLevelsBtn").style.visibility = "visible";
+
+			try {
+				getThisPercentage(response[level]["levelID"], userID);
+			} catch (error) {
+				console.log("Error!", error);
+			}
 		});
 }
 
@@ -183,8 +245,13 @@ $("#levelForm").submit(function (e) {
 		success: function (response) {
 			// console.log(response);
 
-			levels(response["userID"]);
-			document.querySelector("#loadStudentLevels").classList.remove("loader");
+			try {
+				levelsModal(response["userID"]);
+				document.querySelector("#loadStudentLevelsModal").classList.remove("loader");
+			} catch (err) {
+				levels(response["userID"]);
+				document.querySelector("#loadStudentLevels").classList.remove("loader");
+			}
 
 			if (response["edited"] === true) {
 				document.querySelector("#btnLevelLoader").classList.remove("loader");
@@ -213,7 +280,11 @@ function deactivateLevel(studentLevelID) {
 	fetch(`${mysite}/courses/deactivate_level/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
-			levels(response["userID"]);
+			try {
+				levelsModal(response["userID"]);
+			} catch (err) {
+				levels(response["userID"]);
+			}
 		});
 }
 
@@ -221,7 +292,11 @@ function generateCertificate(studentLevelID) {
 	fetch(`${mysite}/courses/generate_certificate/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
-			levels(response["userID"]);
+			try {
+				levelsModal(response["userID"]);
+			} catch (err) {
+				levels(response["userID"]);
+			}
 		});
 }
 
@@ -229,6 +304,10 @@ function deleteCertificate(studentLevelID) {
 	fetch(`${mysite}/courses/delete_certificate/${studentLevelID}`)
 		.then((response) => response.json())
 		.then((response) => {
-			levels(response["userID"]);
+			try {
+				levelsModal(response["userID"]);
+			} catch (err) {
+				levels(response["userID"]);
+			}
 		});
 }

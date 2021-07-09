@@ -701,25 +701,37 @@ def search_level_students(request):
 def get_this_percentage(request):
 
     response = {
-        "percentage": 0,
+        "percentage": "Inactivo",
+        "certificate_img": None,
+        "certificate_pdf": None,
+        "is_active": False,
+        "delivered": False,
     }
 
     student_level = Student_Level.objects.get(
         student=request.GET.get("studentID"), level=request.GET.get("levelID")
     )
 
-    percentage = round(
-        Attendance.objects.filter(
-            course__date__gte=student_level.date,
-            student=student_level.student,
-            attendance=True,
-        ).count()
-        * 100
-        / student_level.attendances,
-        1,
-    )
+    if student_level.is_active:
 
-    response["percentage"] = percentage if percentage < 101 else 100
+        percentage = round(
+            Attendance.objects.filter(
+                course__date__gte=student_level.date,
+                student=student_level.student,
+                attendance=True,
+            ).count()
+            * 100
+            / student_level.attendances,
+            1,
+        )
+
+        response["delivered"] = student_level.delivered
+        response["is_active"] = student_level.is_active
+
+        if student_level.certificate_img:
+            response["certificate_img"] = student_level.certificate_img.url
+            response["certificate_pdf"] = student_level.certificate_pdf.url
+        response["percentage"] = f"{percentage if percentage < 101 else 100} %"
 
     return JsonResponse(response, status=200)
 

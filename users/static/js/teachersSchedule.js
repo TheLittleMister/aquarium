@@ -86,19 +86,19 @@ function getSchedule(user_id) {
 						for (var objID = 0; objID < response["schedule"][scheduleID][i].length; objID++) {
 							$(`#scheduleModalBody${scheduleID}${i}`).append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["schedule"][scheduleID][i][objID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["schedule"][scheduleID][i][objID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["schedule"][scheduleID][i][objID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["schedule"][scheduleID][i][objID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["schedule"][scheduleID][i][objID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["schedule"][scheduleID][i][objID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["schedule"][scheduleID][i][objID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["schedule"][scheduleID][i][objID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/users/profile/${response["schedule"][scheduleID][i][objID]["id"]}">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["schedule"][scheduleID][i][objID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["schedule"][scheduleID][i][objID]["phone_2"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue; background-color: ${response["schedule"][scheduleID][i][objID]["teacher__color__hex_code"]};" scope="row" data-label="Profesor">\
                                                     <button class="btn-sm" onclick="changeStudentTeacher(${response["schedule"][scheduleID][i][objID]["id"]});" id="studentTeacherBtn${response["schedule"][scheduleID][i][objID]["id"]}">${
@@ -186,9 +186,55 @@ function getThisPercentage(levelID, studentID) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
-				element.innerHTML += `<span style="font-size: medium; font-weight: bold;">${response["percentage"]}%</span>`;
-			});
+			if (response["is_active"]) {
+				document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
+					element.innerHTML = `${response["percentage"]}`;
+				});
+				if (response["certificate_img"]) {
+					document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+						element.innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + response["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${mysite + response["certificate_pdf"]}')">PDF</button>`;
+					});
+				} else {
+					document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+						element.innerHTML = ``;
+					});
+				}
+
+				let deliveredBtn;
+				let delivered;
+
+				if (response["delivered"]) {
+					deliveredBtn = "btn-danger";
+					delivered = "NO ENTREGADO";
+				} else if (response["delivered"] === false) {
+					deliveredBtn = "btn-success";
+					delivered = "ENTREGADO";
+				} else {
+					// null
+					deliveredBtn = "btn-secondary";
+					delivered = "PENDIENTE";
+				}
+
+				document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-success");
+					element.classList.remove("btn-secondary");
+					element.classList.add(deliveredBtn);
+
+					element.innerHTML = delivered;
+					element.style.display = "inline-block";
+				});
+			} else {
+				document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
+					element.innerHTML = `Inactivo`;
+				});
+				document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+					element.innerHTML = ``;
+				});
+				document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+					element.style.display = "none";
+				});
+			}
 		},
 	});
 }
@@ -249,6 +295,7 @@ function changeThisFilter(filter) {
 }
 
 function load_students_levels(levelID, filter) {
+	// console.log("hi?");
 	const start = levelStudentsCounter;
 	const end = levelStudentsCounter + levelStudentsQuantity;
 	levelStudentsCounter = end + 1;
@@ -271,6 +318,7 @@ function load_students_levels(levelID, filter) {
 				console.log("Error!", error);
 			},
 			success: function (response) {
+				// console.log(response);
 				document.querySelector("#searchlevelName").innerHTML = response["levelName"];
 
 				if (response["all_loaded"] == true) {
@@ -298,21 +346,23 @@ function load_students_levels(levelID, filter) {
 										<button onclick="changeStudentTeacher(${response["students"][studentsID]["student__id"]});" id="studentTeacherBtn${response["students"][studentsID]["student__id"]}" class="btn-sm">${response["students"][studentsID]["student__teacher__username"] !== null ? response["students"][studentsID]["student__teacher__username"] : "Reclamar"}</button>\
 									</td>\
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
-										<span class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
+										<span style="font-size: medium;" class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <span class="thisCertificate${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${
+						response["students"][studentsID]["student__id"]
+					});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
 
 					if (response["students"][studentsID]["certificate_img"]) {
-						document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+						document.querySelector(`.thisCertificate${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
 							mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
 						}')">PDF</button>`;
 					}
@@ -372,20 +422,22 @@ $("#levelSearch").keyup(
 										<button onclick="changeStudentTeacher(${response["students"][studentsID]["student__id"]});" id="studentTeacherBtn${response["students"][studentsID]["student__id"]}" class="btn-sm">${response["students"][studentsID]["student__teacher__username"] !== null ? response["students"][studentsID]["student__teacher__username"] : "Reclamar"}</button>\
 									</td>\
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__identity_document"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__first_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/users/profile/${response["students"][studentsID]["student__id"]}">${response["students"][studentsID]["student__last_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
-										<span class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${response["students"][studentsID]["student__id"]});" class="${deliveredBtn}">${delivered}</button>\
+										<span style="font-size: medium;" class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <span class="thisCertificate${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${
+							response["students"][studentsID]["student__id"]
+						});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
 						if (response["students"][studentsID]["certificate_img"]) {
-							document.querySelector(`.thisPercentage${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+							document.querySelector(`.thisCertificate${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
 								mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
 							}')">PDF</button>`;
 						}
@@ -532,5 +584,116 @@ function showStudentStatistics() {
 	} else {
 		document.querySelector("#studentStatistics").style.display = "none";
 		document.querySelector("#showStudentStatisticsButton").innerHTML = "Abrir";
+	}
+}
+
+function prettyDate(time) {
+	var date = new Date(time),
+		diff = (new Date().getTime() - date.getTime()) / 1000,
+		day_diff = Math.floor(diff / 86400);
+	var year = date.getFullYear(),
+		month = date.getMonth() + 1,
+		day = date.getDate();
+
+	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) return year.toString() + "-" + (month < 10 ? "0" + month.toString() : month.toString()) + "-" + (day < 10 ? "0" + day.toString() : day.toString());
+
+	var r =
+		(day_diff == 0 && ((diff < 60 && "justo ahora") || (diff < 120 && "Hace 1 minuto") || (diff < 3600 && "Hace " + Math.floor(diff / 60) + " minutos") || (diff < 7200 && "Hace 1 hora") || (diff < 86400 && "Hace " + Math.floor(diff / 3600) + " horas"))) ||
+		(day_diff == 1 && "Ayer") ||
+		(day_diff < 7 && "Hace " + day_diff + " días") ||
+		(day_diff < 31 && "Hace " + Math.ceil(day_diff / 7) + " semanas");
+	return r;
+}
+
+// THIS FUNCTION ACTIVATES TOOLTIPS
+
+function activateToolTip() {
+	$('[data-toggle="tooltip"]').tooltip();
+}
+
+// This AJAX function searches for students
+$("#searchStudents").keyup(
+	delay(function () {
+		$.ajax({
+			type: "GET",
+			url: `${mysite}/courses/search_students/`,
+			data: {
+				student: $(this).val(),
+			},
+			beforeSend: function () {
+				document.querySelector("#resultsSearchStudentsTable").style.visibility = "hidden";
+				document.querySelector("#resultsSearchStudentsTableBody").innerHTML = "";
+
+				document.querySelector("#searchStudentsLoader").classList.add("loader");
+			},
+			error: function (error) {
+				console.log("Error!", error);
+			},
+			success: function (response) {
+				document.querySelector("#resultsSearchStudentsTable").style.visibility = "visible";
+
+				document.querySelector("#searchStudentsLoader").classList.remove("loader");
+
+				for (studentID in response["students"]) {
+					login = prettyDate(response["students"][studentID]["real_last_login"]);
+
+					login = login !== "1969-12-31" ? login : "-";
+
+					$("#resultsSearchStudentsTableBody").append(`<tr> \
+                                                <td scope="row" data-label="Documento"> \
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["identity_document"]}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Nombres">\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["first_name"]}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Apellidos">\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["last_name"]}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (1)">\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_1"]}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_2"]}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${login}</a>\
+                                                </td>\
+                                            </tr>`);
+				}
+
+				if (response["students"].length === 0) {
+					$("#resultsStudentsTableBody").append(`<tr> \
+                                                <td scope="row" data-label="Documento"> \
+                                                    <a href="#">Sin Resultados</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Nombres">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Apellidos">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (1)">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
+                                                    <a href="#">-</a>\
+                                                </td>\
+                                            </tr>`);
+				}
+			},
+		});
+	}, 1000)
+);
+
+function showStudentSearch() {
+	if (document.querySelector("#studentSearch").style.display === "none") {
+		document.querySelector("#studentSearch").style.display = "block";
+		document.querySelector("#showStudentSearchButton").innerHTML = "Cerrar";
+	} else {
+		document.querySelector("#studentSearch").style.display = "none";
+		document.querySelector("#showStudentSearchButton").innerHTML = "Abrir";
 	}
 }
