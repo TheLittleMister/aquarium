@@ -172,6 +172,7 @@ function changeStudentTeacher(userID) {
 
 // FUNCTION TO GET STUDENT LEVEL PERCERNTAGE
 function getThisPercentage(levelID, studentID) {
+	console.log(levelID);
 	$.ajax({
 		type: "GET",
 		url: `${mysite}/users/get_this_percentage/`,
