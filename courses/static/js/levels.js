@@ -45,6 +45,34 @@ function changeThisDelivered(levelID, studentID) {
 				element.innerHTML = delivered;
 				element.classList.add(deliveredBtn);
 			});
+			document.querySelectorAll(`#btnDelivered${levelID}${studentID}`).forEach((element) => {
+				let deliveredBtn;
+				let delivered;
+
+				if (response["delivered"]) {
+					deliveredBtn = "btn-danger";
+					delivered = "NO ENTREGADO";
+
+					element.classList.remove("btn-success");
+					element.classList.remove("btn-secondary");
+				} else if (response["delivered"] === false) {
+					deliveredBtn = "btn-success";
+					delivered = "ENTREGADO";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-secondary");
+				} else {
+					// null
+					deliveredBtn = "btn-secondary";
+					delivered = "PENDIENTE";
+
+					element.classList.remove("btn-danger");
+					element.classList.remove("btn-success");
+				}
+
+				element.innerHTML = delivered;
+				element.classList.add(deliveredBtn);
+			});
 			document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
 				let deliveredBtn;
 				let delivered;
