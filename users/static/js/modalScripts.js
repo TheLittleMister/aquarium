@@ -158,14 +158,15 @@ function levelsModal(userID) {
                                     <div class="w3-round-xlarge w3-center w3-orange" style="height:24px;width:${ajaxResponse["percentage"]}%">${ajaxResponse["percentage"]}%</div>\
                                 </div>`;
 							}
+
+							try {
+								getThisPercentage(ajaxResponse["levelID"], userID);
+							} catch (error) {
+								console.log("Error!", error);
+							}
 						},
 					});
 				}
-			}
-			try {
-				getThisPercentage(response[level]["levelID"], userID);
-			} catch (error) {
-				console.log("Error!", error);
 			}
 
 			document.querySelector("#loadStudentLevelsModal").classList.remove("loader");

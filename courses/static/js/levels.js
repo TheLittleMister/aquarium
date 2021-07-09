@@ -182,6 +182,12 @@ function levels(userID) {
                                     <div class="w3-round-xlarge w3-center w3-orange" style="height:24px;width:${ajaxResponse["percentage"]}%">${ajaxResponse["percentage"]}%</div>\
                                 </div>`;
 							}
+
+							try {
+								getThisPercentage(ajaxResponse["levelID"], userID);
+							} catch (error) {
+								console.log("Error!", error);
+							}
 						},
 					});
 				}
@@ -189,12 +195,6 @@ function levels(userID) {
 			document.querySelector("#loadStudentLevels").classList.remove("loader");
 			document.querySelector("#levelsDiv").style.display = "block";
 			document.querySelector("#showLevelsBtn").style.visibility = "visible";
-
-			try {
-				getThisPercentage(response[level]["levelID"], userID);
-			} catch (error) {
-				console.log("Error!", error);
-			}
 		});
 }
 

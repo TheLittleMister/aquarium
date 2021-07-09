@@ -203,7 +203,7 @@ function getThisPercentage(levelID, studentID) {
 				let deliveredBtn;
 				let delivered;
 
-				console.log(response["delivered"]);
+				// console.log(response["delivered"]);
 
 				if (response["delivered"]) {
 					deliveredBtn = "btn-danger";
