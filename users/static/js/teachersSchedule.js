@@ -172,7 +172,7 @@ function changeStudentTeacher(userID) {
 
 // FUNCTION TO GET STUDENT LEVEL PERCERNTAGE
 function getThisPercentage(levelID, studentID) {
-	console.log(levelID);
+	// console.log(levelID);
 	$.ajax({
 		type: "GET",
 		url: `${mysite}/users/get_this_percentage/`,
@@ -248,7 +248,7 @@ function changeDelivered(levelID, studentID) {
 	fetch(`${mysite}/users/change_delivered/${levelID}/${studentID}`)
 		.then((response) => response.json())
 		.then((response) => {
-			document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+			document.querySelectorAll(`#btnDelivered${levelID}${studentID}`).forEach((element) => {
 				let deliveredBtn;
 				let delivered;
 
