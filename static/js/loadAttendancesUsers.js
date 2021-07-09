@@ -1,6 +1,3 @@
-// var mysite = "http://127.0.0.1:8000";
-// var mysite = "https://aquariumschool.co";
-
 // START LOAD FUTURE ATTENDANCES
 
 // Start with first future attendance
@@ -12,17 +9,6 @@ const studentFutureAttendancesQuantity = 20;
 // All future attendances loaded
 let allFutureAttendancesLoaded = false;
 
-// When DOM loads, render the first 20 future attendances
-document.addEventListener("DOMContentLoaded", load_future_attendances);
-
-// Function that creates INFINITE SCROLLING for future attendances
-
-$(window).scroll(function () {
-	if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureAttendancesLoaded === false) {
-		load_future_attendances();
-	}
-});
-
 function activateToolTip() {
 	$('[data-toggle="tooltip"]').tooltip();
 }
@@ -33,7 +19,7 @@ function load_future_attendances() {
 	const end = studentFutureAttendanceCounter + studentFutureAttendancesQuantity;
 	studentFutureAttendanceCounter = end + 1;
 
-	let userID = document.querySelector("#userID").getAttribute("value");
+	let userID = document.querySelector("#modalUserID").getAttribute("value");
 
 	// Fetch new future attendances and add them
 	$.ajax({
@@ -45,7 +31,7 @@ function load_future_attendances() {
 			userID: userID,
 		},
 		beforeSend: function () {
-			document.querySelector("#loadFutureAttendances").classList.add("loader");
+			document.querySelector("#loadFutureAttendancesModal").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -53,7 +39,7 @@ function load_future_attendances() {
 		success: function (response) {
 			// console.log(response);
 
-			document.querySelector("#loadFutureAttendances").classList.remove("loader");
+			document.querySelector("#loadFutureAttendancesModal").classList.remove("loader");
 
 			if (response["all_loaded"] === true) {
 				allFutureAttendancesLoaded = true;
@@ -78,11 +64,11 @@ function load_future_attendances() {
 					day = "RECUPERA";
 				}
 
-				$("#futureAttendancesTableBody").append(`<tr> \
+				$("#futureAttendancesTableBodyModal").append(`<tr> \
                                                 <td scope="row" data-label="Asistencia">\
                                                     <button id="attendanceButton${response["attendances"][studentID]["id"]}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
                                                 </td>\
-                                                <td scope="row" data-label="Clase"> \
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
                                                     <a id="courseName${response["attendances"][studentID]["course__id"]}" href="#"></a> <br>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="day${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
@@ -114,17 +100,6 @@ const studentPastAttendancesQuantity = 20;
 // All past attendances loaded
 let allPastAttendancesLoaded = false;
 
-// When DOM loads, render the first 20 past attendances
-document.addEventListener("DOMContentLoaded", load_past_attendances);
-
-// Function that creates INFINITE SCROLLING for past attendances
-
-$(window).scroll(function () {
-	if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastAttendancesLoaded === false) {
-		load_past_attendances();
-	}
-});
-
 function activateToolTip() {
 	$('[data-toggle="tooltip"]').tooltip();
 }
@@ -135,7 +110,7 @@ function load_past_attendances() {
 	const end = studentPastAttendanceCounter + studentPastAttendancesQuantity;
 	studentPastAttendanceCounter = end + 1;
 
-	let userID = document.querySelector("#userID").getAttribute("value");
+	let userID = document.querySelector("#modalUserID").getAttribute("value");
 
 	// Fetch new past attendances and add them
 	$.ajax({
@@ -147,7 +122,7 @@ function load_past_attendances() {
 			userID: userID,
 		},
 		beforeSend: function () {
-			document.querySelector("#loadPastAttendances").classList.add("loader");
+			document.querySelector("#loadPastAttendancesModal").classList.add("loader");
 		},
 		error: function (error) {
 			console.log("Error!", error);
@@ -155,7 +130,7 @@ function load_past_attendances() {
 		success: function (response) {
 			// console.log(response);
 
-			document.querySelector("#loadPastAttendances").classList.remove("loader");
+			document.querySelector("#loadPastAttendancesModal").classList.remove("loader");
 
 			if (response["all_loaded"] === true) {
 				allPastAttendancesLoaded = true;
@@ -180,11 +155,11 @@ function load_past_attendances() {
 					day = "RECUPERA";
 				}
 
-				$("#pastAttendancesTableBody").append(`<tr> \
+				$("#pastAttendancesTableBodyModal").append(`<tr> \
                                                 <td scope="row" data-label="Asistencia">\
                                                     <button id="attendanceButton${response["attendances"][studentID]["id"]}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
                                                 </td>\
-                                                <td scope="row" data-label="Clase"> \
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
                                                     <a id="courseName${response["attendances"][studentID]["course__id"]}" href="#"></a> <br>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="day${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
@@ -286,21 +261,21 @@ $("#attendanceSearchForm").submit(function (e) {
 	});
 });
 
-function closeFutureCourses(button) {
-	if (document.querySelector("#futureCourses").style.display === "block") {
-		document.querySelector("#futureCourses").style.display = "none";
+function closeFutureCoursesModal(button) {
+	if (document.querySelector("#futureCoursesModal").style.display === "block") {
+		document.querySelector("#futureCoursesModal").style.display = "none";
 		button.innerHTML = "Abrir";
 	} else {
-		document.querySelector("#futureCourses").style.display = "block";
+		document.querySelector("#futureCoursesModal").style.display = "block";
 		button.innerHTML = "Cerrar";
 	}
 }
-function closePastCourses(button) {
-	if (document.querySelector("#pastCourses").style.display === "block") {
-		document.querySelector("#pastCourses").style.display = "none";
+function closePastCoursesModal(button) {
+	if (document.querySelector("#pastCoursesModal").style.display === "block") {
+		document.querySelector("#pastCoursesModal").style.display = "none";
 		button.innerHTML = "Abrir";
 	} else {
-		document.querySelector("#pastCourses").style.display = "block";
+		document.querySelector("#pastCoursesModal").style.display = "block";
 		button.innerHTML = "Cerrar";
 	}
 }

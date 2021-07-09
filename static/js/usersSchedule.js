@@ -3,9 +3,7 @@
 
 function tConvert(time) {
 	// Check correct time format and split into components
-	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
-		time,
-	];
+	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
 	if (time.length > 1) {
 		// If time format correct
@@ -34,11 +32,7 @@ function getSchedule(user_id) {
 		success: function (response) {
 			document.querySelector("#loadStudentSchedule").classList.remove("loader");
 
-			for (
-				var scheduleID = 0;
-				scheduleID < response["schedule"].length;
-				scheduleID++
-			) {
+			for (var scheduleID = 0; scheduleID < response["schedule"].length; scheduleID++) {
 				var DE = tConvert(response["schedule"][scheduleID][0]);
 				var A = tConvert(response["schedule"][scheduleID][1]);
 
@@ -71,8 +65,7 @@ function getSchedule(user_id) {
                                             </tr>`);
 			}
 
-			document.querySelector("#showScheduleButton").style.visibility =
-				"visible";
+			document.querySelector("#showScheduleButton").style.visibility = "visible";
 		},
 	});
 }
@@ -102,9 +95,7 @@ $("#editProfileForm").submit(function (e) {
 			document.querySelector("#loadEditProfile").classList.add("loader");
 			document.querySelector("#editProfileMessages").classList.remove("alert");
 
-			document
-				.querySelector("#editProfileMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#editProfileMessages").classList.remove("alert-danger");
 
 			document.querySelector("#editProfileMessages").innerHTML = "";
 		},
@@ -122,12 +113,8 @@ $("#editProfileForm").submit(function (e) {
 
 				for (messageID in response["messages"]) {
 					document.querySelector("#editProfileMessages").classList.add("alert");
-					document
-						.querySelector("#editProfileMessages")
-						.classList.add("alert-danger");
-					$("#editProfileMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					document.querySelector("#editProfileMessages").classList.add("alert-danger");
+					$("#editProfileMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			}
 		},
@@ -150,13 +137,10 @@ function studentStatistics(user_id) {
 			console.log("Error!", error);
 		},
 		success: function (response) {
-			console.log(response);
-			document
-				.querySelector("#loadStudentStatistics")
-				.classList.remove("loader");
+			// console.log(response);
+			document.querySelector("#loadStudentStatistics").classList.remove("loader");
 
-			document.querySelector("#showStudentStatisticsButton").style.visibility =
-				"visible";
+			document.querySelector("#showStudentStatisticsButton").style.visibility = "visible";
 
 			$("#studentAttendanceStatsBody").append(`<tr> \
                                                 <td scope="row" data-label="Asistió"> \

@@ -18,22 +18,10 @@ function prettyDate(time) {
 		month = date.getMonth() + 1,
 		day = date.getDate();
 
-	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31)
-		return (
-			year.toString() +
-			"-" +
-			(month < 10 ? "0" + month.toString() : month.toString()) +
-			"-" +
-			(day < 10 ? "0" + day.toString() : day.toString())
-		);
+	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) return year.toString() + "-" + (month < 10 ? "0" + month.toString() : month.toString()) + "-" + (day < 10 ? "0" + day.toString() : day.toString());
 
 	var r =
-		(day_diff == 0 &&
-			((diff < 60 && "justo ahora") ||
-				(diff < 120 && "Hace 1 minuto") ||
-				(diff < 3600 && "Hace " + Math.floor(diff / 60) + " minutos") ||
-				(diff < 7200 && "Hace 1 hora") ||
-				(diff < 86400 && "Hace " + Math.floor(diff / 3600) + " horas"))) ||
+		(day_diff == 0 && ((diff < 60 && "justo ahora") || (diff < 120 && "Hace 1 minuto") || (diff < 3600 && "Hace " + Math.floor(diff / 60) + " minutos") || (diff < 7200 && "Hace 1 hora") || (diff < 86400 && "Hace " + Math.floor(diff / 3600) + " horas"))) ||
 		(day_diff == 1 && "Ayer") ||
 		(day_diff < 7 && "Hace " + day_diff + " días") ||
 		(day_diff < 31 && "Hace " + Math.ceil(day_diff / 7) + " semanas");
@@ -56,9 +44,8 @@ $("#searchStudents").keyup(
 				student: $(this).val(),
 			},
 			beforeSend: function () {
-				document.querySelector("#resultsStudentsTable").style.visibility =
-					"hidden";
-				document.querySelector("#resultsStudentsTableBody").innerHTML = "";
+				document.querySelector("#resultsSearchStudentsTable").style.visibility = "hidden";
+				document.querySelector("#resultsSearchStudentsTableBody").innerHTML = "";
 
 				document.querySelector("#searchStudentsLoader").classList.add("loader");
 			},
@@ -66,40 +53,33 @@ $("#searchStudents").keyup(
 				console.log("Error!", error);
 			},
 			success: function (response) {
-				// console.log(response);
+				document.querySelector("#resultsSearchStudentsTable").style.visibility = "visible";
 
-				document.querySelector("#resultsStudentsTable").style.visibility =
-					"visible";
-
-				document
-					.querySelector("#searchStudentsLoader")
-					.classList.remove("loader");
+				document.querySelector("#searchStudentsLoader").classList.remove("loader");
 
 				for (studentID in response["students"]) {
-					login = prettyDate(
-						response["students"][studentID]["real_last_login"]
-					);
+					login = prettyDate(response["students"][studentID]["real_last_login"]);
 
 					login = login !== "1969-12-31" ? login : "-";
 
-					$("#resultsStudentsTableBody").append(`<tr> \
+					$("#resultsSearchStudentsTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${login}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${login}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -144,13 +124,9 @@ $("#createStudentForm").submit(function (e) {
 		beforeSend: function () {
 			document.querySelector("#createStudentButton").style.display = "none";
 			document.querySelector("#loadCreateStudent").classList.add("loader");
-			document
-				.querySelector("#createStudentMessages")
-				.classList.remove("alert");
+			document.querySelector("#createStudentMessages").classList.remove("alert");
 
-			document
-				.querySelector("#createStudentMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#createStudentMessages").classList.remove("alert-danger");
 
 			document.querySelector("#createStudentMessages").innerHTML = "";
 		},
@@ -161,23 +137,15 @@ $("#createStudentForm").submit(function (e) {
 			// console.log(response);
 
 			if (response["userID"] !== null) {
-				window.location.replace(
-					`${mysite}/courses/student/${response["userID"]}`
-				);
+				window.location.replace(`${mysite}/courses/student/${response["userID"]}`);
 			} else {
 				document.querySelector("#loadCreateStudent").classList.remove("loader");
 				document.querySelector("#createStudentButton").style.display = "block";
 
 				for (messageID in response["messages"]) {
-					document
-						.querySelector("#createStudentMessages")
-						.classList.add("alert");
-					document
-						.querySelector("#createStudentMessages")
-						.classList.add("alert-danger");
-					$("#createStudentMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					document.querySelector("#createStudentMessages").classList.add("alert");
+					document.querySelector("#createStudentMessages").classList.add("alert-danger");
+					$("#createStudentMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			}
 		},
@@ -199,9 +167,7 @@ $("#editStudentForm").submit(function (e) {
 			document.querySelector("#loadEditStudent").classList.add("loader");
 			document.querySelector("#editStudentMessages").classList.remove("alert");
 
-			document
-				.querySelector("#editStudentMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#editStudentMessages").classList.remove("alert-danger");
 
 			document.querySelector("#editStudentMessages").innerHTML = "";
 		},
@@ -219,12 +185,8 @@ $("#editStudentForm").submit(function (e) {
 
 				for (messageID in response["messages"]) {
 					document.querySelector("#editStudentMessages").classList.add("alert");
-					document
-						.querySelector("#editStudentMessages")
-						.classList.add("alert-danger");
-					$("#editStudentMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					document.querySelector("#editStudentMessages").classList.add("alert-danger");
+					$("#editStudentMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			}
 		},
@@ -237,75 +199,41 @@ function changeAttendance(attendanceID) {
 		.then((response) => {
 			// console.log(response);
 
-			if (document.querySelector(`#attendanceButton${attendanceID}`) !== null) {
+			document.querySelectorAll(`#attendanceButton${attendanceID}`).forEach((element) => {
 				if (response["attendance"] === true) {
-					document
-						.querySelector(`#attendanceButton${attendanceID}`)
-						.classList.remove("btn-danger");
-					document
-						.querySelector(`#attendanceButton${attendanceID}`)
-						.classList.add("btn-success");
-					document.querySelector(`#attendanceButton${attendanceID}`).innerHTML =
-						"ASISTIÓ";
+					element.classList.remove("btn-danger");
+					element.classList.add("btn-success");
+					element.innerHTML = "ASISTIÓ";
 				} else {
-					document
-						.querySelector(`#attendanceButton${attendanceID}`)
-						.classList.remove("btn-success");
+					element.classList.remove("btn-success");
 
 					if (response["past"] === true) {
-						document
-							.querySelector(`#attendanceButton${attendanceID}`)
-							.classList.add("btn-danger");
-						document.querySelector(
-							`#attendanceButton${attendanceID}`
-						).innerHTML = "NO ASISTIÓ";
+						element.classList.add("btn-danger");
+						element.innerHTML = "NO ASISTIÓ";
 					} else {
-						document
-							.querySelector(`#attendanceButton${attendanceID}`)
-							.classList.add("btn-secondary");
-						document.querySelector(
-							`#attendanceButton${attendanceID}`
-						).innerHTML = "PENDIENTE";
+						element.classList.add("btn-secondary");
+						element.innerHTML = "PENDIENTE";
 					}
 				}
-			}
+			});
 
-			if (
-				document.querySelector(`#attendanceButtonSearch${attendanceID}`) !==
-				null
-			) {
+			document.querySelectorAll(`#attendanceButtonSearch${attendanceID}`).forEach((element) => {
 				if (response["attendance"] === true) {
-					document
-						.querySelector(`#attendanceButtonSearch${attendanceID}`)
-						.classList.remove("btn-danger");
-					document
-						.querySelector(`#attendanceButtonSearch${attendanceID}`)
-						.classList.add("btn-success");
-					document.querySelector(
-						`#attendanceButtonSearch${attendanceID}`
-					).innerHTML = "ASISTIÓ";
+					element.classList.remove("btn-danger");
+					element.classList.add("btn-success");
+					element.innerHTML = "ASISTIÓ";
 				} else {
-					document
-						.querySelector(`#attendanceButtonSearch${attendanceID}`)
-						.classList.remove("btn-success");
+					element.classList.remove("btn-success");
 
 					if (response["past"] === true) {
-						document
-							.querySelector(`#attendanceButtonSearch${attendanceID}`)
-							.classList.add("btn-danger");
-						document.querySelector(
-							`#attendanceButtonSearch${attendanceID}`
-						).innerHTML = "NO ASISTIÓ";
+						element.classList.add("btn-danger");
+						element.innerHTML = "NO ASISTIÓ";
 					} else {
-						document
-							.querySelector(`#attendanceButtonSearch${attendanceID}`)
-							.classList.add("btn-secondary");
-						document.querySelector(
-							`#attendanceButtonSearch${attendanceID}`
-						).innerHTML = "PENDIENTE";
+						element.classList.add("btn-secondary");
+						element.innerHTML = "PENDIENTE";
 					}
 				}
-			}
+			});
 		});
 }
 
@@ -315,53 +243,29 @@ function changeQuota(attendanceID) {
 		.then((response) => {
 			// console.log(response);
 
-			if (document.querySelector(`#quotaButton${attendanceID}`) !== null) {
+			document.querySelectorAll(`#quotaButton${attendanceID}`).forEach((element) => {
 				if (response["quota"] === "PAGO") {
-					document
-						.querySelector(`#quotaButton${attendanceID}`)
-						.classList.remove("btn-secondary");
-					document
-						.querySelector(`#quotaButton${attendanceID}`)
-						.classList.add("btn-success");
-					document.querySelector(`#quotaButton${attendanceID}`).innerHTML =
-						response["quota"];
+					element.classList.remove("btn-secondary");
+					element.classList.add("btn-success");
+					element.innerHTML = response["quota"];
 				} else {
-					document
-						.querySelector(`#quotaButton${attendanceID}`)
-						.classList.remove("btn-success");
-					document
-						.querySelector(`#quotaButton${attendanceID}`)
-						.classList.add("btn-secondary");
-					document.querySelector(`#quotaButton${attendanceID}`).innerHTML =
-						response["quota"];
+					element.classList.remove("btn-success");
+					element.classList.add("btn-secondary");
+					element.innerHTML = response["quota"];
 				}
-			}
+			});
 
-			if (
-				document.querySelector(`#quotaButtonSearch${attendanceID}`) !== null
-			) {
+			document.querySelectorAll(`#quotaButtonSearch${attendanceID}`).forEach((element) => {
 				if (response["quota"] === "PAGO") {
-					document
-						.querySelector(`#quotaButtonSearch${attendanceID}`)
-						.classList.remove("btn-secondary");
-					document
-						.querySelector(`#quotaButtonSearch${attendanceID}`)
-						.classList.add("btn-success");
-					document.querySelector(
-						`#quotaButtonSearch${attendanceID}`
-					).innerHTML = response["quota"];
+					element.classList.remove("btn-secondary");
+					element.classList.add("btn-success");
+					element.innerHTML = response["quota"];
 				} else {
-					document
-						.querySelector(`#quotaButtonSearch${attendanceID}`)
-						.classList.remove("btn-success");
-					document
-						.querySelector(`#quotaButtonSearch${attendanceID}`)
-						.classList.add("btn-secondary");
-					document.querySelector(
-						`#quotaButtonSearch${attendanceID}`
-					).innerHTML = response["quota"];
+					element.classList.remove("btn-success");
+					element.classList.add("btn-secondary");
+					element.innerHTML = response["quota"];
 				}
-			}
+			});
 		});
 }
 
@@ -374,29 +278,25 @@ function getAttendanceInfo(attendanceID, courseID) {
 	// GET COURSE AND STUDENT NAME
 
 	if (document.querySelector(`#courseName${courseID}`) !== null) {
-		document.querySelector("#attendanceCourse").innerHTML =
-			document.querySelector(`#courseName${courseID}`).innerHTML;
+		document.querySelector("#attendanceCourse").innerHTML = document.querySelector(`#courseName${courseID}`).innerHTML;
 	} else {
-		document.querySelector("#attendanceCourse").innerHTML =
-			document.querySelector(`#courseName`).innerHTML;
+		document.querySelector("#attendanceCourse").innerHTML = document.querySelector(`#courseName`).innerHTML;
 	}
 
 	if (document.querySelector("#studentName") !== null) {
-		document.querySelector("#attendanceStudent").innerHTML =
-			document.querySelector("#studentName").innerHTML;
+		document.querySelector("#attendanceStudent").innerHTML = document.querySelector("#studentName").innerHTML;
 	} else {
-		document.querySelector("#attendanceStudent").innerHTML =
-			document.querySelector(`#studentName${attendanceID}`).innerHTML;
+		try {
+			document.querySelector("#attendanceStudent").innerHTML = document.querySelector(`#studentName${attendanceID}`).innerHTML;
+		} catch (err) {
+			document.querySelector("#attendanceStudent").innerHTML = document.querySelector(`#studentNameModal`).innerHTML;
+		}
 	}
 
 	document.querySelector("#attendanceFormMessages").classList.remove("alert");
 
-	document
-		.querySelector("#attendanceFormMessages")
-		.classList.remove("alert-danger");
-	document
-		.querySelector("#attendanceFormMessages")
-		.classList.remove("alert-success");
+	document.querySelector("#attendanceFormMessages").classList.remove("alert-danger");
+	document.querySelector("#attendanceFormMessages").classList.remove("alert-success");
 
 	document.querySelector("#attendanceFormMessages").innerHTML = "";
 
@@ -406,10 +306,7 @@ function getAttendanceInfo(attendanceID, courseID) {
 			// console.log(response);
 
 			$("#attendanceFormDiv").html(response["form"]);
-			$("#attendanceForm").attr(
-				"action",
-				`/courses/edit_attendance/${attendanceID}`
-			);
+			$("#attendanceForm").attr("action", `/courses/edit_attendance/${attendanceID}`);
 			$("#attendanceFormDiv").append(
 				`<button id="btnAttendanceSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
 				<div id="btnAttendanceLoader"></div>`
@@ -423,60 +320,42 @@ function getAttendanceInfo(attendanceID, courseID) {
 			let image = `${mysite}/media/` + response["attendance"][0]["image"];
 
 			if (cycle === true && end_cycle === false) {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceCycle").classList.add("btn-warning");
 				document.querySelector("#attendanceCycle").innerHTML = "INICIA";
 			} else if (cycle === false && end_cycle === true) {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceCycle").classList.add("btn-warning");
 				document.querySelector("#attendanceCycle").innerHTML = "TERMINA";
 			} else {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-warning");
+				document.querySelector("#attendanceCycle").classList.remove("btn-warning");
 
-				document
-					.querySelector("#attendanceCycle")
-					.classList.add("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.add("btn-secondary");
 				document.querySelector("#attendanceCycle").innerHTML = "SIN DEFINIR";
 			}
 
-			document
-				.getElementById("attendanceCycle")
-				.setAttribute("onClick", `javascript: changeCycle(${attendanceID});`);
+			document.getElementById("attendanceCycle").setAttribute("onClick", `javascript: changeCycle(${attendanceID});`);
 
 			if (onlyday === true && recover === false) {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceDay").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-primary");
 				document.querySelector("#attendanceDay").innerHTML = "SOLO HOY";
 			} else if (onlyday === false && recover === true) {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceDay").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-primary");
 				document.querySelector("#attendanceDay").innerHTML = "RECUPERA";
 			} else {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-primary");
+				document.querySelector("#attendanceDay").classList.remove("btn-primary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-secondary");
 				document.querySelector("#attendanceDay").innerHTML = "SIN DEFINIR";
 			}
 
-			document
-				.getElementById("attendanceDay")
-				.setAttribute("onClick", `javascript: changeDay(${attendanceID});`);
+			document.getElementById("attendanceDay").setAttribute("onClick", `javascript: changeDay(${attendanceID});`);
 		});
 }
 
@@ -490,53 +369,40 @@ function changeCycle(attendanceID) {
 			let end_cycle = response["end_cycle"];
 
 			if (cycle === true && end_cycle === false) {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceCycle").classList.add("btn-warning");
 				document.querySelector("#attendanceCycle").innerHTML = "INICIA";
 
-				if (document.querySelector(`#cycle${attendanceID}`) !== null) {
-					document.querySelector(`#cycle${attendanceID}`).innerHTML = "INICIA";
-				}
-
-				if (document.querySelector(`#cycleSearch${attendanceID}`) !== null) {
-					document.querySelector(`#cycleSearch${attendanceID}`).innerHTML =
-						"INICIA";
-				}
+				document.querySelectorAll(`#cycle${attendanceID}`).forEach((element) => {
+					element.innerHTML = "INICIA";
+				});
+				document.querySelectorAll(`#cycleSearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "INICIA";
+				});
 			} else if (cycle === false && end_cycle === true) {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceCycle").classList.add("btn-warning");
 				document.querySelector("#attendanceCycle").innerHTML = "TERMINA";
 
-				if (document.querySelector(`#cycle${attendanceID}`) !== null) {
-					document.querySelector(`#cycle${attendanceID}`).innerHTML = "TERMINA";
-				}
-
-				if (document.querySelector(`#cycleSearch${attendanceID}`) !== null) {
-					document.querySelector(`#cycleSearch${attendanceID}`).innerHTML =
-						"TERMINA";
-				}
+				document.querySelectorAll(`#cycle${attendanceID}`).forEach((element) => {
+					element.innerHTML = "TERMINA";
+				});
+				document.querySelectorAll(`#cycleSearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "TERMINA";
+				});
 			} else {
-				document
-					.querySelector("#attendanceCycle")
-					.classList.remove("btn-warning");
+				document.querySelector("#attendanceCycle").classList.remove("btn-warning");
 
-				document
-					.querySelector("#attendanceCycle")
-					.classList.add("btn-secondary");
+				document.querySelector("#attendanceCycle").classList.add("btn-secondary");
 				document.querySelector("#attendanceCycle").innerHTML = "SIN DEFINIR";
-				if (document.querySelector(`#cycle${attendanceID}`) !== null) {
-					document.querySelector(`#cycle${attendanceID}`).innerHTML = "";
-				}
-
-				if (document.querySelector(`#cycleSearch${attendanceID}`) !== null) {
-					document.querySelector(`#cycleSearch${attendanceID}`).innerHTML = "";
-				}
+				document.querySelectorAll(`#cycle${attendanceID}`).forEach((element) => {
+					element.innerHTML = "";
+				});
+				document.querySelectorAll(`#cycleSearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "";
+				});
 			}
 		});
 }
@@ -551,51 +417,41 @@ function changeDay(attendanceID) {
 			let recover = response["recover"];
 
 			if (onlyday === true && recover === false) {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceDay").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-primary");
 				document.querySelector("#attendanceDay").innerHTML = "SOLO HOY";
 
-				if (document.querySelector(`#day${attendanceID}`) !== null) {
-					document.querySelector(`#day${attendanceID}`).innerHTML = "SOLO HOY";
-				}
-
-				if (document.querySelector(`#daySearch${attendanceID}`) !== null) {
-					document.querySelector(`#daySearch${attendanceID}`).innerHTML =
-						"SOLO HOY";
-				}
+				document.querySelectorAll(`#day${attendanceID}`).forEach((element) => {
+					element.innerHTML = "SOLO HOY";
+				});
+				document.querySelectorAll(`#daySearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "SOLO HOY";
+				});
 			} else if (onlyday === false && recover === true) {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-secondary");
+				document.querySelector("#attendanceDay").classList.remove("btn-secondary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-primary");
 				document.querySelector("#attendanceDay").innerHTML = "RECUPERA";
-				if (document.querySelector(`#day${attendanceID}`) !== null) {
-					document.querySelector(`#day${attendanceID}`).innerHTML = "RECUPERA";
-				}
 
-				if (document.querySelector(`#daySearch${attendanceID}`) !== null) {
-					document.querySelector(`#daySearch${attendanceID}`).innerHTML =
-						"RECUPERA";
-				}
+				document.querySelectorAll(`#day${attendanceID}`).forEach((element) => {
+					element.innerHTML = "RECUPERA";
+				});
+				document.querySelectorAll(`#daySearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "RECUPERA";
+				});
 			} else {
-				document
-					.querySelector("#attendanceDay")
-					.classList.remove("btn-primary");
+				document.querySelector("#attendanceDay").classList.remove("btn-primary");
 
 				document.querySelector("#attendanceDay").classList.add("btn-secondary");
 				document.querySelector("#attendanceDay").innerHTML = "SIN DEFINIR";
 
-				if (document.querySelector(`#day${attendanceID}`) !== null) {
-					document.querySelector(`#day${attendanceID}`).innerHTML = "";
-				}
-
-				if (document.querySelector(`#daySearch${attendanceID}`) !== null) {
-					document.querySelector(`#daySearch${attendanceID}`).innerHTML = "";
-				}
+				document.querySelectorAll(`#day${attendanceID}`).forEach((element) => {
+					element.innerHTML = "";
+				});
+				document.querySelectorAll(`#daySearch${attendanceID}`).forEach((element) => {
+					element.innerHTML = "";
+				});
 			}
 		});
 }
@@ -617,13 +473,9 @@ $("#attendanceForm").submit(function (e) {
 		beforeSend: function () {
 			document.querySelector("#btnAttendanceSubmit").style.display = "none";
 			document.querySelector("#btnAttendanceLoader").classList.add("loader");
-			document
-				.querySelector("#attendanceFormMessages")
-				.classList.remove("alert");
+			document.querySelector("#attendanceFormMessages").classList.remove("alert");
 
-			document
-				.querySelector("#attendanceFormMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#attendanceFormMessages").classList.remove("alert-danger");
 
 			document.querySelector("#attendanceFormMessages").innerHTML = "";
 		},
@@ -635,10 +487,7 @@ $("#attendanceForm").submit(function (e) {
 
 			if (response["edited"] === true) {
 				$("#attendanceFormDiv").html(response["form"]);
-				$("#attendanceForm").attr(
-					"action",
-					`/courses/edit_attendance/${response["attendanceID"]}`
-				);
+				$("#attendanceForm").attr("action", `/courses/edit_attendance/${response["attendanceID"]}`);
 				$("#attendanceFormDiv").append(
 					`<button id="btnAttendanceSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
 				<div id="btnAttendanceLoader"></div>`
@@ -647,74 +496,37 @@ $("#attendanceForm").submit(function (e) {
 				// console.log(response["note"]);
 
 				if (response["note"] !== null) {
-					if (
-						document.querySelector(`#note${response["attendanceID"]}`) !== null
-					) {
-						document.querySelector(
-							`#note${response["attendanceID"]}`
-						).innerHTML = "";
+					document.querySelectorAll(`#note${response["attendanceID"]}`).forEach((element) => {
+						element.innerHTML = "";
+						element.innerHTML += `<span style="font-size: large;" data-toggle="tooltip" title="${response["note"]}">📃</span>`;
+					});
+					document.querySelectorAll(`#noteSearch${response["attendanceID"]}`).forEach((element) => {
+						element.innerHTML = "";
+						element.innerHTML += `<span style="font-size: large;" data-toggle="tooltip" title="${response["note"]}">📃</span>`;
+					});
 
-						$(`#note${response["attendanceID"]}`).append(
-							`<span style="font-size: large;" data-toggle="tooltip" title="${response["note"]}">📃</span>`
-						);
-					}
-
-					if (
-						document.querySelector(`#noteSearch${response["attendanceID"]}`) !==
-						null
-					) {
-						document.querySelector(
-							`#noteSearch${response["attendanceID"]}`
-						).innerHTML = "";
-
-						$(`#noteSearch${response["attendanceID"]}`).append(
-							`<span style="font-size: large;" data-toggle="tooltip" title="${response["note"]}">📃</span>`
-						);
-					}
 					activateToolTip();
 				} else {
-					if (
-						document.querySelector(`#note${response["attendanceID"]}`) !== null
-					) {
-						document.querySelector(
-							`#note${response["attendanceID"]}`
-						).innerHTML = "-";
-					}
-
-					if (
-						document.querySelector(`#noteSearch${response["attendanceID"]}`) !==
-						null
-					) {
-						document.querySelector(
-							`#noteSearch${response["attendanceID"]}`
-						).innerHTML = "-";
-					}
+					document.querySelectorAll(`#note${response["attendanceID"]}`).forEach((element) => {
+						element.innerHTML = "-";
+					});
+					document.querySelectorAll(`#noteSearch${response["attendanceID"]}`).forEach((element) => {
+						element.innerHTML = "-";
+					});
 				}
 
-				document
-					.querySelector("#attendanceFormMessages")
-					.classList.add("alert");
-				document
-					.querySelector("#attendanceFormMessages")
-					.classList.add("alert-success");
+				document.querySelector("#attendanceFormMessages").classList.add("alert");
+				document.querySelector("#attendanceFormMessages").classList.add("alert-success");
 
 				$("#attendanceFormMessages").append("Cambios Guardados!");
 			} else {
-				document
-					.querySelector("#btnAttendanceLoader")
-					.classList.remove("loader");
+				document.querySelector("#btnAttendanceLoader").classList.remove("loader");
 				document.querySelector("#btnAttendanceSubmit").style.display = "block";
 
 				for (messageID in response["messages"]) {
-					document
-						.querySelector("#attendanceFormMessages")
-						.classList.add("alert");
-					document
-						.querySelector("#attendanceFormMessages")
-						.classList.add("alert-danger");
-					$("#attendanceFormMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					document.querySelector("#attendanceFormMessages").classList.add("alert");
+					document.querySelector("#attendanceFormMessages").classList.add("alert-danger");
+					$("#attendanceFormMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			}
 		},
@@ -761,11 +573,7 @@ $("#attendanceSearchForm").submit(function (e) {
 			// console.log(response);
 
 			if (response["attendances"].length > 0) {
-				for (
-					var studentID = 0;
-					studentID < response["attendances"].length;
-					studentID++
-				) {
+				for (var studentID = 0; studentID < response["attendances"].length; studentID++) {
 					let attendanceBtnColor;
 					let attendanceStr;
 					let quotaBtnColor;
@@ -805,10 +613,7 @@ $("#attendanceSearchForm").submit(function (e) {
 						day = "RECUPERA";
 					}
 
-					if (
-						response["attendances"][studentID]["note"] !== null &&
-						response["attendances"][studentID]["note"] !== ""
-					) {
+					if (response["attendances"][studentID]["note"] !== null && response["attendances"][studentID]["note"] !== "") {
 						note = response["attendances"][studentID]["note"];
 						note_emoji = "📃";
 					}
@@ -837,23 +642,15 @@ $("#attendanceSearchForm").submit(function (e) {
                                                 </td>\
                                             </tr>`);
 
-					fetch(
-						`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
-					)
+					fetch(`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`)
 						.then((data) => data.json())
 						.then((data) => {
-							document.querySelector(
-								`#courseNameSearch${data["course_id"]}`
-							).innerHTML = data["courseStr"];
+							document.querySelector(`#courseNameSearch${data["course_id"]}`).innerHTML = data["courseStr"];
 
-							document.querySelector(
-								`#countSearch${data["course_id"]}`
-							).innerHTML = data["courseCount"];
+							document.querySelector(`#countSearch${data["course_id"]}`).innerHTML = data["courseCount"];
 
 							if (data["today"] == true) {
-								document.querySelector(
-									`#todaySearch${data["course_id"]}`
-								).innerHTML = "HOY";
+								document.querySelector(`#todaySearch${data["course_id"]}`).innerHTML = "HOY";
 							}
 						});
 
@@ -895,13 +692,9 @@ $("#editCourseForm").submit(function (e) {
 		beforeSend: function () {
 			document.querySelector("#editCourseFormButton").style.display = "none";
 			document.querySelector("#loadEditCourseForm").classList.add("loader");
-			document
-				.querySelector("#editCourseFormMessages")
-				.classList.remove("alert");
+			document.querySelector("#editCourseFormMessages").classList.remove("alert");
 
-			document
-				.querySelector("#editCourseFormMessages")
-				.classList.remove("alert-danger");
+			document.querySelector("#editCourseFormMessages").classList.remove("alert-danger");
 
 			document.querySelector("#editCourseFormMessages").innerHTML = "";
 		},
@@ -914,15 +707,9 @@ $("#editCourseForm").submit(function (e) {
 
 			if (response["edited"] === false) {
 				for (messageID in response["messages"]) {
-					document
-						.querySelector("#editCourseFormMessages")
-						.classList.add("alert");
-					document
-						.querySelector("#editCourseFormMessages")
-						.classList.add("alert-danger");
-					$("#editCourseFormMessages").append(
-						`<li class="ml-2">${response["messages"][messageID]}</li>`
-					);
+					document.querySelector("#editCourseFormMessages").classList.add("alert");
+					document.querySelector("#editCourseFormMessages").classList.add("alert-danger");
+					$("#editCourseFormMessages").append(`<li class="ml-2">${response["messages"][messageID]}</li>`);
 				}
 			} else {
 				location.reload();
@@ -941,12 +728,7 @@ function prettyDate(time) {
 	if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) return;
 
 	return (
-		(day_diff == 0 &&
-			((diff < 60 && "just now") ||
-				(diff < 120 && "1 minute ago") ||
-				(diff < 3600 && Math.floor(diff / 60) + " minutes ago") ||
-				(diff < 7200 && "1 hour ago") ||
-				(diff < 86400 && Math.floor(diff / 3600) + " hours ago"))) ||
+		(day_diff == 0 && ((diff < 60 && "just now") || (diff < 120 && "1 minute ago") || (diff < 3600 && Math.floor(diff / 60) + " minutes ago") || (diff < 7200 && "1 hour ago") || (diff < 86400 && Math.floor(diff / 3600) + " hours ago"))) ||
 		(day_diff == 1 && "Yesterday") ||
 		(day_diff < 7 && day_diff + " days ago") ||
 		(day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago")
@@ -964,9 +746,7 @@ if (typeof jQuery != "undefined")
 
 function tConvert(time) {
 	// Check correct time format and split into components
-	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
-		time,
-	];
+	time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
 	if (time.length > 1) {
 		// If time format correct
@@ -995,11 +775,7 @@ function getSchedule(user_id) {
 		success: function (response) {
 			document.querySelector("#loadStudentSchedule").classList.remove("loader");
 
-			for (
-				var scheduleID = 0;
-				scheduleID < response["schedule"].length;
-				scheduleID++
-			) {
+			for (var scheduleID = 0; scheduleID < response["schedule"].length; scheduleID++) {
 				var DE = tConvert(response["schedule"][scheduleID][0]);
 				var A = tConvert(response["schedule"][scheduleID][1]);
 
@@ -1032,8 +808,7 @@ function getSchedule(user_id) {
                                             </tr>`);
 			}
 
-			document.querySelector("#showScheduleButton").style.visibility =
-				"visible";
+			document.querySelector("#showScheduleButton").style.visibility = "visible";
 		},
 	});
 }
@@ -1064,12 +839,9 @@ function studentStatistics(user_id) {
 		},
 		success: function (response) {
 			// console.log(response);
-			document
-				.querySelector("#loadStudentStatistics")
-				.classList.remove("loader");
+			document.querySelector("#loadStudentStatistics").classList.remove("loader");
 
-			document.querySelector("#showStudentStatisticsButton").style.visibility =
-				"visible";
+			document.querySelector("#showStudentStatisticsButton").style.visibility = "visible";
 
 			$("#studentAttendanceStatsBody").append(`<tr> \
                                                 <td scope="row" data-label="Asistió"> \
@@ -1126,11 +898,7 @@ function get_inconsistencies() {
 			.then((response) => {
 				inconsistencies_loaded = true;
 
-				for (
-					var studentID = 0;
-					studentID < response["students"].length;
-					studentID++
-				) {
+				for (var studentID = 0; studentID < response["students"].length; studentID++) {
 					let btnException;
 					let btnExceptionClass;
 
@@ -1143,19 +911,19 @@ function get_inconsistencies() {
 					}
 					$("#inconsistenciesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" id="tdException${response["students"][studentID]["id"]}" scope="row" data-label="Excepción">\
                                                     <button onclick="changeException(${response["students"][studentID]["id"]});" class="btn btn-sm ${btnExceptionClass}">${btnException}</button>\
@@ -1171,13 +939,9 @@ function changeException(userID) {
 		.then((response) => response.json())
 		.then((response) => {
 			if (response["exception"] == true) {
-				document.querySelector(
-					`#tdException${userID}`
-				).innerHTML = `<button onclick='changeException(${userID});' class='btn btn-sm btn-success'>SI</button>`;
+				document.querySelector(`#tdException${userID}`).innerHTML = `<button onclick='changeException(${userID});' class='btn btn-sm btn-success'>SI</button>`;
 			} else {
-				document.querySelector(
-					`#tdException${userID}`
-				).innerHTML = `<button onclick='changeException(${userID});' class='btn btn-sm btn-danger'>NO</button>`;
+				document.querySelector(`#tdException${userID}`).innerHTML = `<button onclick='changeException(${userID});' class='btn btn-sm btn-danger'>NO</button>`;
 			}
 		});
 }
@@ -1191,26 +955,22 @@ function get_plus() {
 			.then((response) => {
 				plus_loaded = true;
 
-				for (
-					var studentID = 0;
-					studentID < response["students"].length;
-					studentID++
-				) {
+				for (var studentID = 0; studentID < response["students"].length; studentID++) {
 					$("#plusTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["document"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -1237,26 +997,22 @@ function get_change() {
 			.then((response) => {
 				change_loaded = true;
 
-				for (
-					var studentID = 0;
-					studentID < response["students"].length;
-					studentID++
-				) {
+				for (var studentID = 0; studentID < response["students"].length; studentID++) {
 					$("#changeTableBody").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["identity_document"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["identity_document"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Nombres">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["first_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["first_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Apellidos">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["last_name"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["last_name"]}</a>\
                                                 </td>\
                                                 <td scope="row" data-label="Tel/Cel (1)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_1"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_1"]}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-                                                    <a href="${mysite}/courses/student/${response["students"][studentID]["id"]}">${response["students"][studentID]["phone_2"]}</a>\
+                                                    <a href="#" onclick="load_profile_data(${response["students"][studentID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentID]["phone_2"]}</a>\
                                                 </td>\
                                             </tr>`);
 				}
@@ -1273,14 +1029,8 @@ function get_teachers() {
 			.then((response) => {
 				teachers_loaded = true;
 
-				for (
-					var studentID = 0;
-					studentID < response["students"].length;
-					studentID++
-				) {
-					login = prettyDate(
-						response["students"][studentID]["real_last_login"]
-					);
+				for (var studentID = 0; studentID < response["students"].length; studentID++) {
+					login = prettyDate(response["students"][studentID]["real_last_login"]);
 
 					login = login !== "1969-12-31" ? login : "-";
 
@@ -1347,8 +1097,7 @@ function load_active_students() {
 			},
 			beforeSend: function () {
 				document.querySelector("#loadActiveStudents").classList.add("loader");
-				document.querySelector("#loadMoreActiveStudentsBtn").style.display =
-					"none";
+				document.querySelector("#loadMoreActiveStudentsBtn").style.display = "none";
 			},
 			error: function (error) {
 				console.log("Error!", error);
@@ -1358,34 +1107,27 @@ function load_active_students() {
 					allActiveStudentsLoaded = true;
 				}
 
-				for (
-					var studentsID = 0;
-					studentsID < response["students"].length;
-					studentsID++
-				) {
+				for (var studentsID = 0; studentsID < response["students"].length; studentsID++) {
 					$(`#activeStudentsTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["phone_1"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["phone_2"]}</a>\
 									</td>\
 								</tr>`);
 				}
-				document
-					.querySelector("#loadActiveStudents")
-					.classList.remove("loader");
-				document.querySelector("#loadMoreActiveStudentsBtn").style.display =
-					"block";
+				document.querySelector("#loadActiveStudents").classList.remove("loader");
+				document.querySelector("#loadMoreActiveStudentsBtn").style.display = "block";
 			},
 		});
 	} else {
@@ -1404,39 +1146,32 @@ $("#activeStudentsSearch").keyup(
 				student: $(this).val(),
 			},
 			beforeSend: function () {
-				document
-					.querySelector("#searchLoadActiveStudents")
-					.classList.add("loader");
+				document.querySelector("#searchLoadActiveStudents").classList.add("loader");
 				document.querySelector("#searchActiveStudentsTableBody").innerHTML = "";
 			},
 			error: function (error) {
 				console.log("Error!", error);
 			},
 			success: function (response) {
-				document.querySelector("#searchActiveStudentsTable").style.visibility =
-					"visible";
+				document.querySelector("#searchActiveStudentsTable").style.visibility = "visible";
 
 				if (response["students"].length > 0) {
-					for (
-						var studentsID = 0;
-						studentsID < response["students"].length;
-						studentsID++
-					) {
+					for (var studentsID = 0; studentsID < response["students"].length; studentsID++) {
 						$(`#searchActiveStudentsTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["identity_document"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["identity_document"]}</a>\
 									</td>\
 									<td scope="row" data-label="Nombres">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["first_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["first_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Apellidos">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["last_name"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["last_name"]}</a>\
 									</td>\
 									<td scope="row" data-label="Tel/Cel (1)">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_1"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["phone_1"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
-										<a href="${mysite}/courses/student/${response["students"][studentsID]["id"]}">${response["students"][studentsID]["phone_2"]}</a>\
+										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["phone_2"]}</a>\
 									</td>\
 								</tr>`);
 					}
@@ -1460,9 +1195,7 @@ $("#activeStudentsSearch").keyup(
 								</tr>`);
 				}
 
-				document
-					.querySelector("#searchLoadActiveStudents")
-					.classList.remove("loader");
+				document.querySelector("#searchLoadActiveStudents").classList.remove("loader");
 			},
 		});
 	}, 1000)

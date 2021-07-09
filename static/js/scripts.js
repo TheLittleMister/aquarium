@@ -652,3 +652,101 @@ $("#id_identity_document_1").keyup(
 		});
 	}, 1000)
 );
+
+//  THIS FUNCTION LOADS USER MODAL PROFILE INFORMATION
+function load_profile_data(userID) {
+	$("#modalUserID").val(userID);
+	$("#inputUserModalSearchAttendance").val(userID);
+
+	// Start with first past attendance
+	studentPastAttendanceCounter = 0;
+
+	// All past attendances loaded
+	allPastAttendancesLoaded = false;
+	document.querySelector("#loadMorePastAttendances").style.display = "block";
+	document.querySelector("#pastAttendancesTableBodyModal").innerHTML = "";
+	document.querySelector("#loadMorePastAttendances").setAttribute("onClick", `javascript: load_past_attendances(${userID});`);
+
+	// Start with first future attendance
+	studentFutureAttendanceCounter = 0;
+
+	// All future attendances loaded
+	allFutureAttendancesLoaded = false;
+	document.querySelector("#loadMoreFutureAttendances").style.display = "block";
+	document.querySelector("#futureAttendancesTableBodyModal").innerHTML = "";
+	document.querySelector("#loadMoreFutureAttendances").setAttribute("onClick", `javascript: load_future_attendances(${userID});`);
+
+	document.querySelector("#studentScheduleBodyModal").innerHTML = "";
+	document.querySelector("#studentScheduleModal").style.display = "none";
+	document.querySelector("#showScheduleButtonModal").style.visibility = "hidden";
+	document.querySelector("#getScheduleButtonModal").style.display = "inline-block";
+	document.querySelector("#getScheduleButtonModal").setAttribute("onClick", `javascript: getScheduleModal(${userID});`);
+
+	document.querySelector("#studentAttendanceStatsBodyModal").innerHTML = "";
+
+	let element = document.querySelector("#studentPaymentStatsBody");
+
+	if (typeof element != "undefined" && element != null) {
+		document.querySelector("#studentPaymentStatsBody").innerHTML = "";
+	}
+
+	document.querySelector("#showStudentStatisticsButtonModal").style.visibility = "hidden";
+	document.querySelector("#studentStatisticsModal").style.display = "none";
+	document.querySelector("#studentStatisticsButtonModal").style.display = "inline-block";
+	document.querySelector("#studentStatisticsButtonModal").setAttribute("onClick", `javascript: studentStatisticsModal(${userID});`);
+
+	document.querySelector("#levelsDivModal").style.display = "none";
+	document.querySelector("#showLevelsBtnModal").style.visibility = "hidden";
+	document.querySelector("#levelsBtnModal").style.display = "inline-block";
+	document.querySelector("#levelsBtnModal").setAttribute("onClick", `javascript: levelsModal(${userID});`);
+
+	$.ajax({
+		type: "GET",
+		url: `${mysite}/courses/user_data/`,
+		data: {
+			userID: userID,
+		},
+		beforeSend: function () {
+			// TODO
+		},
+		error: function (error) {
+			console.log("Error!", error);
+		},
+		success: function (response) {
+			document.querySelector("#teacherProfile").innerHTML = response["user"][0]["teacher__username"];
+			document.querySelector("#profileModalBtn").setAttribute("onClick", `window.location.replace("${mysite}/courses/student/${response["user"][0]["id"]}")`);
+			document.querySelector("#modalImage").src = `${mysite}/media/${response["user"][0]["image"]}`;
+
+			if (response["user"][0]["is_admin"]) {
+				document.querySelector("#userType").innerHTML = "Admin";
+			} else if (response["user"][0]["is_teacher"]) {
+				document.querySelector("#userType").innerHTML = "Profesor";
+			} else {
+				document.querySelector("#userType").innerHTML = "Estudiante";
+			}
+
+			document.querySelector("#studentNameModal").innerHTML = `${response["user"][0]["first_name"]} ${response["user"][0]["last_name"]}`;
+			document.querySelector("#modalSearchAttendanceLabel").innerHTML = `Buscar clases de ${response["user"][0]["first_name"]} ${response["user"][0]["last_name"]}`;
+
+			document.querySelector("#userUsername").innerHTML = `@${response["user"][0]["username"]}`;
+
+			document.querySelector("#userDocument").innerHTML = `<i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["id_type__id_type"]}: ${response["user"][0]["identity_document"]}`;
+
+			document.querySelector("#userGender").innerHTML = `<i class="fas fa-venus-mars fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["sex__sex_name"]}`;
+
+			var ageDate = new Date(Date.now() - new Date(response["user"][0]["date_birth"]));
+
+			document.querySelector("#userAge").innerHTML = `<i class="fas fa-birthday-cake fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["date_birth"]} - Edad: ${Math.abs(ageDate.getUTCFullYear() - 1970)}`;
+
+			document.querySelector("#userEmail").innerHTML = `<i class="fas fa-envelope fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["email"]}`;
+
+			document.querySelector("#userParent").innerHTML = `<i class="fas fa-user fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>Acudiente: ${response["user"][0]["parent"]}`;
+
+			document.querySelector("#userPhone1").innerHTML = `<i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i><a target="_blank" href="https://api.whatsapp.com/send?phone=57${response["user"][0]["phone_1"]}">${response["user"][0]["phone_1"]}</a>`;
+
+			document.querySelector("#userPhone2").innerHTML = `<i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">2</i><a target="_blank" href="https://api.whatsapp.com/send?phone=57${response["user"][0]["phone_2"]}">${response["user"][0]["phone_2"]}</a>`;
+
+			document.querySelector("#userNote").innerHTML = `<i class="fas fa-sticky-note fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["note"]}`;
+		},
+	});
+}
