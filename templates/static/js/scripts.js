@@ -730,9 +730,9 @@ function load_profile_data(userID) {
 
 			document.querySelector("#userUsername").innerHTML = `@${response["user"][0]["username"]}`;
 
-			document.querySelector("#userDocument").innerHTML = `<i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["id_type"]}: ${response["user"][0]["identity_document"]}`;
+			document.querySelector("#userDocument").innerHTML = `<i class="fas fa-id-card fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["id_type__id_type"]}: ${response["user"][0]["identity_document"]}`;
 
-			document.querySelector("#userGender").innerHTML = `<i class="fas fa-venus-mars fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["sex"]}`;
+			document.querySelector("#userGender").innerHTML = `<i class="fas fa-venus-mars fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["sex__sex_name"]}`;
 
 			var ageDate = new Date(Date.now() - new Date(response["user"][0]["date_birth"]));
 

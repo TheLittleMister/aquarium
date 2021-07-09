@@ -188,15 +188,15 @@ function getThisPercentage(levelID, studentID) {
 		},
 		success: function (response) {
 			if (response["is_active"]) {
-				document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
+				document.querySelectorAll(`.thisPercentage${levelID}${studentID}`).forEach((element) => {
 					element.innerHTML = `${response["percentage"]}`;
 				});
 				if (response["certificate_img"]) {
-					document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+					document.querySelectorAll(`.thisCertificate${levelID}${studentID}`).forEach((element) => {
 						element.innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + response["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${mysite + response["certificate_pdf"]}')">PDF</button>`;
 					});
 				} else {
-					document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+					document.querySelectorAll(`.thisCertificate${levelID}${studentID}`).forEach((element) => {
 						element.innerHTML = ``;
 					});
 				}
@@ -218,7 +218,7 @@ function getThisPercentage(levelID, studentID) {
 					delivered = "PENDIENTE";
 				}
 
-				document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+				document.querySelectorAll(`#btnDelivered${levelID}${studentID}`).forEach((element) => {
 					element.classList.remove("btn-danger");
 					element.classList.remove("btn-success");
 					element.classList.remove("btn-secondary");
@@ -228,13 +228,13 @@ function getThisPercentage(levelID, studentID) {
 					element.style.display = "inline-block";
 				});
 			} else {
-				document.querySelectorAll(`.thisPercentage${studentID}`).forEach((element) => {
+				document.querySelectorAll(`.thisPercentage${levelID}${studentID}`).forEach((element) => {
 					element.innerHTML = `Inactivo`;
 				});
-				document.querySelectorAll(`.thisCertificate${studentID}`).forEach((element) => {
+				document.querySelectorAll(`.thisCertificate${levelID}${studentID}`).forEach((element) => {
 					element.innerHTML = ``;
 				});
-				document.querySelectorAll(`#btnDelivered${studentID}`).forEach((element) => {
+				document.querySelectorAll(`#btnDelivered${levelID}${studentID}`).forEach((element) => {
 					element.style.display = "none";
 				});
 			}
@@ -358,14 +358,14 @@ function load_students_levels(levelID, filter) {
 										<a href="#" onclick="load_profile_data(${response["students"][studentsID]["student__id"]});" data-bs-toggle="modal" data-bs-target="#profileModal">${response["students"][studentsID]["student__last_name"]}</a>\
 									</td>\
 									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
-										<span style="font-size: medium;" class="thisPercentage${response["students"][studentsID]["student__id"]}"></span> <span class="thisCertificate${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${
+										<span style="font-size: medium;" class="thisPercentage${levelID}${response["students"][studentsID]["student__id"]}"></span> <span class="thisCertificate${levelID}${response["students"][studentsID]["student__id"]}"></span> <button id="btnDelivered${levelID}${response["students"][studentsID]["student__id"]}" onclick="changeDelivered(${levelID}, ${
 						response["students"][studentsID]["student__id"]
 					});" class="${deliveredBtn}">${delivered}</button>\
 									</td>\
 								</tr>`);
 
 					if (response["students"][studentsID]["certificate_img"]) {
-						document.querySelector(`.thisCertificate${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+						document.querySelector(`.thisCertificate${levelID}${response["students"][studentsID]["student__id"]}`).innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response["students"][studentsID]["certificate_img"]}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
 							mysite + "/media/" + response["students"][studentsID]["certificate_pdf"]
 						}')">PDF</button>`;
 					}
