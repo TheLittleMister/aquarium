@@ -12,6 +12,8 @@ from django.core.files import File
 from numerize import numerize
 from unidecode import unidecode
 from django.contrib.auth.models import BaseUserManager
+from django.db.models.functions import Concat
+from django.db.models import Value
 
 # import locale
 
@@ -167,11 +169,15 @@ def search_active_students(request):
 
     if len(search) > 1:
         response["students"] += list(
-            Account.objects.filter(
-                Q(username__icontains=search)
+            Account.objects.annotate(
+                full_name=Concat("first_name", Value(" "), "last_name")
+            )
+            .filter(
+                Q(full_name__icontains=search)
+                | Q(username__icontains=search)
                 | Q(email__icontains=search)
-                | Q(first_name__icontains=search)
-                | Q(last_name__icontains=search)
+                # | Q(first_name__icontains=search)
+                # | Q(last_name__icontains=search)
                 | Q(identity_document__icontains=search)
                 | Q(parent__icontains=search)
                 | Q(phone_1__icontains=search)
@@ -203,11 +209,15 @@ def search_students(request):
 
         if len(search) > 1:
             response["students"] += list(
-                Account.objects.filter(
-                    Q(username__icontains=search)
+                Account.objects.annotate(
+                    full_name=Concat("first_name", Value(" "), "last_name")
+                )
+                .filter(
+                    Q(full_name__icontains=search)
+                    | Q(username__icontains=search)
                     | Q(email__icontains=search)
-                    | Q(first_name__icontains=search)
-                    | Q(last_name__icontains=search)
+                    # | Q(first_name__icontains=search)
+                    # | Q(last_name__icontains=search)
                     | Q(identity_document__icontains=search)
                     | Q(parent__icontains=search)
                     | Q(phone_1__icontains=search)
