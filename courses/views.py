@@ -165,7 +165,7 @@ def search_active_students(request):
         "students": list(),
     }
 
-    search = request.GET.get("student").strip()
+    search = " ".join(request.GET.get("student").split())
 
     if len(search) > 1:
         response["students"] += list(
@@ -202,8 +202,7 @@ def search_active_students(request):
 def search_students(request):
 
     response = {"students": list()}
-
-    search = request.GET.get("student").strip()
+    search = " ".join(request.GET.get("student").split())
 
     if request.user.is_admin or request.user.is_teacher:
 
