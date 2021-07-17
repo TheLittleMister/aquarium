@@ -101,7 +101,7 @@ def load_students(request):
 
     # Get start and end points
     start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20))
+    end = int(request.GET.get("end") or (start + 20)) + 1
 
     # Generate list of students
     response["students"] += list(
@@ -551,7 +551,7 @@ def load_future_attendances(request):
 
     # Get start and end points / and user id
     start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20))
+    end = int(request.GET.get("end") or (start + 20)) + 1
     user_id = int(request.GET.get("userID"))
 
     # Generate list of future attendances
@@ -596,7 +596,7 @@ def load_past_attendances(request):
 
     # Get start and end points / and user id
     start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20))
+    end = int(request.GET.get("end") or (start + 20)) + 1
     user_id = int(request.GET.get("userID"))
 
     # Generate list of past attendances
@@ -905,7 +905,7 @@ def load_past_courses(request):
 
     # Get start and end points
     start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20))
+    end = int(request.GET.get("end") or (start + 20)) + 1
 
     # Generate list of old courses
 
@@ -932,7 +932,7 @@ def load_future_courses(request):
 
     # Get start and end points
     start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20))
+    end = int(request.GET.get("end") or (start + 20)) + 1
 
     # Generate list of future courses
 

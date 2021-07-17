@@ -18,10 +18,7 @@ document.addEventListener("DOMContentLoaded", load_future_attendaces);
 // Function that creates INFINITE SCROLLING for future attendances
 
 $(window).scroll(function () {
-	if (
-		$(window).scrollTop() + $(window).height() >= $(document).height() - 200 &&
-		allFutureAttendancesLoaded === false
-	) {
+	if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureAttendancesLoaded === false) {
 		load_future_attendances();
 	}
 });
@@ -56,19 +53,13 @@ function load_future_attendaces() {
 		success: function (response) {
 			// console.log(response);
 
-			document
-				.querySelector("#loadFutureAttendances")
-				.classList.remove("loader");
+			document.querySelector("#loadFutureAttendances").classList.remove("loader");
 
 			if (response["all_loaded"] === true) {
 				allFutureAttendancesLoaded = true;
 			}
 
-			for (
-				var studentID = 0;
-				studentID < response["attendances"].length;
-				studentID++
-			) {
+			for (var studentID = 0; studentID < response["attendances"].length; studentID++) {
 				let attendanceBtnColor;
 				let attendanceStr;
 				let quotaBtnColor;
@@ -103,10 +94,7 @@ function load_future_attendaces() {
 					day = "RECUPERA";
 				}
 
-				if (
-					response["attendances"][studentID]["note"] !== null &&
-					response["attendances"][studentID]["note"] !== ""
-				) {
+				if (response["attendances"][studentID]["note"] !== null && response["attendances"][studentID]["note"] !== "") {
 					note = response["attendances"][studentID]["note"];
 					note_emoji = "📃";
 				}
@@ -135,21 +123,15 @@ function load_future_attendaces() {
                                                 </td>\
                                             </tr>`);
 
-				fetch(
-					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
-				)
+				fetch(`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`)
 					.then((data) => data.json())
 					.then((data) => {
-						document.querySelector(
-							`#courseName${data["course_id"]}`
-						).innerHTML = data["courseStr"];
+						document.querySelector(`#courseName${data["course_id"]}`).innerHTML = data["courseStr"];
 
-						document.querySelector(`#count${data["course_id"]}`).innerHTML =
-							data["courseCount"];
+						document.querySelector(`#count${data["course_id"]}`).innerHTML = data["courseCount"];
 
 						if (data["today"] == true) {
-							document.querySelector(`#today${data["course_id"]}`).innerHTML =
-								"HOY";
+							document.querySelector(`#today${data["course_id"]}`).innerHTML = "HOY";
 						}
 					});
 
@@ -178,10 +160,8 @@ document.addEventListener("DOMContentLoaded", load_past_attendances);
 // Function that creates INFINITE SCROLLING for past attendances
 
 $(window).scroll(function () {
-	if (
-		$(window).scrollTop() + $(window).height() >= $(document).height() - 200 &&
-		allPastAttendancesLoaded === false
-	) {
+	console.log($(window).scrollTop() + $(window).height() >= $(document).height() - 200, allPastAttendancesLoaded === false);
+	if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastAttendancesLoaded === false) {
 		load_past_attendances();
 	}
 });
@@ -220,11 +200,7 @@ function load_past_attendances() {
 
 			// var count = response["attendances"].length;
 
-			for (
-				var studentID = 0;
-				studentID < response["attendances"].length;
-				studentID++
-			) {
+			for (var studentID = 0; studentID < response["attendances"].length; studentID++) {
 				let attendanceBtnColor;
 				let attendanceStr;
 				let quotaBtnColor;
@@ -259,10 +235,7 @@ function load_past_attendances() {
 					day = "RECUPERA";
 				}
 
-				if (
-					response["attendances"][studentID]["note"] !== null &&
-					response["attendances"][studentID]["note"] !== ""
-				) {
+				if (response["attendances"][studentID]["note"] !== null && response["attendances"][studentID]["note"] !== "") {
 					note = response["attendances"][studentID]["note"];
 					note_emoji = "📃";
 				}
@@ -290,17 +263,12 @@ function load_past_attendances() {
                                                 </td>\
                                             </tr>`);
 
-				fetch(
-					`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`
-				)
+				fetch(`${mysite}/courses/course_info/${response["attendances"][studentID]["course__id"]}`)
 					.then((data) => data.json())
 					.then((data) => {
-						document.querySelector(
-							`#courseName${data["course_id"]}`
-						).innerHTML = data["courseStr"];
+						document.querySelector(`#courseName${data["course_id"]}`).innerHTML = data["courseStr"];
 
-						document.querySelector(`#count${data["course_id"]}`).innerHTML =
-							data["courseCount"];
+						document.querySelector(`#count${data["course_id"]}`).innerHTML = data["courseCount"];
 					});
 
 				activateToolTip();

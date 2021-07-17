@@ -426,7 +426,7 @@ def load_level_students(request):
     if request.user.is_admin or request.user.is_teacher:
 
         start = int(request.GET.get("start"))
-        end = int(request.GET.get("end"))
+        end = int(request.GET.get("end")) + 1
         level_id = int(request.GET.get("levelID"))
 
         level = Level.objects.get(pk=level_id)
