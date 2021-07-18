@@ -135,13 +135,13 @@ function load_future_attendances() {
 // START LOAD PAST ATTENDANCES
 
 // Start with first past attendance
-let studentPastAttendanceCounter = 0;
+studentPastAttendanceCounter = 0;
 
 // Load 20 past attendances at a time
-const studentPastAttendancesQuantity = 20;
+// const studentPastAttendancesQuantity = 20;
 
 // All past attendances loaded
-let allPastAttendancesLoaded = false;
+allPastAttendancesLoaded = false;
 
 // Load next set of past attendances
 function load_past_attendances() {
