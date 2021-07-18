@@ -623,7 +623,7 @@ def load_past_attendances(request):
     if (
         end
         >= Attendance.objects.filter(
-            student=user_id, course__date__gte=datetime.datetime.now()
+            student=user_id, course__date__lt=datetime.datetime.now()
         ).count()
     ):
         response["all_loaded"] = True

@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", load_past_attendances);
 // Function that creates INFINITE SCROLLING for past attendances
 
 $(window).scroll(function () {
-	console.log($(window).scrollTop() + $(window).height() >= $(document).height() - 200, allPastAttendancesLoaded === false);
 	if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastAttendancesLoaded === false) {
 		load_past_attendances();
 	}
