@@ -4,13 +4,13 @@
 // START LOAD FUTURE ATTENDANCES
 
 // Start with first future attendance
-studentFutureAttendanceCounter = 0;
+let studentFutureAttendanceCounter = 0;
 
 // Load 20 future attendances at a time
-// studentFutureAttendancesQuantity = 20;
+const studentFutureAttendancesQuantity = 20;
 
 // All future attendances loaded
-allFutureAttendancesLoaded = false;
+let allFutureAttendancesLoaded = false;
 
 function activateToolTip() {
 	$('[data-toggle="tooltip"]').tooltip();
@@ -135,13 +135,13 @@ function load_future_attendances() {
 // START LOAD PAST ATTENDANCES
 
 // Start with first past attendance
-studentPastAttendanceCounter = 0;
+let studentPastAttendanceCounter = 0;
 
 // Load 20 past attendances at a time
-// const studentPastAttendancesQuantity = 20;
+const studentPastAttendancesQuantity = 20;
 
 // All past attendances loaded
-allPastAttendancesLoaded = false;
+let allPastAttendancesLoaded = false;
 
 // Load next set of past attendances
 function load_past_attendances() {
