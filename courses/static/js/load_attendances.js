@@ -194,7 +194,6 @@ function load_past_attendances() {
 			document.querySelector("#loadPastAttendances").classList.remove("loader");
 
 			if (response["all_loaded"] === true) {
-				console.log("Right here!");
 				allPastAttendancesLoaded = true;
 			}
 
