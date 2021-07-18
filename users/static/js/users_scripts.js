@@ -82,7 +82,7 @@ function load_future_attendances() {
                                                 <td scope="row" data-label="Asistencia">\
                                                     <button id="attendanceButton${response["attendances"][studentID]["id"]}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
                                                 </td>\
-                                                <td scope="row" data-label="Clase"> \
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
                                                     <a id="courseName${response["attendances"][studentID]["course__id"]}" href="#"></a> <br>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="day${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
@@ -184,7 +184,7 @@ function load_past_attendances() {
                                                 <td scope="row" data-label="Asistencia">\
                                                     <button id="attendanceButton${response["attendances"][studentID]["id"]}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
                                                 </td>\
-                                                <td scope="row" data-label="Clase"> \
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
                                                     <a id="courseName${response["attendances"][studentID]["course__id"]}" href="#"></a> <br>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="day${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
@@ -254,7 +254,7 @@ $("#attendanceSearchForm").submit(function (e) {
 					                            <td scope="row" data-label="Asistencia">\
                                                     <button id="attendanceButtonSearch${response["attendances"][studentID]["id"]}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
                                                 </td>\
-                                                <td scope="row" data-label="Clase"> \
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
                                                     <a id="courseNameSearch${response["attendances"][studentID]["course__id"]}" href="#"></a> <br>\
 													<span id="today${response["attendances"][studentID]["course__id"]}" class="badge bg-success" style="font-size: small; color: white;"></span>\
 													<span id="daySearch${response["attendances"][studentID]["id"]}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\

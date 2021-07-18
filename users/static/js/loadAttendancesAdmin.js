@@ -7,10 +7,10 @@
 studentFutureAttendanceCounter = 0;
 
 // Load 20 future attendances at a time
-const studentFutureAttendancesQuantity = 20;
+studentFutureAttendancesQuantity = 20;
 
 // All future attendances loaded
-let allFutureAttendancesLoaded = false;
+allFutureAttendancesLoaded = false;
 
 function activateToolTip() {
 	$('[data-toggle="tooltip"]').tooltip();
