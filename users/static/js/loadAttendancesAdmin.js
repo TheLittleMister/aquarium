@@ -4,7 +4,7 @@
 // START LOAD FUTURE ATTENDANCES
 
 // Start with first future attendance
-let studentFutureAttendanceCounter = 0;
+studentFutureAttendanceCounter = 0;
 
 // Load 20 future attendances at a time
 const studentFutureAttendancesQuantity = 20;
