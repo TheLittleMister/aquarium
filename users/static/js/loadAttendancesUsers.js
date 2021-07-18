@@ -4,7 +4,7 @@
 studentFutureAttendanceCounter = 0;
 
 // Load 20 future attendances at a time
-studentFutureAttendancesQuantity = 20;
+// studentFutureAttendancesQuantity = 20;
 
 // All future attendances loaded
 allFutureAttendancesLoaded = false;
