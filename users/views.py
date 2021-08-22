@@ -355,7 +355,7 @@ def approve_request(request, user_id):
 
 def create_schedule(request):
 
-    if request.user.is_admin or request.user.is_teacher:
+    if request.user.is_teacher and not request.user.is_admin:
 
         courses = (
             Account.objects.get(pk=request.GET.get("userID"))
@@ -365,6 +365,11 @@ def create_schedule(request):
             .order_by("date", "start_time")
         )
 
+        return JsonResponse({"schedule": get_schedule(courses)}, status=200)
+
+    elif request.user.is_admin:
+
+        courses = Course.objects.filter(date__gte=datetime.datetime.now() - datetime.timedelta(15)).order_by("date", "start_time")
         return JsonResponse({"schedule": get_schedule(courses)}, status=200)
 
     else:

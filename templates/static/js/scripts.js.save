@@ -745,8 +745,11 @@ function load_profile_data(userID) {
 			document.querySelector("#userPhone1").innerHTML = `<i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">1</i><a target="_blank" href="https://api.whatsapp.com/send?phone=57${response["user"][0]["phone_1"]}">${response["user"][0]["phone_1"]}</a>`;
 
 			document.querySelector("#userPhone2").innerHTML = `<i class="fas fa-phone fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;">2</i><a target="_blank" href="https://api.whatsapp.com/send?phone=57${response["user"][0]["phone_2"]}">${response["user"][0]["phone_2"]}</a>`;
-
-			try { document.querySelector("#userNote").innerHTML = `<i class="fas fa-sticky-note fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["note"]}` } catch (error) { console.log("Es otra noche más, de caminar.") };
+                        
+                        try {
+                            document.querySelector("#userNote").innerHTML = `<i class="fas fa-sticky-note fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !";"`
+                        } catch (error) {}
+			document.querySelector("#userNote").innerHTML = `<i class="fas fa-sticky-note fa-fw w3-margin-right w3-large w3-text-blue" style="color: steelblue !important;"></i>${response["user"][0]["note"]}`;
 		},
 	});
 }

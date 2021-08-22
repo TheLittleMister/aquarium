@@ -912,7 +912,7 @@ def load_past_courses(request):
     response["courses"] += list(
         Course.objects.filter(date__lt=datetime.datetime.now())
         .values("id")
-        .order_by("-date")[start:end]
+        .order_by("-date", "-start_time")[start:end]
     )
 
     # Check if all is already loaded

@@ -121,6 +121,7 @@
     </div>
 </div>
 
+{% if request.user == user %}
 <!-- Modal Profile-->
 <div class="modal" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen-md-down modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -158,10 +159,8 @@
                                 <p id="userAge"></p>
                                 <p id="userEmail"></p>
                                 <p id="userParent"></p>
-                                <p id=userPhone1></p>
-                                <p id=userPhone2></p>
-                                <br>
-                                <p id="userNote"></p>
+                                <p id="userPhone1"></p>
+                                <p id="userPhone2"></p>
                                 <br>
                             </div>
                         </div><br>
@@ -450,6 +449,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% endif %}
 
@@ -476,7 +476,7 @@
                 <!-- ------------ -->
             </div>
 
-            <div class="col-10" style="margin-left: auto; margin-right: auto;">
+            <div style="margin-left: auto; margin-right: auto;">
                 <table id="resultsStudentsTable">
                     <thead>
                         <tr>
