@@ -192,9 +192,9 @@
 
           for (let studentID = 0; studentID < response.students.length; studentID++) {
             login = prettyDate(response.students[studentID].real_last_login);
-            login = login !== "1969-12-31"
+            login = login && login !== "1969-12-31"
               ? login
-              : "-";
+              : "Hace más de un mes";
 
             $("#students_table").append(`<tr> \
                                                 <td scope="row" data-label="Documento"> \

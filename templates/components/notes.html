@@ -405,7 +405,7 @@
             <td>
               <span id="noteDate${response.notes[noteID].id}">${prettyDate(response.notes[noteID].updated_at)}</span>
               
-              ${response.notes[noteID].teacher__id == currentUserID && `<button onclick="editNote(${response.notes[noteID].id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalNote">✏️</button>`}
+              ${response.notes[noteID].teacher__id == currentUserID ? `<button onclick="editNote(${response.notes[noteID].id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalNote">✏️</button>` : ""}
 
             </td>
           </tr>`)
