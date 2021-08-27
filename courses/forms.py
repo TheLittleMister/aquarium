@@ -81,6 +81,10 @@ class AttendanceForm(forms.ModelForm):
         model = Attendance
         fields = ('note', 'image')
 
+        widgets = {
+            'note': forms.Textarea(attrs={'cols': 30, 'rows': 15}),
+        }
+
 
 class CoursesForm(forms.Form):
 
@@ -172,3 +176,14 @@ class StudentLevelForm(forms.ModelForm):
 
         if cleaned_data.get("attendances") < 1:
             raise forms.ValidationError("Al menos 1 asistencia requerida!")
+
+
+class NoteForm(forms.ModelForm):
+
+    class Meta:
+        model = Note
+        fields = ("note",)
+
+        widgets = {
+            'note': forms.Textarea(attrs={'cols': 30, 'rows': 15}),
+        }

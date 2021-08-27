@@ -1,0 +1,245 @@
+<!-- Modal para buscar asistencias/cursos de un usuario -->
+<div class="modal fade" id="modalSearchAttendance" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalSearchAttendanceLabel">
+          Buscar Clases de
+          {{ user }}
+        </h5>
+        <button type="button" class="btn btn-outline-primary btn-close" onclick="$('#modalSearchAttendance').modal('hide');" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="margin-left: auto; margin-right: auto">
+        <!-- ------------ -->
+        <form action="{% url 'courses:search_attendance' %}" id="attendanceSearchForm" method="GET">
+          {% csrf_token %}
+          <input id="inputUserModalSearchAttendance" type="hidden" name="userID" value="{{ user.id }}"/>
+          <input type="date" name="date" class="dateinput form-control" id="attendance_date" required="required"/>
+          <br/>
+          <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
+          <div id="searchDateLoader"></div>
+        </form>
+        <!-- ------------ -->
+      </div>
+
+      <div style="margin-left: auto; margin-right: auto">
+        <table id="resultsStudentsTable">
+          <thead>
+            <tr>
+              {% if current_user.is_admin %}
+                <th scope="col">Clase</th>
+                <th scope="col">Asistencia</th>
+                <th scope="col">Cupo</th>
+                <th scope="col">Nota</th>
+                <th scope="col">Editar</th>
+              {% else %}
+                <th scope="col">Asistencia</th>
+                <th scope="col">Clase</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody id="searchAttendancesTableBody"></tbody>
+        </table>
+      </div>
+      <br/>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#attendanceSearchForm").submit(function (e) {
+    e.preventDefault();
+    const form = $(this);
+    $.ajax({
+      type: "GET",
+      url: `${mysite}/courses/search_attendance/`,
+      data: form.serialize(),
+      beforeSend: function () {
+        document
+          .querySelector("#searchAttendancesTableBody")
+          .innerHTML = "";
+        document
+          .querySelector("#searchDateButton")
+          .style
+          .display = "none";
+        document
+          .querySelector("#searchDateLoader")
+          .classList
+          .add("loader");
+      },
+      error: function (error) {
+        console.log("Error!", error);
+      },
+      success: function (response) {
+        if (response.attendances.length > 0) {
+          for (let studentID = 0; studentID < response.attendances.length; studentID++) {
+            let attendanceBtnColor;
+            let attendanceStr;
+            let quotaBtnColor;
+            let cycle = "";
+            let day = "";
+            let note = "";
+            let note_emoji = "-";
+            if (response.attendances[studentID].attendance === true) {
+              attendanceBtnColor = "btn-success";
+              attendanceStr = "ASISTIÓ";
+            } else {
+              if (response.past == true) {
+                attendanceBtnColor = "btn-danger";
+                attendanceStr = "NO ASISTIÓ";
+              } else {
+                attendanceBtnColor = "btn-secondary";
+                attendanceStr = "PENDIENTE";
+              }
+            }
+            if (response.attendances[studentID].onlyday === true) {
+              day = "SOLO HOY";
+            } else if (response.attendances[studentID].recover === true) {
+              day = "RECUPERA";
+            }
+
+            if (response.attendanceAdmin) {
+              if (response.attendances[studentID].quota === "PAGO") {
+                quotaBtnColor = "btn-success";
+              } else {
+                quotaBtnColor = "btn-secondary";
+              }
+              if (response.attendances[studentID].cycle === true) {
+                cycle = "INICIA";
+              } else if (response.attendances[studentID].end_cycle === true) {
+                cycle = "TERMINA";
+              }
+
+              if (response.attendances[studentID].note !== null && response.attendances[studentID].note !== "") {
+                note = response
+                  .attendances[studentID]
+                  .note;
+                note_emoji = "📃";
+              }
+            }
+            const toAppend1 = response.attendanceAdmin
+              ? `<tr> \
+                                                <td scope="row" data-label="Clase"> \
+                                                    <a id="courseNameSearch${response
+                .attendances[studentID]
+                .course__id}" href=""></a> <br>\
+													<span id="todaySearch${response
+                .attendances[studentID]
+                .course__id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
+													<span id="countSearch${response
+                .attendances[studentID]
+                .course__id}" class="badge bg-info" style="font-size: small; color: white;"></span>\
+													<span id="cycleSearch${response
+                .attendances[studentID]
+                .id}" class="badge bg-warning" style="font-size: small;">${cycle}</span>\
+													<span id="daySearch${response
+                .attendances[studentID]
+                .id}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
+												</td>\
+                                                <td scope="row" data-label="Asistencia">\
+                                                    <button id="attendanceButtonSearch${response
+                .attendances[studentID]
+                .id}" onclick="changeAttendance(${response
+                .attendances[studentID]
+                .id});" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
+                                                </td>\
+                                                <td scope="row" data-label="Cupo">\
+                                                    <button id="quotaButtonSearch${response
+                .attendances[studentID]
+                .id}" onclick="changeQuota(${response
+                .attendances[studentID]
+                .id});" class="btn btn-sm ${quotaBtnColor}">${response
+                .attendances[studentID]
+                .quota}</button>\
+                                                </td>\
+                                                <td scope="row" data-label="Nota">\
+													<span id="noteSearch${response
+                .attendances[studentID]
+                .id}"> \
+														<span style="font-size: large;" data-toggle="tooltip" title="${note}">${note_emoji}</span> \
+													</span> \
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Editar">\
+                                                    <button onclick="getAttendanceInfo(${response
+                .attendances[studentID]
+                .id}, ${response
+                .attendances[studentID]
+                .course__id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalAttendance">✏️</button>\
+                                                </td>\
+                                            </tr>`
+              : `<tr> \
+					                            <td scope="row" data-label="Asistencia">\
+                                                    <button id="attendanceButtonSearch${response
+                .attendances[studentID]
+                .id}" class="btn btn-sm ${attendanceBtnColor}">${attendanceStr}</button>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase"> \
+                                                    <a id="courseNameSearch${response
+                .attendances[studentID]
+                .course__id}" href="#"></a> <br>\
+													<span id="today${response
+                .attendances[studentID]
+                .course__id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
+													<span id="daySearch${response
+                .attendances[studentID]
+                .id}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
+												</td>\
+                                            </tr>`;
+
+            $("#searchAttendancesTableBody").append(toAppend1);
+
+            fetch(`${mysite}/courses/course_info/${response.attendances[studentID].course__id}`)
+              .then((data) => data.json())
+              .then((data) => {
+                document
+                  .querySelector(`#courseNameSearch${data.course_id}`)
+                  .innerHTML = data.courseStr;
+
+                if (response.attendanceAdmin) 
+                  document
+                    .querySelector(`#countSearch${data.course_id}`)
+                    .innerHTML = data.courseCount;
+                
+                if (data.today == true) {
+                  document
+                    .querySelector(`#todaySearch${data.course_id}`)
+                    .innerHTML = "HOY"; //`#today${data.course_id}`
+                }
+              });
+            activateToolTip();
+          }
+          $('[data-toggle="tooltip"]').tooltip();
+        } else {
+          const toAppend2 = response.attendanceAdmin
+            ? `<tr> \
+                                                <td scope="row" data-label="Clase"> \
+                                                    SIN RESULTADOS\
+												</td>\
+                                                <td scope="row" data-label="Asistencia">-</td>\
+                                                <td scope="row" data-label="Cupo">-\
+                                                </td>\
+                                                <td scope="row" data-label="Nota">-\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Editar">-</td>\
+                                            </tr>`
+            : `<tr> \
+												<td scope="row" data-label="Asistencia">-</td>\
+                                                <td scope="row" data-label="Clase"> \
+                                                    SIN RESULTADOS\
+												</td>\
+                                            </tr>`;
+
+          $("#searchAttendancesTableBody").append(toAppend2);
+        }
+        document
+          .querySelector("#searchDateLoader")
+          .classList
+          .remove("loader");
+        document
+          .querySelector("#searchDateButton")
+          .style
+          .display = "block";
+      }
+    });
+  });
+</script>

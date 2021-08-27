@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% load modal_tags %}
+{% load component_tags %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+  
+
+  <div id="userID" value="{{ user.id }}"></div>
+
+  <!-- Page Container -->
+  <div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+
+      {% information request.user user False studentForm %}
+      {% search_user %}
+      {% schedule user %}
+      {% levels request.user user %}
+
+      <!-- End Grid -->
+    </div>
+    <!-- End Page Container -->
+  </div>
+
+  {% if request.user.is_admin or request.user.is_teacher %}
+
+    {% modal_profile request.user user studentForm noteForm %}
+
+  {% endif %}
+
+{% endblock %}
+
+{% comment %} {% block scripts %}
+
+<script type="text/javascript">
+  document
+    .querySelector('#id_image_group')
+    .onclick = function (event) {
+      document
+        .querySelector('#id_file')
+        .click();
+      console.log("here")
+    };
+</script>
+
+{% if request.user == user %}
+  <!-- CROPPER -->
+  <script src="{% static 'js/cropper.js' %}"></script>
+  <!-- Cropper.js -->
+  <script src="{% static 'js/jquery-cropper.js' %}"></script>
+  <!-- Jquery-Cropper.js -->
+  <script src="{% static 'js/cropper-script.js' %}"></script>
+{% endif %}
+
+{% if request.user.is_admin %}
+  <script src="{% static 'js/courses_scripts.js' %}"></script>
+  <script src="{% static 'js/loadAttendancesAdmin.js' %}"></script>
+  <script src="{% static 'js/modalStatisticsAdmin.js' %}"></script>
+{% else %}
+  <script src="{% static 'js/modalStatisticsUsers.js' %}"></script>
+  <script src="{% static 'js/loadAttendancesUsers.js' %}"></script>
+{% endif %}
+
+<script src="{% static 'js/teachersSchedule.js' %}"></script>
+<script src="{% static 'js/modalScripts.js' %}"></script>
+
+{% endblock %} {% endcomment %}

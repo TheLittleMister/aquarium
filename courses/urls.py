@@ -10,7 +10,8 @@ urlpatterns = [
     # Students Paths
     path("", students, name="students"),
     path("load_students/", load_students, name="load_students"),
-    path("load_active_students/", load_active_students, name="load_active_students"),
+    path("load_active_students/", load_active_students,
+         name="load_active_students"),
     path(
         "search_active_students/", search_active_students, name="search_active_students"
     ),
@@ -28,7 +29,8 @@ urlpatterns = [
     path("teachers/", teachers, name="teachers"),
     path("levels/<int:student_id>", levels, name="levels"),
     path("level_info/<int:student_level_id>", level_info, name="level_info"),
-    path("edit_level/<int:student_level_id>", edit_level, name="edit_level"),
+    path("edit_level/<int:student_level_id>/<str:modal>",
+         edit_level, name="edit_level"),
     path(
         "deactivate_level/<int:student_level_id>",
         deactivate_level,
@@ -41,18 +43,21 @@ urlpatterns = [
         load_future_attendances,
         name="load_future_attendances",
     ),
-    path("load_past_attendances/", load_past_attendances, name="load_past_attendances"),
+    path("load_past_attendances/", load_past_attendances,
+         name="load_past_attendances"),
     path("course_info/<int:course_id>", course_info, name="course_info"),
     path(
         "change_attendance/<int:attendance_id>",
         change_attendance,
         name="change_attendance",
     ),
-    path("change_quota/<int:attendance_id>", change_quota, name="change_quota"),
+    path("change_quota/<int:attendance_id>",
+         change_quota, name="change_quota"),
     path(
         "attendance_info/<int:attendance_id>", attendance_info, name="attendance_info"
     ),
-    path("change_cycle/<int:attendance_id>", change_cycle, name="change_cycle"),
+    path("change_cycle/<int:attendance_id>",
+         change_cycle, name="change_cycle"),
     path("change_day/<int:attendance_id>", change_day, name="change_day"),
     path(
         "edit_attendance/<int:attendance_id>", edit_attendance, name="edit_attendance"

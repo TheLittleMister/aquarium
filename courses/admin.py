@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Attendance, Level, Student_Level
+from .models import *
 from .labels import *
 
 
@@ -11,5 +11,6 @@ class courses(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Course, courses)
 admin.site.register(Attendance)
+admin.site.register(Note)
 admin.site.register(Level)
 admin.site.register(Student_Level)

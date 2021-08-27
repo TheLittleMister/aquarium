@@ -1,0 +1,130 @@
+{% load crispy_forms_tags %}
+
+<!-- Modal para editar la información de un usuario -->
+<div class="modal fade" id="modalProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Actualizar Información</h5>
+
+        {% if current_user.is_admin %}
+          <button style="float: right" type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#modalDeleteProfile">Borrar Estudiante</button>
+
+        {% else %}
+
+          <a class="btn btn-outline-dark" href="{% url 'users:change-password' %}">Cambiar Contraseña</a>
+
+        {% endif %}
+        <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="margin-left: auto; margin-right: auto">
+        <!-- ------------ -->
+        <form id="editStudentForm" action="{% url 'users:edit_student' user.id %}" method="POST" autocomplete="off" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ userForm | crispy }}
+          <div id="editStudentMessages"></div>
+          <br/>
+          <div class="modal-footer">
+            {% if current_user.is_admin %}
+              <a class="btn btn-outline-dark" href="{% url 'users:default_password' user.id %}">Resetear Contraseña</a>
+            {% endif %}
+            <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Atrás</button> -->
+            <button id="editStudentButton" type="submit" class="btn btn-outline-primary js-crop-and-upload">Guardar</button>
+            <div id="loadEditStudent"></div>
+          </div>
+        </form>
+        <!-- ------------ -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if current_user.is_admin %}
+  <!-- MODAL TO DELETE PROFILE -->
+  <div class="modal fade" id="modalDeleteProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: lightcyan">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Borrar
+            {{ user }}</h5>
+          <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body" style="margin-left: auto; margin-right: auto">
+          <!-- ------------ -->
+          <form id="deleteStudentForm" action="{% url 'users:delete_student' user.id %}" method="POST" autocomplete="off" enctype="multipart/form-data">
+            {% csrf_token %}
+            ¿Está segur@ que desea eliminar a
+            {{ user }}?
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">NO</button>
+              <button type="submit" class="btn btn-danger">SI</button>
+            </div>
+          </form>
+          <!-- ------------ -->
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<script>
+  $("#editStudentForm").submit(function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const action = form.attr("action");
+    $.ajax({
+      type: "POST",
+      url: `${mysite}${action}`,
+      data: form.serialize(),
+      beforeSend: function () {
+        document
+          .querySelector("#editStudentButton")
+          .style
+          .display = "none";
+        document
+          .querySelector("#loadEditStudent")
+          .classList
+          .add("loader");
+        document
+          .querySelector("#editStudentMessages")
+          .classList
+          .remove("alert");
+        document
+          .querySelector("#editStudentMessages")
+          .classList
+          .remove("alert-danger");
+        document
+          .querySelector("#editStudentMessages")
+          .innerHTML = "";
+      },
+      error: function (error) {
+        console.log("Error!", error);
+      },
+      success: function (response) {
+        if (response.edited !== false) {
+          location.reload();
+        } else {
+          document
+            .querySelector("#loadEditStudent")
+            .classList
+            .remove("loader");
+          document
+            .querySelector("#editStudentButton")
+            .style
+            .display = "block";
+          for (let messageID in response.messages) {
+            document
+              .querySelector("#editStudentMessages")
+              .classList
+              .add("alert");
+            document
+              .querySelector("#editStudentMessages")
+              .classList
+              .add("alert-danger");
+            $("#editStudentMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
+          }
+        }
+      }
+    });
+  });
+</script>

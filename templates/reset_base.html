@@ -4,57 +4,60 @@
 
 <html lang="en">
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- icon -->
-  <link rel="icon" href="{% static 'images/logo.webp' %}">
+    <!-- icon -->
+    <link rel="icon" href="{% static 'images/logo.webp' %}">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link href="{% static 'css/styles.css' %}" rel="stylesheet" media="all">
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" media="all">
 
-  <!-- Scripts -->
-  <script src="https://kit.fontawesome.com/f042eae6e8.js" crossorigin="anonymous"></script> <!-- Font Awesome -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- jQuery is required -->
+    <!-- Scripts -->
+    <script src="https://kit.fontawesome.com/f042eae6e8.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- jQuery is required -->
 
-  <title>Aquarium Languages {% block title %}{% endblock %}</title>
+    <title>Aquarium Languages
+      {% block title %}{% endblock %}
+    </title>
 
-  {% block head %}
-  {% endblock %}
+    {% block head %}{% endblock %}
 
-  <style>
-    @media screen and (max-width: 1161px) {
-      .col-3 {
-        width: 100%;
+    <style>
+      @media screen and (max-width: 1161px) {
+        .col-3 {
+          width: 100%;
+        }
       }
-    }
 
-    ul {
-      text-align: left;
-    }
-  </style>
+      ul {
+        text-align: left;
+      }
+    </style>
 
-</head>
+  </head>
 
-<body style="background-color: #f2f7fd;">
+  <body style="background-color: #f2f7fd;">
 
-  <br>
-  <div class="container col-3 mt-5">
-    <div style="text-align: center;">
-      <img src="{% static 'images/logo.webp' %}" style="width: 100px;"> <br>
-      <!-- <i class="fas fa-water fa-3x" aria-hidden="true" style="color: #009fff;"></i> -->
-      <hr>
-      {% block content %}
-      {% endblock %}
+    <br>
+    <div class="container col-3 mt-5">
+      <div style="text-align: center;">
+        <img src="{% static 'images/logo.webp' %}" style="width: 100px;">
+        <br>
+        <!-- <i class="fas fa-water fa-3x" aria-hidden="true" style="color: #009fff;"></i> -->
+        <hr>
+        {% block content %}{% endblock %}
+      </div>
     </div>
-  </div>
 
-</body>
+  </body>
 
 </html>

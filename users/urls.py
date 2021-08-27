@@ -8,15 +8,22 @@ app_name = "users"
 
 urlpatterns = [
     # USER PATHS
-    path("profile/<int:user_id>", profile, name="profile"),
+    path("profile/", profile, name="profile"),
     path("profile_photo/<int:user_id>", profile_photo, name="profile_photo"),
     path("edit_student/<int:user_id>", edit_student, name="edit_student"),
-    path("edit_profile/<int:user_id>", edit_profile, name="edit_profile"),
     path("delete_student/<int:user_id>", delete_student, name="delete_student"),
     path("cancel_request/<int:user_id>", cancel_request, name="cancel_request"),
-    path("approve_request/<int:user_id>", approve_request, name="approve_request"),
+    path("approve_request/<int:user_id>",
+         approve_request, name="approve_request"),
     path("create_schedule/", create_schedule, name="create_schedule"),
-    path("redirection/", redirection, name="redirection"),
+    path("create_note/<int:user_id>", create_note, name="create_note"),
+    path("delete_note/<int:note_id>", delete_note, name="delete_note"),
+    path(
+        "note_info/<int:note_id>", note_info, name="note_info"
+    ),
+    path(
+        "edit_note/<int:note_id>", edit_note, name="edit_note"
+    ),
     path(
         "change_student_teacher/<int:user_id>",
         change_student_teacher,
@@ -41,10 +48,13 @@ urlpatterns = [
         ),
         name="change-password-done",
     ),
-    path("default_password/<int:user_id>", default_password, name="default_password"),
+    path("default_password/<int:user_id>",
+         default_password, name="default_password"),
     # LEVEL PATHS
     path("load_level_students/", load_level_students, name="load_level_students"),
-    path("search_level_students/", search_level_students, name="search_level_students"),
+    path("load_notes/", load_notes, name="load_notes"),
+    path("search_level_students/", search_level_students,
+         name="search_level_students"),
     path("get_this_percentage/", get_this_percentage, name="get_this_percentage"),
     path(
         "change_delivered/<int:levelID>/<int:studentID>",

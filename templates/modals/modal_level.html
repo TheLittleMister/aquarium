@@ -1,0 +1,160 @@
+<!-- Modal de los profesores donde pueden filtrar certificados / No certificados, etc. -->
+<div class="modal" id="levelModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchlevelName"></h5>
+        <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body col-10" style="margin-left: auto; margin-right: auto">
+        <input id="levelSearch" type="text" placeholder="Buscar Estudiante" class="form-control"/>
+        <input id="levelSearchValue" type="hidden" value=""/>
+        <br/>
+        <table id="searchLevelTable" style="visibility: hidden; background-color: lightgoldenrodyellow">
+          <thead>
+            <tr>
+              <th scope="col">Profesor</th>
+              <th scope="col">Documento</th>
+              <th scope="col">Nombres</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Certificado</th>
+            </tr>
+          </thead>
+          <tbody id="searchLevelTableBody"></tbody>
+        </table>
+        <div id="searchLoadLevel"></div>
+        <br/>
+        <select onchange="changeThisFilter(this.value);" name="fitlerSelection" id="fitlerSelection" class="form-control mb-2" style="background-color: lightcyan">
+          <option value="0" selected="selected">Todos</option>
+          <option value="1">Certificados</option>
+          <option value="2">No Certificados</option>
+          <option value="3">Entregado</option>
+          <option value="4">No Entregado</option>
+          <option value="5">Pendiente</option>
+        </select>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Profesor</th>
+              <th scope="col">Documento</th>
+              <th scope="col">Nombres</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Certificado</th>
+            </tr>
+          </thead>
+          <tbody id="levelTableBody"></tbody>
+        </table>
+        <div id="loadLevel"></div>
+        <br/>
+        <button id="loadMoreLevelBtn" onclick="load_students_levels();" type="button" class="btn btn-outline-primary">Cargar Más</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#levelSearch").keyup(delay(function () {
+    let levelID = $("#levelSearchValue").val();
+
+    $.ajax({
+      type: "GET",
+      url: `${mysite}/users/search_level_students/`,
+      data: {
+        student: $(this).val(),
+        levelID: levelID
+      },
+      beforeSend: function () {
+        document
+          .querySelector("#searchLoadLevel")
+          .classList
+          .add("loader");
+        document
+          .querySelector("#searchLevelTableBody")
+          .innerHTML = "";
+      },
+      error: function (error) {
+        console.log("Error!", error);
+      },
+      success: function (response) {
+        document
+          .querySelector("#searchLevelTable")
+          .style
+          .visibility = "visible";
+
+        if (response.students.length > 0) {
+          for (let studentsID = 0; studentsID < response.students.length; studentsID++) {
+            let deliveredBtn;
+            let delivered;
+
+            if (response.students[studentsID].delivered) {
+              deliveredBtn = "btn btn-sm btn-danger";
+              delivered = "NO ENTREGADO";
+            } else if (response.students[studentsID].delivered === false) {
+              deliveredBtn = "btn btn-sm btn-success";
+              delivered = "ENTREGADO";
+            } else {
+              // null
+              deliveredBtn = "btn btn-sm btn-secondary";
+              delivered = "PENDIENTE";
+            }
+
+            $(`#searchLevelTableBody`).append(
+              `<tr> \
+									<td scope="row" data-label="Profesor" style="background-color: ${response.students[studentsID].student__teacher__color__hex_code};"> \
+										<button onclick="changeStudentTeacher(${response.students[studentsID].student__id});" id="studentTeacherBtn${response.students[studentsID].student__id}" class="btn-sm">${response.students[studentsID].student__teacher__username !== null
+              ? response.students[studentsID].student__teacher__username
+              : "Reclamar"}</button>\
+									</td>\
+									<td scope="row" data-label="Documento"> \
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__identity_document}</a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__first_name}</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__last_name}</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
+										<span style="font-size: medium;" class="thisPercentage${response.students[studentsID].student__id}"></span> <span class="thisCertificate${response.students[studentsID].student__id}"></span> <button id="btnDelivered${levelID}${response.students[studentsID].student__id}" onclick="changeDelivered(${levelID}, ${response.students[studentsID].student__id});" class="${deliveredBtn}">${delivered}</button>\
+									</td>\
+								</tr>`);
+            if (response.students[studentsID].certificate_img) {
+              document
+                .querySelector(`.thisCertificate${response.students[studentsID].student__id}`)
+                .innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response
+                .students[studentsID]
+                .certificate_img}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+              mysite + "/media/" + response
+                .students[studentsID]
+                .certificate_pdf}')">PDF</button>`;
+            }
+            getThisPercentage(levelID, response.students[studentsID].student__id);
+          }
+        } else {
+          $(`#searchLevelTableBody`).append(`<tr> \
+									<td scope="row" data-label="Profesor"> \
+										<a href="#">SIN RESULTADOS</a>\
+									</td>\
+									<td scope="row" data-label="Documento"> \
+										<a href="#"></a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="#">-</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="#">-</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
+										<a href="#">-</a>\
+									</td>\
+								</tr>`);
+        }
+
+        document
+          .querySelector("#searchLoadLevel")
+          .classList
+          .remove("loader");
+      }
+    });
+  }, 1000));
+</script>

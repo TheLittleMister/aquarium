@@ -115,3 +115,19 @@ class Student_Level(models.Model):
 
     delivered = models.BooleanField(
         default=True, null=True, blank=True)  # Inverted bool
+
+
+class Note(models.Model):
+
+    student = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="all_notes")
+
+    teacher = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name="notes")
+
+    note = models.CharField("Nota", max_length=600)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']

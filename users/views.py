@@ -14,6 +14,9 @@ from PIL import Image
 from django.utils import timezone
 from unidecode import unidecode
 from django.contrib.auth.models import BaseUserManager
+from django.db.models.functions import Concat
+from django.db.models import Value
+from django.conf import settings
 
 from courses.forms import *
 from .forms import *
@@ -21,19 +24,9 @@ from .utils import *
 from .labels import *
 from courses.models import *
 
-mysite = "https://aquariumschool.co/"
-# mysite = "http://127.0.0.1:8000/"
+mysite = "http://127.0.0.1:8000/" if settings.DEBUG else "https://aquariumschool.co/"
 
 # USER AUTHENTICATION
-
-
-def redirection(request):
-
-    if request.user.is_admin:
-        return HttpResponseRedirect(reverse("courses:students"))
-
-    else:
-        return HttpResponseRedirect(reverse("users:profile", args=(request.user.id,)))
 
 
 def login_view(request):
@@ -141,35 +134,28 @@ def available(request):
 # USER PROFILE
 
 
-def profile(request, user_id):
-
-    user = Account.objects.get(pk=user_id)
+def profile(request):
 
     if request.user.is_authenticated:
 
-        if request.user.is_teacher or request.user.is_admin or request.user == user:
+        age = (
+            round((datetime.date.today() - request.user.date_birth).days // 365.25)
+            if request.user.date_birth
+            else None
+        )
 
-            age = (
-                round((datetime.date.today() - user.date_birth).days // 365.25)
-                if user.date_birth
-                else None
-            )
-
-            signatureForm = (
-                SignatureForm(instance=user) if request.user.is_admin else None
-            )
-
-            return render(
-                request,
-                "users/profile.html",
-                {
-                    "user": user,
-                    "age": age,
-                    "profileForm": ProfileForm(instance=user),
-                    "signatureForm": signatureForm,
-                    "userBar": True,
-                },
-            )
+        return render(
+            request,
+            "users/teacher_profile.html" if request.user.is_admin or request.user.is_teacher else "users/profile.html",
+            {
+                "user": request.user,
+                "age": age,
+                "studentForm": ProfileForm(instance=request.user),
+                "userBar": False if request.user.is_admin else True,
+                "adminBar": True if request.user.is_admin else False,
+                "noteForm": NoteForm(),
+            },
+        )
 
     return HttpResponseRedirect("/")
 
@@ -205,10 +191,10 @@ def profile_photo(request, user_id):
         return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
 
     else:
-        return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
+        return HttpResponseRedirect(reverse("users:profile"))
 
 
-@staff_member_required(login_url=mysite)
+# @staff_member_required(login_url=mysite)
 def edit_student(request, user_id):
 
     response = {
@@ -217,64 +203,38 @@ def edit_student(request, user_id):
     }
 
     user = Account.objects.get(pk=user_id)
-    studentform = StudentForm(request.POST, instance=user)
 
-    if studentform.is_valid():
-        user = studentform.save()
+    if request.user.is_admin:
+        studentform = StudentForm(request.POST, instance=user)
 
-        user.email = (
-            str(BaseUserManager.normalize_email(user.email)).lower()
-            if user.email
-            else None
-        )
+        if studentform.is_valid():
+            user = studentform.save()
 
-        user.first_name = unidecode(str(user.first_name).upper())
-        user.last_name = unidecode(str(user.last_name).upper())
-
-        if user.parent:
-            user.parent = unidecode(str(user.parent).upper())
-
-        user.save()
-
-        response["edited"] = True
-
-    else:
-        for key in studentform.errors.as_data():
-            response["messages"].append(
-                str(studentform.errors.as_data()[key][0])[2:-2].replace(
-                    "Account", "cuenta"
-                )
+            user.email = (
+                str(BaseUserManager.normalize_email(user.email)).lower()
+                if user.email
+                else None
             )
 
-    return JsonResponse(response, status=200)
+            user.first_name = unidecode(str(user.first_name).upper())
+            user.last_name = unidecode(str(user.last_name).upper())
 
+            if user.parent:
+                user.parent = unidecode(str(user.parent).upper())
 
-@staff_member_required(login_url=mysite)
-def default_password(request, user_id):
+            user.save()
 
-    user = Account.objects.get(pk=user_id)
-    user.set_password("AquariumSchool")
-    user.save()
+            response["edited"] = True
 
-    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
+        else:
+            for key in studentform.errors.as_data():
+                response["messages"].append(
+                    str(studentform.errors.as_data()[key][0])[2:-2].replace(
+                        "Account", "cuenta"
+                    )
+                )
 
-
-@staff_member_required(login_url=mysite)
-def delete_student(request, user_id):
-    Account.objects.get(pk=user_id).delete()
-    return HttpResponseRedirect(reverse("courses:students"))
-
-
-def edit_profile(request, user_id):
-
-    response = {
-        "edited": False,
-        "messages": list(),
-    }
-
-    user = Account.objects.get(pk=user_id)
-
-    if request.user == user:
+    elif request.user == user:
         profileform = ProfileForm(request.POST, instance=user)
 
         if profileform.is_valid():
@@ -313,6 +273,22 @@ def edit_profile(request, user_id):
     return JsonResponse(response, status=200)
 
 
+@staff_member_required(login_url=mysite)
+def default_password(request, user_id):
+
+    user = Account.objects.get(pk=user_id)
+    user.set_password("AquariumSchool")
+    user.save()
+
+    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
+
+
+@staff_member_required(login_url=mysite)
+def delete_student(request, user_id):
+    Account.objects.get(pk=user_id).delete()
+    return HttpResponseRedirect(reverse("courses:students"))
+
+
 def cancel_request(request, user_id):
 
     user = Account.objects.get(pk=user_id)
@@ -325,7 +301,7 @@ def cancel_request(request, user_id):
         return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
 
     else:
-        return HttpResponseRedirect(reverse("users:profile", args=(user.id,)))
+        return HttpResponseRedirect(reverse("users:profile"))
 
 
 @staff_member_required(login_url=mysite)
@@ -369,7 +345,8 @@ def create_schedule(request):
 
     elif request.user.is_admin:
 
-        courses = Course.objects.filter(date__gte=datetime.datetime.now() - datetime.timedelta(15)).order_by("date", "start_time")
+        courses = Course.objects.filter(date__gte=datetime.datetime.now(
+        ) - datetime.timedelta(15)).order_by("date", "start_time")
         return JsonResponse({"schedule": get_schedule(courses)}, status=200)
 
     else:
@@ -409,12 +386,13 @@ def signature(request, user_id):
 
     teacher = Account.objects.get(pk=user_id)
 
-    signatureForm = SignatureForm(request.POST, request.FILES, instance=teacher)
+    signatureForm = SignatureForm(
+        request.POST, request.FILES, instance=teacher)
 
     if signatureForm.is_valid():
         signatureForm.save()
 
-    return HttpResponseRedirect(reverse("users:profile", args=(user_id,)))
+    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
 
 
 # LEVEL FUNCTIONS
@@ -675,11 +653,15 @@ def search_level_students(request):
 
         if len(search) > 1:
             response["students"] += list(
-                level.levels.filter(
+                level.levels.annotate(
+                    student_full_name=Concat(
+                        "student__first_name", Value(" "), "student__last_name")
+                ).filter(
+                    Q(student_full_name__icontains=search) |
                     Q(student__username__icontains=search)
                     | Q(student__email__icontains=search)
-                    | Q(student__first_name__icontains=search)
-                    | Q(student__last_name__icontains=search)
+                    # | Q(student__first_name__icontains=search)
+                    # | Q(student__last_name__icontains=search)
                     | Q(student__identity_document__icontains=search)
                     | Q(student__phone_1__icontains=search)
                     | Q(student__phone_2__icontains=search),
@@ -749,7 +731,8 @@ def change_delivered(request, levelID, studentID):
 
     if request.user.is_admin:
 
-        student_level = Student_Level.objects.get(student=studentID, level=levelID)
+        student_level = Student_Level.objects.get(
+            student=studentID, level=levelID)
 
         if student_level.delivered:
             student_level.delivered = None
@@ -763,5 +746,127 @@ def change_delivered(request, levelID, studentID):
         student_level.save()
 
         response["delivered"] = student_level.delivered
+
+    return JsonResponse(response, status=200)
+
+
+def create_note(request, user_id):
+
+    response = {
+        # "modal": modal,
+        "edited": False,
+        "messages": list(),
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+        form = NoteForm(request.POST)
+
+        if form.is_valid():
+            note = form.save(commit=False)  # Save Note in a variable.
+            note.student = Account.objects.get(pk=user_id)
+            note.teacher = request.user
+            note.save()
+
+            response["edited"] = True
+            response["id"] = note.id
+            response["note"] = note.note
+            response["username"] = note.teacher.username
+            response["date"] = note.updated_at
+
+        else:
+            for key in form.errors.as_data():
+                response["messages"].append(
+                    str(form.errors.as_data()[key][0])[2:-2])
+
+    else:
+        response["Privilege"] = "Restricted"
+
+    return JsonResponse(response, status=200)
+
+
+def load_notes(request):
+
+    response = {
+        "notes": list(),
+        "all_loaded": False,
+    }
+
+    start = int(request.GET.get("start") or 0)
+    end = int(request.GET.get("end") or (start + 20)) + 1
+    user_id = int(request.GET.get("userID"))
+
+    response["notes"] += list(
+        Note.objects.filter(student=user_id).values(
+            "id", "note", "updated_at", "teacher__username", "teacher__id")[start:end]
+    )
+
+    if (
+        end
+        >= Note.objects.filter(student=user_id).count()
+    ):
+        response["all_loaded"] = True
+
+    # Return serialized student attendances data
+    return JsonResponse(response, status=200)
+
+
+def note_info(request, note_id):
+    form = NoteForm(instance=Note.objects.get(pk=int(note_id)))
+    return JsonResponse({"form": form.as_p()}, status=200)
+
+
+def edit_note(request, note_id):
+
+    response = {
+        "edited": False,
+        "form": None,
+        "messages": list()
+    }
+
+    note = Note.objects.get(pk=int(note_id))
+
+    if request.user.is_admin or request.user.is_teacher and request.user == note.teacher:
+
+        form = NoteForm(request.POST, instance=note)
+
+        if form.is_valid():
+
+            note = form.save()
+
+            response["edited"] = True
+            response["id"] = note.id
+            response["note"] = note.note
+            response["username"] = note.teacher.username
+            response["date"] = note.updated_at
+
+            form = NoteForm(instance=note)
+            response["form"] = form.as_p()
+
+        else:
+            for key in form.errors.as_data():
+                response["messages"].append(
+                    str(form.errors.as_data()[key][0])[2:-2])
+
+    else:
+        response["Privilege"] = "Restricted"
+
+    return JsonResponse(response, status=200)
+
+
+def delete_note(request, note_id):
+
+    response = {
+        "deleted": False,
+        "noteID": note_id
+    }
+
+    note = Note.objects.get(pk=int(note_id))
+
+    if request.user.is_admin or request.user.is_teacher and request.user == note.teacher:
+        note.delete()
+        response["deleted"] = True
+
+    else:
+        response["Privilege"] = "Restricted"
 
     return JsonResponse(response, status=200)

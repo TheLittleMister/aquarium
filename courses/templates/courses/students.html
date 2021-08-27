@@ -1,808 +1,237 @@
 {% extends 'base.html' %}
+{% load modal_tags %}
+{% load component_tags %}
 {% load static %}
 {% load crispy_forms_tags %}
-
 {% block content %}
-<!-- Modal to show student inconsistencies -->
-<div class="modal" id="inconsistenciesStudentModal" tabindex="-1" aria-labelledby="inconsistenciesStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="inconsistenciesStudentModalLabel">Inconsistencias</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                            <th scope="col">Excepción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inconsistenciesTableBody"></tbody>
-                </table>
-                <div id="loadInconsistencies"></div>
 
-            </div>
-        </div>
-    </div>
-</div>
+  {% include "../modals/modal_students.html" %}
 
-<!-- Modal to show students plus -->
-<div class="modal" id="plusStudentModal" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="plusStudentModalLabel">Estudiantes +</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="plusTableBody"></tbody>
-                </table>
-                <div id="loadplus"></div>
+  {% modal_profile request.user None None noteForm %}
 
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal to show change information students -->
-<div class="modal" id="changeStudentModal" tabindex="-1" aria-labelledby="changeStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changeStudentModalLabel">Cambio de información - {{ changeCount }}</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="changeTableBody"></tbody>
-                </table>
-                <div id="loadChange"></div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal to show teachers -->
-<div class="modal" id="teachersModal" tabindex="-1" aria-labelledby="teachersModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="teachersModalLabel">Profesores</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                            <th scope="col">Últ. vez</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teachersTableBody"></tbody>
-                </table>
-                <div id="loadTeachers"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- -- Modal to show active students -- -->
-<div class="modal" id="activeStudentsModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Estudiantes Activos - {{ countActiveStudents }}</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <input id="activeStudentsSearch" type="text" placeholder="Buscar Estudiante Activo" class="form-control">
-                <input id="activeStudentsSearchValue" type="hidden" value="">
-                <br>
-                <table id="searchActiveStudentsTable" style="visibility: hidden; background-color: lightgoldenrodyellow;">
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="searchActiveStudentsTableBody"></tbody>
-                </table>
-                <div id="searchLoadActiveStudents"></div> <br>
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Tel/Cel (1)</th>
-                            <th scope="col">Tel/Cel (2)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activeStudentsTableBody"></tbody>
-                </table>
-                <div id="loadActiveStudents"></div> <br>
-                <button id="loadMoreActiveStudentsBtn" onclick="load_active_students();" type="button" class="btn btn-outline-primary">Cargar Más</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{% if request.user.is_admin or request.user.is_teacher %}
-<!-- -- LEVEL MODAL -- -->
-<div class="modal" id="levelModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="searchlevelName"></h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <input id="levelSearch" type="text" placeholder="Buscar Estudiante" class="form-control">
-                <input id="levelSearchValue" type="hidden" value="">
-                <br>
-                <table id="searchLevelTable" style="visibility: hidden; background-color: lightgoldenrodyellow;">
-                    <thead>
-                        <tr>
-                            <th scope="col">Profesor</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Certificado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="searchLevelTableBody"></tbody>
-                </table>
-                <div id="searchLoadLevel"></div> <br>
-                <select onchange="changeThisFilter(this.value);" name="fitlerSelection" id="fitlerSelection" class="form-control mb-2" style="background-color: lightcyan;">
-                    <option value="0" selected>Todos</option>
-                    <option value="1">Certificados</option>
-                    <option value="2">No Certificados</option>
-                    <option value="3">Entregado</option>
-                    <option value="4">No Entregado</option>
-                    <option value="5">Pendiente</option>
-                </select>
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Profesor</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
-                            <th scope="col">Certificado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="levelTableBody"></tbody>
-                </table>
-                <div id="loadLevel"></div> <br>
-                <button id="loadMoreLevelBtn" onclick="load_students_levels();" type="button" class="btn btn-outline-primary">Cargar Más</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Profile-->
-<div class="modal" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <input id="modalUserID" type="hidden"></input>
-                <h5 class="modal-title" id="modalUserTitle"><button class="btn-sm" id="profileModalBtn" onclick="">Ver Perfil</button> <span class="badge" id="teacherProfile"></span></h5>
-
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <!-- <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;"> -->
-            <div class="modal-body">
-                <!-- The Grid -->
-                <div class="w3-row-padding">
-
-                    <!-- Right Column -->
-                    <div class="w3-third" style="float: right;">
-
-                        <div class=" w3-text-grey w3-card-4 rounded">
-                            <div class="w3-display-container" style="text-align: center;">
-                                <div class="image-group">
-                                    <img id="modalImage" src="#" style="width: 300px; border-radius: 50%; margin-top: 20px; margin-bottom: 20px; max-width: 100%; border: 10px solid #f2f7fd;" alt="Avatar">
-                                </div>
-                                <span id="userType" class="badge bg-success" style="color: white;"></span>
-
-                                <h2 id="studentNameModal"></h2>
-                                <span id="userUsername" class="badge bg-primary" style="color: white;"></span>
-                            </div>
-                            <hr>
-                            <div class="w3-container">
-                                <p id="userDocument"></p>
-                                <p id="userGender"></p>
-                                <p id="userAge"></p>
-                                <p id="userEmail"></p>
-                                <p id="userParent"></p>
-                                <p id=userPhone1></p>
-                                <p id=userPhone2></p>
-                                <br>
-                                <p id="userNote"></p>
-                                <br>
-                            </div>
-                        </div><br>
-
-                        <!-- End Right Column -->
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="w3-twothird">
-
-                        <div class="w3-container w3-card  w3-margin-bottom">
-                            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-calendar fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                                Horario
-                                <button id="getScheduleButtonModal" class="btn btn-outline-primary" onclick="">Abrir</button>
-                                <button id="showScheduleButtonModal" class="btn btn-outline-primary" onclick="showScheduleModal();" style="visibility: hidden;">Cerrar</button>
-                            </h2>
-                            <div id="studentScheduleModal" class="w3-container" style="display: none;">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Hora</th>
-                                            <th scope="col">Lunes</th>
-                                            <th scope="col">Martes</th>
-                                            <th scope="col">Miercoles</th>
-                                            <th scope="col">Jueves</th>
-                                            <th scope="col">Viernes</th>
-                                            <th scope="col">Sabado</th>
-                                            <th scope="col">Domingo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentScheduleBodyModal">
-                                    </tbody>
-                                </table>
-                                <div id="loadStudentScheduleModal"></div>
-                                <br>
-                            </div>
-                        </div>
-
-                        <!-- End Right Column -->
-                    </div>
-
-                    <div class="w3-twothird">
-
-                        <div class="w3-container w3-card  w3-margin-bottom">
-                            <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-chart-bar fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                                Estadísticas
-                                <button id="studentStatisticsButtonModal" class="btn btn-outline-primary" onclick="">Abrir</button>
-                                <button id="showStudentStatisticsButtonModal" class="btn btn-outline-primary" onclick="showStudentStatisticsModal();" style="visibility: hidden;">Cerrar</button>
-                            </h2>
-                            <div id="studentStatisticsModal" class="w3-container" style="display: none;">
-                                <div id="loadStudentStatisticsModal"></div>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Asistió</th>
-                                            <th scope="col">Faltó</th>
-                                            <th scope="col">Recuperó</th>
-                                            <th scope="col">Puede Recuperar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentAttendanceStatsBodyModal">
-                                    </tbody>
-                                </table>
-                                <br>
-                                {% if request.user.is_admin %}
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Pago</th>
-                                            <th scope="col">Pago dia</th>
-                                            <th scope="col">No pago</th>
-                                            <th scope="col">Separado</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentPaymentStatsBody">
-                                    </tbody>
-                                </table>
-                                <br>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- End Right Column -->
-                    </div>
-
-                    <div class="w3-twothird">
-
-                        <div class="w3-container w3-card  w3-margin-bottom">
-                            <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-sort-amount-up fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                                Niveles
-                                <button id="levelsBtnModal" class="btn btn-outline-primary" onclick="">Abrir</button>
-                                <button id="showLevelsBtnModal" class="btn btn-outline-primary" onclick="showlevelsModal();" style="visibility: hidden;">Cerrar</button>
-                            </h2>
-                            <div id="loadStudentLevelsModal"></div>
-                            <div id="levelsDivModal" class="w3-container" style="display: none;">
-                                <div class="w3-row-padding">
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación Básica</h2>
-                                        <div id="level11Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Adaptación</h2>
-                                        <div id="level1Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-
-                                </div>
-                                <div class="w3-row-padding">
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Espalda</h2>
-                                        <div id="level2Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Libre</h2>
-                                        <div id="level3Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                </div>
-                                <div class="w3-row-padding">
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Pecho</h2>
-                                        <div id="level4Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Iniciación Estilo Mariposa</h2>
-                                        <div id="level5Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                </div>
-                                <div class="w3-row-padding">
-                                    <div class="w3-half">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Espalda</h2>
-                                        <div id="level6Modal" class="w3-container">
-                                        </div>
-                                        <br>
-
-                                    </div>
-                                    <div class="w3-half">
-
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Libre</h2>
-                                        <div id="level7Modal" class="w3-container">
-                                        </div>
-                                        <br>
-
-                                    </div>
-                                </div>
-                                <div class="w3-row-padding">
-                                    <div class="w3-half">
-
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Pecho</h2>
-                                        <div id="level8Modal" class="w3-container">
-                                        </div>
-                                        <br>
-
-                                    </div>
-                                    <div class="w3-half">
-
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Perfección Estilo Mariposa</h2>
-                                        <div id="level9Modal" class="w3-container">
-                                        </div>
-                                        <br>
-
-                                    </div>
-                                </div>
-                                <div class="w3-row-padding">
-                                    <div class="w3-content">
-
-                                        <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-layer-group fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>Mantenimiento</h2>
-                                        <div id="level10Modal" class="w3-container">
-                                        </div>
-                                        <br>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <!-- <br> -->
-                        </div>
-
-                        <!-- End Right Column -->
-                    </div>
-                    <!-- End Grid -->
-                </div>
-
-
-                <hr>
-                <!-- The Grid -->
-                <div class="w3-row-padding">
-
-                    <!-- Right Column -->
-                    <div class="w3-half">
-
-                        <div class="w3-container w3-card  w3-margin-bottom">
-                            <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-backward fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                                Anteriores
-                                <button class="btn btn-outline-primary" onclick="closePastCoursesModal(this);">Cerrar</button>
-                                <button onclick="document.querySelector('#searchAttendancesTableBody').innerHTML = '';" class="btn btn-info mt-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalSearchAttendance">Buscar Clases</button>
-                            </h2>
-                            <div id="pastCoursesModal" class="w3-container" style="display: block;">
-                                <table id="pastResultsStudentsTableModal">
-                                    <thead>
-                                        <tr>
-                                            {% if request.user.is_admin %}
-                                            <th scope="col">Clase</th>
-                                            <th scope="col">Asistencia</th>
-                                            <th scope="col">Cupo</th>
-                                            <th scope="col">Nota</th>
-                                            <th scope="col">Editar</th>
-                                            {% else %}
-                                            <th scope="col">Asistencia</th>
-                                            <th scope="col">Clase</th>
-                                            {% endif %}
-                                        </tr>
-                                    </thead>
-                                    <tbody id="pastAttendancesTableBodyModal"></tbody>
-                                </table>
-                                <div id="loadPastAttendancesModal"></div> <br>
-                                <button id="loadMorePastAttendances" onclick="" type="button" class="btn btn-outline-primary">Cargar Más</button>
-
-                                <br>
-                            </div>
-                        </div>
-
-                        <!-- End Right Column -->
-                    </div>
-
-
-                    <!-- Right Column -->
-                    <div class="w3-half">
-
-                        <div class="w3-container w3-card  w3-margin-bottom">
-                            <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-forward fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                                Próximas
-                                <button class="btn btn-outline-primary" onclick="closeFutureCoursesModal(this);">Cerrar</button>
-                            </h2>
-                            <div id="futureCoursesModal" class="w3-container" style="display: block;">
-                                <table id="futureResultsStudentsTableModal">
-                                    <thead>
-                                        <tr>
-                                            {% if request.user.is_admin %}
-                                            <th scope="col">Clase</th>
-                                            <th scope="col">Asistencia</th>
-                                            <th scope="col">Cupo</th>
-                                            <th scope="col">Nota</th>
-                                            <th scope="col">Editar</th>
-                                            {% else %}
-                                            <th scope="col">Asistencia</th>
-                                            <th scope="col">Clase</th>
-                                            {% endif %}
-                                        </tr>
-                                    </thead>
-                                    <tbody id="futureAttendancesTableBodyModal"></tbody>
-                                </table>
-                                <div id="loadFutureAttendancesModal"></div> <br>
-                                <button id="loadMoreFutureAttendances" onclick="" type="button" class="btn btn-outline-primary">Cargar Más</button>
-                                <br>
-                            </div>
-                        </div>
-
-                        <!-- End Right Column -->
-                    </div>
-
-                    <!-- End Grid -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% endif %}
-
-
-<!-- MODAL TO SEARCH ATTENDANCE -->
-<div class="modal fade" id="modalSearchAttendance" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalSearchAttendanceLabel">Buscar Clases de {{ user }}</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
-                <!-- ------------ -->
-                <form action="{% url 'courses:search_attendance' %}" id="attendanceSearchForm" method="GET">
-                    {% csrf_token %}
-                    <input id="inputUserModalSearchAttendance" type="hidden" name="userID" value="{{ user.id }}">
-                    <input type="date" name="date" class="dateinput form-control" id="attendance_date" required> <br>
-                    <button id="searchDateButton" type="submit" class="btn btn-outline-primary">Buscar</button>
-                    <div id="searchDateLoader"></div>
-                </form>
-                <!-- ------------ -->
-            </div>
-
-            <div style="margin-left: auto; margin-right: auto;">
-                <table id="resultsStudentsTable">
-                    <thead>
-                        <tr>
-                            {% if request.user.is_admin %}
-                            <th scope="col">Clase</th>
-                            <th scope="col">Asistencia</th>
-                            <th scope="col">Cupo</th>
-                            <th scope="col">Nota</th>
-                            <th scope="col">Editar</th>
-                            {% else %}
-                            <th scope="col">Asistencia</th>
-                            <th scope="col">Clase</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-                    <tbody id="searchAttendancesTableBody"></tbody>
-                </table>
-            </div>
-            <br>
-
-        </div>
-    </div>
-</div>
-
-{% if request.user.is_admin or request.user.is_teacher %}
-<!-- MODAL TO EDIT LEVEL -->
-<div class="modal fade" id="modalLevel" tabindex="-1" aria-labelledby="exampleModalLabel4" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="levelName"></h5>
-                <button id="deactivateLevel" type="button" class="btn btn-danger" data-bs-dismiss="modal">Desactivar</button>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
-                <!-- ------------ -->
-                <ul id="levelFormMessages"></ul>
-                <form id="levelForm">
-                    {% csrf_token %}
-                    <div id="levelFormDiv"></div>
-                </form>
-
-                <!-- ------------ -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL TO EDIT ATTENDANCE -->
-<div class="modal fade" id="modalAttendance" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Actualizar Asistencia</h5>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body" style="margin-left: auto; margin-right: auto;">
-                <!-- ------------ -->
-                <h4>Clase:</h4>
-                <div id="attendanceCourse"></div>
-                <h4>Estudiante:</h4>
-                <div id="attendanceStudent"></div>
-                <h4>Ciclo:</h4>
-                <button id="attendanceCycle" class="btn btn-sm"></button>
-                <h4>Día:</h4>
-                <button id="attendanceDay" class="btn btn-sm"></button>
-                <hr>
-                <ul id="attendanceFormMessages"></ul>
-                <form id="attendanceForm">
-                    {% csrf_token %}
-                    <div id="attendanceFormDiv"></div>
-                </form>
-
-                <!-- ------------ -->
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{% endif %}
-
-<!-- Modal to create a new student-->
-<div class="modal" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createStudentModalLabel">Crear Estudiante</h5>
-                <button onclick="setDefaultPassword();" type="button" class="btn btn-outline-primary">Contraseña: "AquariumSchool"</button>
-                <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">
-                <form id="createStudentForm" action="" method="POST">
-                    {% csrf_token %}
-                    {{ studentForm|crispy }}
-                    <div id="createStudentMessages"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button id="createStudentButton" type="submit" class="btn btn-primary">Crear</button>
-                        <div id="loadCreateStudent"></div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Page Container -->
-<div class="w3-content w3-margin-top" style="max-width:1400px;">
-
+  <!-- Page Container -->
+  <div class="w3-content w3-margin-top" style="max-width: 1400px">
     <!-- The Grid -->
     <div class="w3-row-padding">
+      <!-- Left Column -->
+      <div class="w3-third" style="float: right">
+        <div class="w3-text-grey w3-card-4">
+          <div class="w3-container" style="text-align: center">
+            <br/>
 
-        <!-- Left Column -->
-        <div class="w3-third" style="float: right">
+            <p class="w3-large">
+              <b>
+                <i class="fas fa-users-cog fa-fw w3-margin-right w3-text-realBlue"></i>
+                Más opciones
+              </b>
+              <button id="showStudentOptionsButton" onclick="showStudentOptions();" class="btn btn-outline-primary">Cerrar</button>
+            </p>
 
-            <div class="w3-text-grey w3-card-4">
-                <div class="w3-container" style="text-align: center;">
-                    <br>
-
-                    <p class="w3-large">
-                        <b>
-                            <i class="fas fa-users-cog fa-fw w3-margin-right w3-text-realBlue"></i>
-                            Más opciones
-                        </b>
-                        <button id="showStudentOptionsButton" onclick="showStudentOptions();" class="btn btn-outline-primary">Cerrar</button>
-                    </p>
-
-                    <div id="studentOptions">
-                        <button onclick="get_inconsistencies();" class="btn btn-outline-danger mb-2" data-bs-toggle="modal" data-bs-target="#inconsistenciesStudentModal">
-                            Inconsistencias
-                        </button>
-                        <button onclick="get_plus();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#plusStudentModal">
-                            Estudiantes +
-                        </button>
-                        <button onclick="get_teachers();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#teachersModal">
-                            Profesores
-                        </button>
-                        <button onclick="get_change();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#changeStudentModal">
-                            <span class="badge bg-primary" style="color: white;">{{ changeCount }}</span>
-                            Cambio de Información
-                        </button>
-                        <button onclick="load_active_students();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#activeStudentsModal">
-                            <span class="badge bg-primary" style="color: white;">{{ countActiveStudents }}</span>
-                            Estudiantes Activos
-                        </button>
-                        <br>
-                    </div>
-                </div>
-            </div><br>
-
-            <!-- End Left Column -->
-        </div>
-
-        <!-- Right Column -->
-        <div class="w3-twothird">
-
-            <div class="w3-container w3-card w3-margin-bottom">
-                <h2 class="w3-text-grey w3-padding-16"><i class="fas fa-users fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
-                    {{ countStudents }} Estudiantes
-                    <button class="btn btn-primary" style="float: right;" data-bs-toggle="modal" data-bs-target="#createStudentModal">
-                        Crear Estudiante
-                    </button>
-                </h2>
-                <input id="searchStudents" type="text" class="form-control" placeholder="Buscar Estudiantes">
-                <br>
-                <div id="searchStudentsLoader"></div>
-                <div class="w3-container">
-                    <table id="resultsSearchStudentsTable" style="visibility: hidden; background-color: lightyellow;">
-                        <thead>
-                            <tr>
-                                <th scope="col">Documento</th>
-                                <th scope="col">Nombres</th>
-                                <th scope="col">Apellidos</th>
-                                <th scope="col">Tel/Cel (1)</th>
-                                <th scope="col">Tel/Cel (2)</th>
-                                <th scope="col">Últ. vez</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsSearchStudentsTableBody"></tbody>
-                    </table>
-                    <br>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope="col">Documento</th>
-                                <th scope="col">Nombres</th>
-                                <th scope="col">Apellidos</th>
-                                <th scope="col">Tel/Cel (1)</th>
-                                <th scope="col">Tel/Cel (2)</th>
-                                <th scope="col">Últ. vez</th>
-                            </tr>
-                        </thead>
-                        <tbody id="students_table"></tbody>
-                    </table>
-                    <div id="loadStudents"></div>
-                    <br>
-                </div>
+            <div id="studentOptions">
+              <button onclick="get_inconsistencies();" class="btn btn-outline-danger mb-2" data-bs-toggle="modal" data-bs-target="#inconsistenciesStudentModal">Inconsistencias</button>
+              <button onclick="get_plus();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#plusStudentModal">Estudiantes +</button>
+              <button onclick="get_teachers();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#teachersModal">Profesores</button>
+              <button onclick="get_change();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#changeStudentModal">
+                <span class="badge bg-primary" style="color: white">{{ changeCount }}</span>
+                Cambio de Información
+              </button>
+              <button onclick="load_active_students();" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#activeStudentsModal">
+                <span class="badge bg-primary" style="color: white">{{ countActiveStudents }}</span>
+                Estudiantes Activos
+              </button>
+              <br/>
             </div>
-            <!-- End Right Column -->
+          </div>
         </div>
+        <br/>
 
-        <!-- End Grid -->
+        <!-- End Left Column -->
+      </div>
+
+      <!-- Left Column -->
+
+      {% search_user %}
+
+      <!-- Right Column -->
+      <div class="w3-twothird">
+        <div class="w3-container w3-card w3-margin-bottom">
+          <h2 class="w3-text-grey w3-padding-16">
+            <i class="fas fa-users fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
+            {{ countStudents }}
+            Estudiantes
+            <button class="btn btn-primary" style="float: right" data-bs-toggle="modal" data-bs-target="#createStudentModal">Crear Estudiante</button>
+          </h2>
+
+          <div class="w3-container">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Documento</th>
+                  <th scope="col">Nombres</th>
+                  <th scope="col">Apellidos</th>
+                  <th scope="col">Tel/Cel (1)</th>
+                  <th scope="col">Tel/Cel (2)</th>
+                  <th scope="col">Últ. vez</th>
+                </tr>
+              </thead>
+              <tbody id="students_table"></tbody>
+            </table>
+            <div id="loadStudents"></div>
+            <br/>
+          </div>
+        </div>
+        <!-- End Right Column -->
+      </div>
+
+      <!-- End Grid -->
     </div>
 
     <!-- End Page Container -->
-</div>
-{% endblock %}
+  </div>
 
-{% block scripts %}
-<script src="{% static 'js/courses_scripts.js' %}"></script> <!-- Custom courses scripts -->
-<script src="{% static 'js/load_students.js' %}"></script> <!-- LOAD STUDENTS script -->
-<script src="{% static 'js/loadAttendancesAdmin.js' %}"></script>
-<script src="{% static 'js/modalStatisticsAdmin.js' %}"></script>
-<script src="{% static 'js/modalScripts.js' %}"></script>
-<script src="{% static 'js/levels.js' %}"></script>
+  <script>
+    $("#createStudentForm").submit(function (e) {
+      e.preventDefault();
+
+      const form = $(this);
+
+      $.ajax({
+        type: "POST",
+        url: `${mysite}/courses/create_student/`,
+        data: form.serialize(),
+        beforeSend: function () {
+          document
+            .querySelector("#createStudentButton")
+            .style
+            .display = "none";
+          document
+            .querySelector("#loadCreateStudent")
+            .classList
+            .add("loader");
+          document
+            .querySelector("#createStudentMessages")
+            .classList
+            .remove("alert");
+
+          document
+            .querySelector("#createStudentMessages")
+            .classList
+            .remove("alert-danger");
+
+          document
+            .querySelector("#createStudentMessages")
+            .innerHTML = "";
+        },
+        error: function (error) {
+          console.log("Error!", error);
+        },
+        success: function (response) {
+          if (response.userID !== null) {
+            window
+              .location
+              .replace(`${mysite}/courses/student/${response.userID}`);
+          } else {
+            document
+              .querySelector("#loadCreateStudent")
+              .classList
+              .remove("loader");
+            document
+              .querySelector("#createStudentButton")
+              .style
+              .display = "block";
+
+            for (let messageID in response.messages) {
+              document
+                .querySelector("#createStudentMessages")
+                .classList
+                .add("alert");
+              document
+                .querySelector("#createStudentMessages")
+                .classList
+                .add("alert-danger");
+              $("#createStudentMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
+            }
+          }
+        }
+      });
+    });
+
+    function load_students() {
+      // Set start and end students numbers, and update counter
+      const start = studentCounter;
+      const end = studentCounter + studentQuantity;
+      studentCounter = end + 1;
+
+      // Fetch new students and add them
+      $.ajax({
+        type: "GET",
+        url: `${mysite}/courses/load_students/`,
+        data: {
+          start: start,
+          end: end
+        },
+        beforeSend: function () {
+          document
+            .querySelector("#loadStudents")
+            .classList
+            .add("loader");
+        },
+        error: function (error) {
+          console.log("Error!", error);
+        },
+        success: function (response) {
+          // console.log(response);
+          document
+            .querySelector("#loadStudents")
+            .classList
+            .remove("loader");
+
+          if (response.all_loaded === true) {
+            allStudents = true;
+          }
+
+          for (let studentID = 0; studentID < response.students.length; studentID++) {
+            login = prettyDate(response.students[studentID].real_last_login);
+            login = login !== "1969-12-31"
+              ? login
+              : "-";
+
+            $("#students_table").append(`<tr> \
+                                                <td scope="row" data-label="Documento"> \
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].identity_document}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Nombres">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].first_name}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Apellidos">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].last_name}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (1)">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].phone_1}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].phone_2}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Últ. vez">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${login}</a>\
+                                                </td>\
+                                            </tr>`);
+          }
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", load_students);
+
+    $(window).scroll(function () {
+      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allStudents === false) {
+        load_students();
+      }
+    });
+
+    function setDefaultPassword() {
+      $("#id_password1").val("AquariumSchool");
+      $("#id_password2").val("AquariumSchool");
+    }
+  </script>
 {% endblock %}

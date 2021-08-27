@@ -1,0 +1,244 @@
+<!-- Start Schedule -->
+<div id="modalsDiv"></div>
+
+<div class="w3-twothird">
+  <div class="w3-container w3-card w3-margin-bottom">
+    <h2 class="w3-text-grey w3-padding-16">
+      <i class="fa fa-calendar fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
+      Horario
+
+      <button id="getScheduleButton{% if modal %}Modal{% endif %}" class="btn btn-outline-primary" onclick="getSchedule({{ user.id }}, {% if user.is_admin or user.is_teacher %}true{% else %}false{% endif %}, {% if modal %}true{% else %}false{% endif %});">Abrir</button>
+      <button id="showScheduleButton{% if modal %}Modal{% endif %}" class="btn btn-outline-primary" onclick="showSchedule({% if modal %}true{% else %}false{% endif %});" style="visibility: hidden">Cerrar</button>
+    </h2>
+    <div id="studentSchedule{% if modal %}Modal{% endif %}" class="w3-container" style="display: none">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Hora</th>
+            <th scope="col">Lunes</th>
+            <th scope="col">Martes</th>
+            <th scope="col">Miercoles</th>
+            <th scope="col">Jueves</th>
+            <th scope="col">Viernes</th>
+            <th scope="col">Sabado</th>
+            <th scope="col">Domingo</th>
+          </tr>
+        </thead>
+        <tbody id="studentScheduleBody{% if modal %}Modal{% endif %}"></tbody>
+      </table>
+      <div id="loadStudentSchedule{% if modal %}Modal{% endif %}"></div>
+      <br/>
+    </div>
+  </div>
+</div>
+<!-- End Schedule -->
+
+<script>
+  function getSchedule(user_id, staff = false, modal = false) {
+    $.ajax({
+      type: "GET",
+      url: `${mysite}/${staff
+        ? "users"
+        : "courses"}/create_schedule/`,
+      data: {
+        userID: user_id
+      },
+      beforeSend: function () {
+        document
+          .querySelector(
+            `#getScheduleButton${modal
+            ? "Modal"
+            : ""}`)
+          .style
+          .display = "none";
+        document
+          .querySelector(
+            `#loadStudentSchedule${modal
+            ? "Modal"
+            : ""}`)
+          .classList
+          .add("loader");
+      },
+      error: (error) => console.log("Error!", error),
+      success: function (response) {
+        for (let scheduleID = 0; scheduleID < response.schedule.length; scheduleID++) {
+          const DE = tConvert(response.schedule[scheduleID][0]);
+          const A = tConvert(response.schedule[scheduleID][1]);
+
+          const weekdays = {
+            2: "LUNES",
+            3: "MARTES",
+            4: "MIERCOLES",
+            5: "JUEVES",
+            6: "VIERNES",
+            7: "SABADO",
+            8: "DOMINGO"
+          };
+
+          if (staff) {
+            for (let i = 2; i < response.schedule[scheduleID].length; i++) {
+              if (response.schedule[scheduleID][i] != "-") {
+                $("#modalsDiv").append(`<div class="modal" id="scheduleModal${scheduleID}${i}" tabindex="-1" aria-labelledby="plusStudentModalLabel" aria-hidden="true">\
+						<div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered modal-dialog-scrollable">\
+							<div class="modal-content">\
+								<div class="modal-header">\
+									<h5 class="modal-title" id="plusStudentModalLabel">${weekdays[i]} DE ${DE} A ${A}</h5>\
+									<button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">\
+										&times;\
+									</button>\
+								</div>\
+								<div class="modal-body col-10" style="margin-left: auto; margin-right: auto;">\
+									<table>\
+										<thead>\
+											<tr>\
+												<th scope="col">Documento</th>\
+												<th scope="col">Nombres</th>\
+												<th scope="col">Apellidos</th>\
+												<th scope="col">Tel/Cel (1)</th>\
+												<th scope="col">Tel/Cel (2)</th>\
+												<th scope="col">Profesor</th>\
+											</tr>\
+										</thead>\
+										<tbody id="scheduleModalBody${scheduleID}${i}"></tbody>\
+									</table>\
+								</div>\
+							</div>\
+						</div>\
+					</div>`);
+
+                for (let objID = 0; objID < response.schedule[scheduleID][i].length; objID++) {
+                  $(`#scheduleModalBody${scheduleID}${i}`).append(
+                    `<tr> \
+                                                <td scope="row" data-label="Documento"> \
+                                                    <a href="#" onclick="load_profile_data(${response.schedule[scheduleID][i][objID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.schedule[scheduleID][i][objID].identity_document}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Nombres">\
+                                                    <a href="#" onclick="load_profile_data(${response.schedule[scheduleID][i][objID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.schedule[scheduleID][i][objID].first_name}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Apellidos">\
+                                                    <a href="#" onclick="load_profile_data(${response.schedule[scheduleID][i][objID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.schedule[scheduleID][i][objID].last_name}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (1)">\
+                                                    <a href="#" onclick="load_profile_data(${response.schedule[scheduleID][i][objID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.schedule[scheduleID][i][objID].phone_1}</a>\
+                                                </td>\
+                                                <td scope="row" data-label="Tel/Cel (2)">\
+                                                    <a href="#" onclick="load_profile_data(${response.schedule[scheduleID][i][objID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.schedule[scheduleID][i][objID].phone_2}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue; background-color: ${response.schedule[scheduleID][i][objID].teacher__color__hex_code};" scope="row" data-label="Profesor">\
+                                                    <button class="btn-sm" onclick="changeStudentTeacher(${response.schedule[scheduleID][i][objID].id});" id="studentTeacherBtn${response.schedule[scheduleID][i][objID].id}">${response.schedule[scheduleID][i][objID].teacher__username !== null
+                    ? response.schedule[scheduleID][i][objID].teacher__username
+                    : "Reclamar"}</button>\
+                                                </td>\
+                                            </tr>`);
+                }
+
+                response.schedule[scheduleID][i] = `<button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#scheduleModal${scheduleID}${i}">Ver</button>`;
+              }
+            }
+          }
+
+          $(
+            `#studentScheduleBody${modal
+            ? "Modal"
+            : ""}`).append(`<tr> \
+                                                <td scope="row" data-label="Hora"> \
+                                                    DE ${DE}\
+                                                    A ${A}\
+                                                </td>\
+                                                <td scope="row" data-label="Lunes">\
+                                                    ${response.schedule[scheduleID][2]}\
+                                                </td>\
+                                                <td scope="row" data-label="Martes">\
+                                                    ${response.schedule[scheduleID][3]}\
+                                                </td>\
+                                                <td scope="row" data-label="Miercoles">\
+                                                    ${response.schedule[scheduleID][4]}\
+                                                </td>\
+                                                <td scope="row" data-label="Jueves">\
+                                                    ${response.schedule[scheduleID][5]}\
+                                                </td>\
+                                                <td scope="row" data-label="Viernes">\
+                                                    ${response.schedule[scheduleID][6]}\
+                                                </td>\
+                                                <td scope="row" data-label="Sábado">\
+                                                    ${response.schedule[scheduleID][7]}\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Domingo">\
+                                                    ${response.schedule[scheduleID][8]}\
+                                                </td>\
+                                            </tr>`);
+        }
+
+        document
+          .querySelector(
+            `#showScheduleButton${modal
+            ? "Modal"
+            : ""}`)
+          .style
+          .visibility = "visible";
+        document
+          .querySelector(
+            `#studentSchedule${modal
+            ? "Modal"
+            : ""}`)
+          .style
+          .display = "block";
+        document
+          .querySelector(
+            `#loadStudentSchedule${modal
+            ? "Modal"
+            : ""}`)
+          .classList
+          .remove("loader");
+      }
+    });
+  }
+
+  function showSchedule(modal = false) {
+    if (document.querySelector(
+      `#studentSchedule${modal
+      ? "Modal"
+      : ""}`).style.display === `none`) {
+      document
+        .querySelector(
+          `#studentSchedule${modal
+          ? "Modal"
+          : ""}`)
+        .style
+        .display = `block`;
+      document
+        .querySelector(
+          `#showScheduleButton${modal
+          ? "Modal"
+          : ""}`)
+        .innerHTML = `Cerrar`;
+    } else {
+      document
+        .querySelector(
+          `#studentSchedule${modal
+          ? "Modal"
+          : ""}`)
+        .style
+        .display = `none`;
+      document
+        .querySelector(
+          `#showScheduleButton${modal
+          ? "Modal"
+          : ""}`)
+        .innerHTML = `Abrir`;
+    }
+  }
+
+  function changeStudentTeacher(userID) {
+    fetch(`${mysite}/users/change_student_teacher/${userID}`)
+      .then((response) => response.json())
+      .then((response) => {
+        document
+          .querySelectorAll(`#studentTeacherBtn${userID}`)
+          .forEach(function (button) {
+            button.innerHTML = response.teacher;
+            button.parentNode.style.backgroundColor = response.color;
+          });
+      });
+  }
+</script>

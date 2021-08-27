@@ -22,21 +22,24 @@ from .models import *
 from users.models import *
 
 # FORMS
+from users.forms import *
 from .forms import *
 from .utils import *
 from .labels import *
 
 # Create your views here.
-
-mysite = "https://aquariumschool.co/"
-# mysite = "http://127.0.0.1:8000/"
+mysite = "http://127.0.0.1:8000/" if settings.DEBUG else "https://aquariumschool.co/"
 
 # USERS FUNCTIONS
 
 
 def user_data(request):
 
-    response = {"user": list()}
+    response = {
+        "user": list(),
+        "is_admin": request.user.is_admin,
+        "is_staff": request.user.is_admin or request.user.is_teacher,
+    }
 
     userID = request.GET.get("userID")
 
@@ -58,6 +61,7 @@ def user_data(request):
             "phone_1",
             "phone_2",
             "note",
+            "signature",
             "teacher__username",
         )
     )
@@ -77,7 +81,8 @@ def students(request):
                 Account.objects.filter(newrequest=True).count()
             ),
             "countStudents": numerize.numerize(
-                Account.objects.filter(is_teacher=False, is_admin=False).count()
+                Account.objects.filter(
+                    is_teacher=False, is_admin=False).count()
             ),
             "countActiveStudents": numerize.numerize(
                 Account.objects.filter(
@@ -87,6 +92,7 @@ def students(request):
                 .distinct()
                 .count()
             ),
+            "noteForm": NoteForm(),
         },
     )
 
@@ -271,7 +277,8 @@ def create_student(request):
     else:
         for key in form.errors.as_data():
             response["messages"].append(
-                str(form.errors.as_data()[key][0])[2:-2].replace("Account", "cuenta")
+                str(form.errors.as_data()[key][0])[
+                    2:-2].replace("Account", "cuenta")
             )
 
     return JsonResponse(response, status=200)
@@ -306,11 +313,13 @@ def student(request, student_id):
                             ).order_by("date", "start_time"),
                         }
                     ),
+                    "noteForm": NoteForm(),
+                    "signatureForm": SignatureForm(instance=student),
                     "adminBar": True,
                 },
             )
 
-        return HttpResponseRedirect(reverse("users:profile", args=(student_id,)))
+        return HttpResponseRedirect(reverse("users:profile"))
 
     return HttpResponseRedirect("/")
 
@@ -329,7 +338,8 @@ def create_schedule(request):
 
 def student_statistics(request):
     return JsonResponse(
-        get_student_statistics(Account.objects.get(pk=request.GET.get("userID"))),
+        get_student_statistics(Account.objects.get(
+            pk=request.GET.get("userID"))),
         status=200,
     )
 
@@ -449,20 +459,27 @@ def levels(request, student_id):
 
     if request.user.is_admin or request.user.is_teacher or request.user == student:
 
-        for level in Level.objects.all():
+        is_staff = student.is_admin or student.is_teacher
 
-            student_level, created = Student_Level.objects.get_or_create(
-                student=student, level=level
-            )
+        if not is_staff:
 
-            response[level.name] = {
-                "studentLevelID": student_level.id,
-                "levelID": student_level.level.id,
-                "date": student_level.date,
-                "attendances": student_level.attendances,
-                "is_active": student_level.is_active,
-                "delivered": student_level.delivered,
-            }
+            for level in Level.objects.all():
+
+                student_level, created = Student_Level.objects.get_or_create(
+                    student=student, level=level
+                )
+
+                response[level.name] = {
+                    "studentLevelID": student_level.id,
+                    "levelID": student_level.level.id,
+                    "date": student_level.date,
+                    "attendances": student_level.attendances,
+                    "is_active": student_level.is_active,
+                    "delivered": student_level.delivered,
+                }
+
+        else:
+            response["is_staff"] = is_staff
 
     else:
         response["Privilege"] = "Restricted"
@@ -477,7 +494,8 @@ def level_info(request, student_level_id):
             "level__name"
         )
 
-        form = StudentLevelForm(instance=Student_Level.objects.get(pk=student_level_id))
+        form = StudentLevelForm(
+            instance=Student_Level.objects.get(pk=student_level_id))
 
         return JsonResponse(
             {
@@ -490,9 +508,10 @@ def level_info(request, student_level_id):
         return JsonResponse({"Privilege": "Restricted"}, status=200)
 
 
-def edit_level(request, student_level_id):
+def edit_level(request, student_level_id, modal):
 
     response = {
+        "modal": modal,
         "edited": False,
         "messages": list(),
     }
@@ -510,7 +529,8 @@ def edit_level(request, student_level_id):
 
         else:
             for key in form.errors.as_data():
-                response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
+                response["messages"].append(
+                    str(form.errors.as_data()[key][0])[2:-2])
     else:
         response["Privilege"] = "Restricted"
 
@@ -664,7 +684,8 @@ def change_quota(request, attendance_id):
 @staff_member_required(login_url=mysite)
 def attendance_info(request, attendance_id):
 
-    form = AttendanceForm(instance=Attendance.objects.get(pk=int(attendance_id)))
+    form = AttendanceForm(
+        instance=Attendance.objects.get(pk=int(attendance_id)))
 
     return JsonResponse(
         {
@@ -750,7 +771,8 @@ def edit_attendance(request, attendance_id):
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(
+                str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -760,6 +782,7 @@ def search_attendance(request):
     response = {
         "attendances": list(),
         "past": False,
+        "attendanceAdmin": request.user.is_admin,
     }
 
     date = request.GET.get("date", "")
@@ -802,7 +825,8 @@ def date_attendances(request):
         "delivered": True,
     }
 
-    student_level = Student_Level.objects.get(pk=int(response["studentLevelID"]))
+    student_level = Student_Level.objects.get(
+        pk=int(response["studentLevelID"]))
     response["delivered"] = student_level.delivered
 
     if student_level.certificate_img and student_level.certificate_pdf:
@@ -959,7 +983,8 @@ def search_course(request):
     date = request.GET.get("date", "")
 
     if date:
-        response["courses"] += list(Course.objects.filter(date=date).values("id"))
+        response["courses"] += list(
+            Course.objects.filter(date=date).values("id"))
 
     return JsonResponse(response, status=200)
 
@@ -1010,7 +1035,8 @@ def create_courses(request):
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(
+                str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -1028,6 +1054,7 @@ def course(request, course_id):
             "past": course.date < datetime.date.today(),
             "editCourseForm": EditCourseForm(instance=course),
             "adminBar": True,
+            "noteForm": NoteForm(),
         },
     )
 
@@ -1072,7 +1099,8 @@ def edit_course(request, course_id):
 
     else:
         for key in form.errors.as_data():
-            response["messages"].append(str(form.errors.as_data()[key][0])[2:-2])
+            response["messages"].append(
+                str(form.errors.as_data()[key][0])[2:-2])
 
     return JsonResponse(response, status=200)
 
@@ -1158,7 +1186,8 @@ def generate_certificate(request, student_level_id):
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 370), text, (24, 57, 100), font=font)
+        draw.text(((img.width // 2) - (x // 2), 370),
+                  text, (24, 57, 100), font=font)
 
         # LEVEL NAME
 
@@ -1173,7 +1202,8 @@ def generate_certificate(request, student_level_id):
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 450), text, (83, 83, 83), font=font)
+        draw.text(((img.width // 2) - (x // 2), 450),
+                  text, (83, 83, 83), font=font)
 
         # TEACHER AND ADMIN NAMES
 
@@ -1220,7 +1250,8 @@ def generate_certificate(request, student_level_id):
         x, y = font.getsize(text)
 
         # draw.text((x, y),"Sample Text",(r,g,b))
-        draw.text(((img.width // 2) - (x // 2), 695), text, (83, 83, 83), font=font)
+        draw.text(((img.width // 2) - (x // 2), 695),
+                  text, (83, 83, 83), font=font)
 
         blob = BytesIO()
         img.save(blob, "PNG")

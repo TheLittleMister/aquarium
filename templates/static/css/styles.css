@@ -73,7 +73,8 @@ form {
 }
 
 button,
-input {
+input,
+textarea {
 	border: 0;
 	outline: 0;
 	font-size: 16px;
@@ -89,7 +90,8 @@ label {
 	width: 100%;
 }
 
-input {
+input,
+textarea {
 	margin-right: 8px;
 	box-shadow: inset 2px 2px 5px #babecc, inset -5px -5px 10px #fff;
 	width: 100%;
@@ -99,6 +101,9 @@ input {
 	/* -webkit-appearance: none; */
 }
 input:focus {
+	box-shadow: inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff;
+}
+textarea:focus {
 	box-shadow: inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff;
 }
 
@@ -164,6 +169,7 @@ html {
 .w3-card-4,
 .w3-content,
 input,
+textarea,
 button,
 select,
 span {
@@ -533,8 +539,7 @@ strong {
 }
 
 /* IE10+ hack to solve lower label text position compared to the rest of the browsers */
-@media screen and (-ms-high-contrast: active),
-	screen and (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
 	.label-control {
 		top: 0.9375rem;
 	}
@@ -573,8 +578,7 @@ strong {
 }
 
 /* IE10+ hack to solve lower label text position compared to the rest of the browsers */
-@media screen and (-ms-high-contrast: active),
-	screen and (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
 	.form-control-input {
 		padding-top: 1.25rem;
 		padding-bottom: 0.75rem;
@@ -596,7 +600,7 @@ select {
 	-ms-appearance: none;
 	-o-appearance: none;
 	appearance: none;
-	background-image: url("../images/down-arrow.png");
+	/* background-image: url("../images/down-arrow.png"); */
 	background-position: 96% 50%;
 	background-repeat: no-repeat;
 	outline: none;
@@ -644,8 +648,7 @@ input[type="checkbox"] {
 }
 
 /* IE10+ hack to raise checkbox field position compared to the rest of the browsers */
-@media screen and (-ms-high-contrast: active),
-	screen and (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
 	input[type="checkbox"] {
 		vertical-align: -9%;
 	}
@@ -1048,27 +1051,19 @@ input[type="checkbox"] {
 	font-size: 2rem;
 }
 
-.navbar-custom
-	button[aria-expanded="false"]
-	.navbar-toggler-awesome.fas.fa-times {
+.navbar-custom button[aria-expanded="false"] .navbar-toggler-awesome.fas.fa-times {
 	display: none;
 }
 
-.navbar-custom
-	button[aria-expanded="false"]
-	.navbar-toggler-awesome.fas.fa-bars {
+.navbar-custom button[aria-expanded="false"] .navbar-toggler-awesome.fas.fa-bars {
 	display: inline-block;
 }
 
-.navbar-custom
-	button[aria-expanded="true"]
-	.navbar-toggler-awesome.fas.fa-bars {
+.navbar-custom button[aria-expanded="true"] .navbar-toggler-awesome.fas.fa-bars {
 	display: none;
 }
 
-.navbar-custom
-	button[aria-expanded="true"]
-	.navbar-toggler-awesome.fas.fa-times {
+.navbar-custom button[aria-expanded="true"] .navbar-toggler-awesome.fas.fa-times {
 	display: inline-block;
 	margin-right: 0.125rem;
 }
@@ -1077,11 +1072,7 @@ input[type="checkbox"] {
 /*    04. Header     */
 /*********************/
 .header {
-	background: linear-gradient(
-			rgba(255, 255, 255, 0.5),
-			rgba(255, 255, 255, 0.5)
-		),
-		url("../images/header-background.webp") center center no-repeat;
+	background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../images/header-background.webp") center center no-repeat;
 	background-size: cover;
 }
 
@@ -2712,3 +2703,12 @@ a:hover.back-to-top {
 	/* end of navigation */
 }
 /* end of min-width width 1200px */
+
+td {
+	border-bottom: 2px solid steelblue !important;
+}
+
+#studentNoteBody tr td,
+#studentNoteBodyModal tr td {
+	text-align: left !important;
+}

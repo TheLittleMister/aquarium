@@ -1,0 +1,492 @@
+<!-- Modal para editar ajustes de asistencia. -->
+<div class="modal fade" id="modalAttendance" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Actualizar Asistencia</h5>
+        <button type="button" class="btn btn-outline-primary btn-close" onclick="$('#modalAttendance').modal('hide');" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="margin-left: auto; margin-right: auto">
+        <!-- ------------ -->
+        <h4>Clase:</h4>
+        <div id="attendanceCourse"></div>
+        <h4>Estudiante:</h4>
+        <div id="attendanceStudent"></div>
+        <h4>Ciclo:</h4>
+        <button id="attendanceCycle" class="btn btn-sm"></button>
+        <h4>Día:</h4>
+        <button id="attendanceDay" class="btn btn-sm"></button>
+        <hr/>
+        <ul id="attendanceFormMessages"></ul>
+        <form id="attendanceForm">
+          {% csrf_token %}
+          <div id="attendanceFormDiv"></div>
+        </form>
+        <!-- ------------ -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#attendanceForm").submit(function (e) {
+    e.preventDefault();
+
+    let form = $(this);
+    const action = form.attr("action");
+    form = new FormData($(this)[0]);
+
+    $.ajax({
+      type: "POST", url: `${mysite}${action}`, data: form,
+      // cache: false,
+      contentType: false,
+      processData: false,
+      beforeSend: function () {
+        document
+          .querySelector("#btnAttendanceSubmit")
+          .style
+          .display = "none";
+        document
+          .querySelector("#btnAttendanceLoader")
+          .classList
+          .add("loader");
+        document
+          .querySelector("#attendanceFormMessages")
+          .classList
+          .remove("alert");
+
+        document
+          .querySelector("#attendanceFormMessages")
+          .classList
+          .remove("alert-danger");
+
+        document
+          .querySelector("#attendanceFormMessages")
+          .innerHTML = "";
+      },
+      error: function (error) {
+        console.log("Error!", error);
+      },
+      success: function (response) {
+        // console.log(response);
+
+        if (response.edited === true) {
+          $("#attendanceFormDiv").html(response.form);
+          $("#attendanceForm").attr("action", `/courses/edit_attendance/${response.attendanceID}`);
+          $("#attendanceFormDiv").append(`<button id="btnAttendanceSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
+				<div id="btnAttendanceLoader"></div>`);
+
+          // console.log(response.note);
+
+          if (response.note !== null) {
+            document
+              .querySelectorAll(`#note${response.attendanceID}`)
+              .forEach((element) => {
+                element.innerHTML = "";
+                element.innerHTML += `<span style="font-size: large;" data-toggle="tooltip" title="${response.note}">📃</span>`;
+              });
+            document
+              .querySelectorAll(`#noteSearch${response.attendanceID}`)
+              .forEach((element) => {
+                element.innerHTML = "";
+                element.innerHTML += `<span style="font-size: large;" data-toggle="tooltip" title="${response.note}">📃</span>`;
+              });
+
+            activateToolTip();
+          } else {
+            document
+              .querySelectorAll(`#note${response.attendanceID}`)
+              .forEach((element) => {
+                element.innerHTML = "-";
+              });
+            document
+              .querySelectorAll(`#noteSearch${response.attendanceID}`)
+              .forEach((element) => {
+                element.innerHTML = "-";
+              });
+          }
+
+          document
+            .querySelector("#attendanceFormMessages")
+            .classList
+            .add("alert");
+          document
+            .querySelector("#attendanceFormMessages")
+            .classList
+            .add("alert-success");
+
+          $("#attendanceFormMessages").append("Cambios Guardados!");
+        } else {
+          document
+            .querySelector("#btnAttendanceLoader")
+            .classList
+            .remove("loader");
+          document
+            .querySelector("#btnAttendanceSubmit")
+            .style
+            .display = "block";
+
+          for (let messageID in response.messages) {
+            document
+              .querySelector("#attendanceFormMessages")
+              .classList
+              .add("alert");
+            document
+              .querySelector("#attendanceFormMessages")
+              .classList
+              .add("alert-danger");
+            $("#attendanceFormMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
+          }
+        }
+      }
+    });
+  });
+
+  function getAttendanceInfo(attendanceID, courseID) {
+    document
+      .querySelector("#attendanceCourse")
+      .innerHTML = "";
+    document
+      .querySelector("#attendanceStudent")
+      .innerHTML = "";
+    document
+      .querySelector("#attendanceCycle")
+      .innerHTML = "";
+    document
+      .querySelector("#attendanceDay")
+      .innerHTML = "";
+
+    // GET COURSE AND STUDENT NAME
+
+    if (document.querySelector(`#courseName${courseID}`) !== null) {
+      document
+        .querySelector("#attendanceCourse")
+        .innerHTML = document
+        .querySelector(`#courseName${courseID}`)
+        .innerHTML;
+    } else {
+      document
+        .querySelector("#attendanceCourse")
+        .innerHTML = document
+        .querySelector(`#courseNameSearch${courseID}`)
+        .innerHTML;
+    }
+
+    try {
+      document
+        .querySelector("#attendanceStudent")
+        .innerHTML = document
+        .querySelector(`#studentName${attendanceID}`)
+        .innerHTML;
+    } catch (err) {
+      document
+        .querySelector("#attendanceStudent")
+        .innerHTML = document
+        .querySelector(`#studentNameServer`)
+        .innerHTML;
+    }
+
+    document
+      .querySelector("#attendanceFormMessages")
+      .classList
+      .remove("alert");
+
+    document
+      .querySelector("#attendanceFormMessages")
+      .classList
+      .remove("alert-danger");
+    document
+      .querySelector("#attendanceFormMessages")
+      .classList
+      .remove("alert-success");
+
+    document
+      .querySelector("#attendanceFormMessages")
+      .innerHTML = "";
+
+    fetch(`${mysite}/courses/attendance_info/${attendanceID}`)
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response);
+
+        $("#attendanceFormDiv").html(response.form);
+        $("#attendanceForm").attr("action", `/courses/edit_attendance/${attendanceID}`);
+        $("#attendanceFormDiv").append(`<button id="btnAttendanceSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
+				<div id="btnAttendanceLoader"></div>`);
+
+        let cycle = response
+          .attendance[0]
+          .cycle;
+        let end_cycle = response
+          .attendance[0]
+          .end_cycle;
+        let onlyday = response
+          .attendance[0]
+          .onlyday;
+        let recover = response
+          .attendance[0]
+          .recover;
+        // 			let note = response.attendance[0].note;
+        // 			let image = `${mysite}/media/` + response.attendance[0].image;
+
+        if (cycle === true && end_cycle === false) {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-warning");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "INICIA";
+        } else if (cycle === false && end_cycle === true) {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-warning");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "TERMINA";
+        } else {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-warning");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-secondary");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "SIN DEFINIR";
+        }
+
+        document
+          .getElementById("attendanceCycle")
+          .setAttribute("onClick", `javascript: changeCycle(${attendanceID});`);
+
+        if (onlyday === true && recover === false) {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-primary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "SOLO HOY";
+        } else if (onlyday === false && recover === true) {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-primary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "RECUPERA";
+        } else {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-primary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-secondary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "SIN DEFINIR";
+        }
+
+        document
+          .getElementById("attendanceDay")
+          .setAttribute("onClick", `javascript: changeDay(${attendanceID});`);
+      });
+  }
+
+  function changeCycle(attendanceID) {
+    fetch(`${mysite}/courses/change_cycle/${attendanceID}`)
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response);
+
+        let cycle = response.cycle;
+        let end_cycle = response.end_cycle;
+
+        if (cycle === true && end_cycle === false) {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-warning");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "INICIA";
+
+          document
+            .querySelectorAll(`#cycle${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "INICIA";
+            });
+          document
+            .querySelectorAll(`#cycleSearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "INICIA";
+            });
+        } else if (cycle === false && end_cycle === true) {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-warning");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "TERMINA";
+
+          document
+            .querySelectorAll(`#cycle${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "TERMINA";
+            });
+          document
+            .querySelectorAll(`#cycleSearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "TERMINA";
+            });
+        } else {
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .remove("btn-warning");
+
+          document
+            .querySelector("#attendanceCycle")
+            .classList
+            .add("btn-secondary");
+          document
+            .querySelector("#attendanceCycle")
+            .innerHTML = "SIN DEFINIR";
+          document
+            .querySelectorAll(`#cycle${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "";
+            });
+          document
+            .querySelectorAll(`#cycleSearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "";
+            });
+        }
+      });
+  }
+
+  function changeDay(attendanceID) {
+    fetch(`${mysite}/courses/change_day/${attendanceID}`)
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response);
+
+        let onlyday = response.onlyday;
+        let recover = response.recover;
+
+        if (onlyday === true && recover === false) {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-primary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "SOLO HOY";
+
+          document
+            .querySelectorAll(`#day${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "SOLO HOY";
+            });
+          document
+            .querySelectorAll(`#daySearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "SOLO HOY";
+            });
+        } else if (onlyday === false && recover === true) {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-secondary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-primary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "RECUPERA";
+
+          document
+            .querySelectorAll(`#day${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "RECUPERA";
+            });
+          document
+            .querySelectorAll(`#daySearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "RECUPERA";
+            });
+        } else {
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .remove("btn-primary");
+
+          document
+            .querySelector("#attendanceDay")
+            .classList
+            .add("btn-secondary");
+          document
+            .querySelector("#attendanceDay")
+            .innerHTML = "SIN DEFINIR";
+
+          document
+            .querySelectorAll(`#day${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "";
+            });
+          document
+            .querySelectorAll(`#daySearch${attendanceID}`)
+            .forEach((element) => {
+              element.innerHTML = "";
+            });
+        }
+      });
+  }
+</script>

@@ -9,13 +9,17 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+from django.core.management.utils import get_random_secret_key
 from pathlib import Path
 import os
 import json
 
-with open("/etc/config.json") as config_file:
-    config = json.load(config_file)
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+if not DEBUG:
+    with open("/etc/config.json") as config_file:
+        config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,14 +30,12 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.get("SECRET_KEY")
+SECRET_KEY = get_random_secret_key() if DEBUG else config.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
-    "172.104.13.4",
+    "172.104.13.4" if not DEBUG else '127.0.0.1',
     "aquariumschool.co",
     "www.aquariumschool.co",
 ]
@@ -92,16 +94,25 @@ AUTH_USER_MODEL = "users.Account"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "aquarium",
-        "USER": "franklin",
-        "PASSWORD": config.get("DBPASSWORD"),
-        "HOST": "localhost",
-        "PORT": "",
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "aquarium",
+            "USER": "franklin",
+            "PASSWORD": config.get("DBPASSWORD"),
+            "HOST": "localhost",
+            "PORT": "",
+        }
+    }
 
 
 # Password validation
@@ -178,7 +189,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "aquariumschool@gmail.com"
-EMAIL_HOST_PASSWORD = config.get("GPASS")
+EMAIL_HOST_PASSWORD = "" if DEBUG else config.get("GPASS")
 EMAIL_USE_TLS = True
 SERVER_EMAIL = "aquariumschool@gmail.com"
 DEFAULT_FROM_EMAIL = "aquariumschool@gmail.com"
