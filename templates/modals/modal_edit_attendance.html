@@ -179,11 +179,24 @@
         .querySelector(`#studentName${attendanceID}`)
         .innerHTML;
     } catch (err) {
-      document
-        .querySelector("#attendanceStudent")
-        .innerHTML = document
-        .querySelector(`#studentNameServer`)
-        .innerHTML;
+
+      try {
+
+        document
+          .querySelector("#attendanceStudent")
+          .innerHTML = document
+          .querySelector(`#studentNameServer`)
+          .innerHTML;
+
+      } catch  {
+
+        document
+          .querySelector("#attendanceStudent")
+          .innerHTML = document
+          .querySelector(`#studentName`)
+          .innerHTML;
+
+      }
     }
 
     document
