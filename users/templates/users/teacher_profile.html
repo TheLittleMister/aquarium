@@ -17,7 +17,7 @@
     <!-- The Grid -->
     <div class="w3-row-padding">
 
-      {% information request.user user False studentForm %}
+      {% information request.user user False studentForm None age %}
       {% search_user %}
       {% schedule user %}
       {% levels request.user user %}

@@ -150,7 +150,7 @@ def profile(request):
             {
                 "user": request.user,
                 "age": age,
-                "studentForm": ProfileForm(instance=request.user),
+                "studentForm": StudentForm(instance=request.user) if request.user.is_admin else ProfileForm(instance=request.user),
                 "userBar": False if request.user.is_admin else True,
                 "adminBar": True if request.user.is_admin else False,
                 "noteForm": NoteForm(),

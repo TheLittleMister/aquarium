@@ -13,7 +13,7 @@
   <div class="w3-content w3-margin-top" style="max-width: 1400px">
     <!-- The Grid -->
     <div class="w3-row-padding">
-      {% information request.user user False studentForm signatureForm %}
+      {% information request.user user False studentForm signatureForm age %}
       {% schedule user %}
       {% statistics request.user user %}
       {% notes request.user user noteForm %}

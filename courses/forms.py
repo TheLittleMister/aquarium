@@ -81,10 +81,6 @@ class AttendanceForm(forms.ModelForm):
         model = Attendance
         fields = ('note', 'image')
 
-        widgets = {
-            'note': forms.Textarea(attrs={'cols': 30, 'rows': 15}),
-        }
-
 
 class CoursesForm(forms.Form):
 

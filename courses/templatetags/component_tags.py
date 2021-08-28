@@ -43,12 +43,13 @@ def notes(current_user, user, noteForm): return {
 
 
 @register.inclusion_tag(os.path.join(modals, "information.html"))
-def information(current_user, user, modal=False, userForm=None, signatureForm=None): return {
+def information(current_user, user, modal=False, userForm=None, signatureForm=None, age=None): return {
     "current_user": current_user,
     "user": user,
     "modal": modal,
     "signatureForm": signatureForm,
     "userForm": userForm,
+    "age": age,
 }
 
 
