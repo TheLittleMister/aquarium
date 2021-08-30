@@ -686,6 +686,34 @@ def active_without_level(request):
                     "phone_2": student.phone_2
                 })
 
+            else:
+                to_append = True
+                for level in student.levels.filter(is_active=True):
+                    percentage = round(
+                        Attendance.objects.filter(
+                            course__date__gte=level.date,
+                            student=student,
+                            attendance=True,
+                        ).count()
+                        * 100
+                        / level.attendances,
+                        1,
+                    )
+
+                    if percentage < 100:
+                        to_append = False
+                        break
+
+                if to_append:
+                    response["students"].append({
+                        "id": student.id,
+                        "identity_document": student.identity_document,
+                        "first_name": student.first_name,
+                        "last_name": student.last_name,
+                        "phone_1": student.phone_1,
+                        "phone_2": student.phone_2
+                    })
+
     return JsonResponse(response, status=200)
 
 
