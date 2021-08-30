@@ -685,7 +685,7 @@ def active_without_level(request):
                     "last_name": student.last_name,
                     "phone_1": student.phone_1,
                     "phone_2": student.phone_2,
-                    "teacher": student.teacher.username
+                    "teacher": student.teacher.username if student.teacher else None
                 })
 
             else:
@@ -714,7 +714,7 @@ def active_without_level(request):
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
                         "phone_2": student.phone_2,
-                        "teacher": student.teacher.username
+                        "teacher": student.teacher.username if student.teacher else None
                     })
 
     return JsonResponse(response, status=200)
@@ -752,7 +752,7 @@ def hundred_no_certificate(request):
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
                         "phone_2": student.phone_2,
-                        "teacher": student.teacher.username
+                        "teacher": student.teacher.username if student.teacher else None
                     })
                     break
 
@@ -791,7 +791,7 @@ def no_hundred_certificate(request):
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
                         "phone_2": student.phone_2,
-                        "teacher": student.teacher.username
+                        "teacher": student.teacher.username if student.teacher else None
                     })
                     break
 
@@ -830,7 +830,7 @@ def hundred_no_delivered(request):
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
                         "phone_2": student.phone_2,
-                        "teacher": student.teacher.username
+                        "teacher": student.teacher.username if student.teacher else None
                     })
                     break
 
