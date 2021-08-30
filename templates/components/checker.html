@@ -19,6 +19,7 @@
               <th scope="col">Apellidos</th>
               <th scope="col">Tel/Cel (1)</th>
               <th scope="col">Tel/Cel (2)</th>
+              <th scope="col">Profesor</th>
             </tr>
           </thead>
           <tbody id="checkerTableBody"></tbody>
@@ -84,6 +85,9 @@
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Tel/Cel (2)">\
                                                     <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].phone_2}</a>\
+                                                </td>\
+                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Profesor">\
+                                                    <a href="#" onclick="load_profile_data(${response.students[studentID].id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentID].teacher}</a>\
                                                 </td>\
                                             </tr>`);
           }

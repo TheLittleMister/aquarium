@@ -7,14 +7,12 @@
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Actualizar Información</h5>
 
-        {% if current_user.is_admin %}
+        {% if current_user.is_admin and not user.is_admin %}
           <button style="float: right" type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#modalDeleteProfile">Borrar Estudiante</button>
-
         {% else %}
-
           <a class="btn btn-outline-dark" href="{% url 'users:change-password' %}">Cambiar Contraseña</a>
-
         {% endif %}
+
         <button type="button" class="btn btn-outline-primary btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body" style="margin-left: auto; margin-right: auto">
@@ -25,11 +23,11 @@
           <div id="editStudentMessages"></div>
           <br/>
           <div class="modal-footer">
-            {% if current_user.is_admin %}
+            {% if current_user.is_admin and not user.is_admin %}
               <a class="btn btn-outline-dark" href="{% url 'users:default_password' user.id %}">Resetear Contraseña</a>
             {% endif %}
             <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Atrás</button> -->
-            <button id="editStudentButton" type="submit" class="btn btn-outline-primary js-crop-and-upload">Guardar</button>
+            <button id="editStudentButton" type="submit" class="btn btn-outline-primary">Guardar</button>
             <div id="loadEditStudent"></div>
           </div>
         </form>

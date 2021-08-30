@@ -6,11 +6,11 @@
     <h2 class="w3-text-grey w3-padding-16">
       <i class="fa fa-calendar fa-fw w3-margin-right w3-xxlarge w3-text-realBlue"></i>
       Horario
-
       <button id="getScheduleButton{% if modal %}Modal{% endif %}" class="btn btn-outline-primary" onclick="getSchedule({{ user.id }}, {% if user.is_admin or user.is_teacher %}true{% else %}false{% endif %}, {% if modal %}true{% else %}false{% endif %});">Abrir</button>
       <button id="showScheduleButton{% if modal %}Modal{% endif %}" class="btn btn-outline-primary" onclick="showSchedule({% if modal %}true{% else %}false{% endif %});" style="visibility: hidden">Cerrar</button>
       <button id="printScheduleButton{% if modal %}Modal{% endif %}" type="button" class="btn btn-outline-primary rounded-pill" onclick="printSchedule(null, true)" style="visibility: hidden; float: right;">Imprimir Horario</button>
     </h2>
+    <div id="loadStudentSchedule{% if modal %}Modal{% endif %}"></div>
     <div id="studentSchedule{% if modal %}Modal{% endif %}" class="w3-container" style="display: none">
       <table>
         <thead>
@@ -27,7 +27,6 @@
         </thead>
         <tbody id="studentScheduleBody{% if modal %}Modal{% endif %}"></tbody>
       </table>
-      <div id="loadStudentSchedule{% if modal %}Modal{% endif %}"></div>
       <br/>
     </div>
   </div>

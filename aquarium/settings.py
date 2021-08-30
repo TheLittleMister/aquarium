@@ -15,7 +15,7 @@ import os
 import json
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 if not DEBUG:
     with open("/etc/config.json") as config_file:

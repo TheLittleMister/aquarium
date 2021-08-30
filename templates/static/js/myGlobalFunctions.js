@@ -1,5 +1,5 @@
-// const mysite = "http://127.0.0.1:8000";
-const mysite = "https://aquariumschool.co";
+const mysite = "http://127.0.0.1:8000";
+// const mysite = "https://aquariumschool.co";
 
 // START GOOGLE
 window.dataLayer = window.dataLayer || [];

@@ -154,6 +154,7 @@ def profile(request):
                 "userBar": False if request.user.is_admin else True,
                 "adminBar": True if request.user.is_admin else False,
                 "noteForm": NoteForm(),
+                "signatureForm": SignatureForm(instance=request.user) if request.user.is_admin else None,
             },
         )
 
@@ -671,8 +672,8 @@ def active_without_level(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user).distinct()
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").order_by("teacher").distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user).order_by("teacher").distinct()
 
         for student in students:
 
@@ -683,7 +684,8 @@ def active_without_level(request):
                     "first_name": student.first_name,
                     "last_name": student.last_name,
                     "phone_1": student.phone_1,
-                    "phone_2": student.phone_2
+                    "phone_2": student.phone_2,
+                    "teacher": student.teacher.username
                 })
 
             else:
@@ -711,7 +713,8 @@ def active_without_level(request):
                         "first_name": student.first_name,
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
-                        "phone_2": student.phone_2
+                        "phone_2": student.phone_2,
+                        "teacher": student.teacher.username
                     })
 
     return JsonResponse(response, status=200)
@@ -725,8 +728,8 @@ def hundred_no_certificate(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
 
         for student in students:
             for level in student.levels.filter(is_active=True, certificate_img=""):
@@ -748,7 +751,8 @@ def hundred_no_certificate(request):
                         "first_name": student.first_name,
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
-                        "phone_2": student.phone_2
+                        "phone_2": student.phone_2,
+                        "teacher": student.teacher.username
                     })
                     break
 
@@ -763,8 +767,8 @@ def no_hundred_certificate(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
 
         for student in students:
             for level in student.levels.filter(is_active=True).exclude(certificate_img=""):
@@ -786,7 +790,8 @@ def no_hundred_certificate(request):
                         "first_name": student.first_name,
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
-                        "phone_2": student.phone_2
+                        "phone_2": student.phone_2,
+                        "teacher": student.teacher.username
                     })
                     break
 
@@ -801,8 +806,8 @@ def hundred_no_delivered(request):
 
     if request.user.is_admin or request.user.is_teacher:
 
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
 
         for student in students:
             for level in student.levels.filter(is_active=True, delivered=True).exclude(certificate_img=""):
@@ -824,7 +829,8 @@ def hundred_no_delivered(request):
                         "first_name": student.first_name,
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
-                        "phone_2": student.phone_2
+                        "phone_2": student.phone_2,
+                        "teacher": student.teacher.username
                     })
                     break
 
