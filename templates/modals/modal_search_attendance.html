@@ -54,22 +54,8 @@
       type: "GET",
       url: `${mysite}/courses/search_attendance/`,
       data: form.serialize(),
-      beforeSend: function () {
-        document
-          .querySelector("#searchAttendancesTableBody")
-          .innerHTML = "";
-        document
-          .querySelector("#searchDateButton")
-          .style
-          .display = "none";
-        document
-          .querySelector("#searchDateLoader")
-          .classList
-          .add("loader");
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc("searchDateButton", "searchDateLoader", null, "searchAttendancesTableBody"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
         if (response.attendances.length > 0) {
           for (let studentID = 0; studentID < response.attendances.length; studentID++) {
@@ -212,33 +198,25 @@
         } else {
           const toAppend2 = response.attendanceAdmin
             ? `<tr> \
-                                                <td scope="row" data-label="Clase"> \
-                                                    SIN RESULTADOS\
-												</td>\
-                                                <td scope="row" data-label="Asistencia">-</td>\
-                                                <td scope="row" data-label="Cupo">-\
-                                                </td>\
-                                                <td scope="row" data-label="Nota">-\
-                                                </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Editar">-</td>\
-                                            </tr>`
+                <td scope="row" data-label="Clase"> \
+                    SIN RESULTADOS\
+                </td>\
+                <td scope="row" data-label="Asistencia">-</td>\
+                <td scope="row" data-label="Cupo">-\
+                </td>\
+                <td scope="row" data-label="Nota">-\
+                </td>\
+                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Editar">-</td>\
+            </tr>`
             : `<tr> \
-												<td scope="row" data-label="Asistencia">-</td>\
-                                                <td scope="row" data-label="Clase"> \
-                                                    SIN RESULTADOS\
-												</td>\
-                                            </tr>`;
-
+                <td scope="row" data-label="Asistencia">-</td>\
+                <td scope="row" data-label="Clase"> \
+                    SIN RESULTADOS\
+                </td>\
+              </tr>`;
           $("#searchAttendancesTableBody").append(toAppend2);
         }
-        document
-          .querySelector("#searchDateLoader")
-          .classList
-          .remove("loader");
-        document
-          .querySelector("#searchDateButton")
-          .style
-          .display = "block";
+        afterFunc("searchDateButton", "searchDateLoader");
       }
     });
   });

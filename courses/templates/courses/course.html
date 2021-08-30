@@ -208,10 +208,8 @@
       </div>
       <!-- End Right Column -->
     </div>
-
     <!-- End Grid -->
   </div>
-
   <!-- End Page Container -->
 </div>
 
@@ -219,56 +217,27 @@
   activateToolTip();
 
   $("#editCourseForm").submit(function (e) {
-	e.preventDefault();
+    e.preventDefault();
 
-	const form = $(this);
-	const action = form.attr("action");
-	$("#id_students_to option").prop("selected", true);
-	$("#id_teachers_to option").prop("selected", true);
+    const form = $(this);
+    const action = form.attr("action");
+    $("#id_students_to option").prop("selected", true);
+    $("#id_teachers_to option").prop("selected", true);
 
-	$.ajax({
-		type: "POST",
-		url: `${mysite}${action}`,
-		data: form.serialize(),
-		beforeSend: function () {
-			document.querySelector("#editCourseFormButton").style.display = "none";
-			document.querySelector("#loadEditCourseForm").classList.add("loader");
-			document.querySelector("#editCourseFormMessages").classList.remove("alert");
-
-			document.querySelector("#editCourseFormMessages").classList.remove("alert-danger");
-
-			document.querySelector("#editCourseFormMessages").innerHTML = "";
-		},
-		error: function (error) {
-			console.log("Error!", error);
-		},
-		success: function (response) {
-			document.querySelector("#loadEditCourseForm").classList.remove("loader");
-			document.querySelector("#editCourseFormButton").style.display = "block";
-
-			if (response.edited === false) {
-				for (let messageID in response.messages) {
-					document.querySelector("#editCourseFormMessages").classList.add("alert");
-					document.querySelector("#editCourseFormMessages").classList.add("alert-danger");
-					$("#editCourseFormMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
-				}
-			} else {
-				location.reload();
-			}
-		},
-	});
-});
-</script> 
+    $.ajax({
+      type: "POST",
+      url: `${mysite}${action}`,
+      data: form.serialize(),
+      beforeSend: beforeFunc("editCourseFormButton", "loadEditCourseForm", "editCourseFormMessages"),
+      error: (error) => console.log("Error!", error),
+      success: function (response) {
+        if (response.edited) 
+          location.reload();
+        else 
+          afterFunc("editCourseFormButton", "loadEditCourseForm", "editCourseFormMessages", response.messages, response.edited);
+        }
+      });
+  });
+</script>
 
 {% endblock %}
-
-{% comment %} {% block scripts %}
-<script src="{% static 'js/courses_scripts.js' %}"></script>
-<!-- Custom courses scripts -->
-<script src="{% static 'js/loadAttendancesAdmin.js' %}"></script>
-<script src="{% static 'js/modalStatisticsAdmin.js' %}"></script>
-<script src="{% static 'js/modalScripts.js' %}"></script>
-<script src="{% static 'js/levels.js' %}"></script>
-
-
-{% endblock %} {% endcomment %}

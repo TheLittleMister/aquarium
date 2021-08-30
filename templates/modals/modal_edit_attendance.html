@@ -41,44 +41,20 @@
       // cache: false,
       contentType: false,
       processData: false,
-      beforeSend: function () {
-        document
-          .querySelector("#btnAttendanceSubmit")
-          .style
-          .display = "none";
-        document
-          .querySelector("#btnAttendanceLoader")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#attendanceFormMessages")
-          .classList
-          .remove("alert");
-
-        document
-          .querySelector("#attendanceFormMessages")
-          .classList
-          .remove("alert-danger");
-
-        document
-          .querySelector("#attendanceFormMessages")
-          .innerHTML = "";
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc("btnAttendanceSubmit", "btnAttendanceLoader", "attendanceFormMessages"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-        // console.log(response);
+        const messages = response.messages.length > 0
+          ? response.messages
+          : ["Cambios Guardados!"];
 
-        if (response.edited === true) {
+        if (response.edited) {
           $("#attendanceFormDiv").html(response.form);
           $("#attendanceForm").attr("action", `/courses/edit_attendance/${response.attendanceID}`);
           $("#attendanceFormDiv").append(`<button id="btnAttendanceSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
-				<div id="btnAttendanceLoader"></div>`);
+				  <div id="btnAttendanceLoader"></div>`);
 
-          // console.log(response.note);
-
-          if (response.note !== null) {
+          if (response.note) {
             document
               .querySelectorAll(`#note${response.attendanceID}`)
               .forEach((element) => {
@@ -105,39 +81,8 @@
                 element.innerHTML = "-";
               });
           }
-
-          document
-            .querySelector("#attendanceFormMessages")
-            .classList
-            .add("alert");
-          document
-            .querySelector("#attendanceFormMessages")
-            .classList
-            .add("alert-success");
-
-          $("#attendanceFormMessages").append("Cambios Guardados!");
-        } else {
-          document
-            .querySelector("#btnAttendanceLoader")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#btnAttendanceSubmit")
-            .style
-            .display = "block";
-
-          for (let messageID in response.messages) {
-            document
-              .querySelector("#attendanceFormMessages")
-              .classList
-              .add("alert");
-            document
-              .querySelector("#attendanceFormMessages")
-              .classList
-              .add("alert-danger");
-            $("#attendanceFormMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
-          }
         }
+        afterFunc("btnAttendanceSubmit", "btnAttendanceLoader", "attendanceFormMessages", messages, response.edited)
       }
     });
   });
@@ -343,7 +288,7 @@
         let cycle = response.cycle;
         let end_cycle = response.end_cycle;
 
-        if (cycle === true && end_cycle === false) {
+        if (cycle && !end_cycle) {
           document
             .querySelector("#attendanceCycle")
             .classList
@@ -367,7 +312,7 @@
             .forEach((element) => {
               element.innerHTML = "INICIA";
             });
-        } else if (cycle === false && end_cycle === true) {
+        } else if (!cycle && end_cycle) {
           document
             .querySelector("#attendanceCycle")
             .classList
@@ -427,7 +372,7 @@
         let onlyday = response.onlyday;
         let recover = response.recover;
 
-        if (onlyday === true && recover === false) {
+        if (onlyday && !recover) {
           document
             .querySelector("#attendanceDay")
             .classList
@@ -451,7 +396,7 @@
             .forEach((element) => {
               element.innerHTML = "SOLO HOY";
             });
-        } else if (onlyday === false && recover === true) {
+        } else if (!onlyday && recover) {
           document
             .querySelector("#attendanceDay")
             .classList

@@ -59,7 +59,7 @@
       Notas
       <button id="studentNoteButton" class="btn btn-outline-primary" onclick="studentNote({{ user.id }}, {{ current_user.id }});">Abrir</button>
       <button id="showStudentNoteButton" class="btn btn-outline-primary" onclick="showStudentNote(this);" style="visibility: hidden">Cerrar</button>
-      <button id="addNote" style="display: none; margin-right: auto; margin-left: auto;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCreateNote" onclick="">Añadir Nota</button>
+      <button id="addNote" style="display: none; margin-left: auto;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCreateNote" onclick="">Añadir Nota</button>
     </h2>
     <div id="studentNote" class="w3-container" style="display: none; overflow: auto; max-height: 500px;">
       <div id="loadStudentNote"></div>
@@ -83,54 +83,24 @@
 
 <script>
 
- $("#noteForm").submit(function (e) {
-   e.preventDefault();
+$("#noteForm").submit(function (e) {
+	e.preventDefault();
 
-   let form = $(this);
-   const action = form.attr("action")
+	let form = $(this);
+	const action = form.attr("action");
 
-  $.ajax({
-    type: "POST",
-    url: `${mysite}${action}`,
-    data: form.serialize(),
+	$.ajax({
+		type: "POST",
+		url: `${mysite}${action}`,
+		data: form.serialize(),
+		beforeSend: beforeFunc("btnNoteSubmit", "btnNoteLoader", "noteFormMessages"),
+		error: (error) => console.log("Error!", error),
+		success: function (response) {
+			const messages = response.messages.length > 0 ? response.messages : ["Nueva Nota Agregada!"];
 
-    beforeSend: function () {
-        document
-          .querySelector("#btnNoteSubmit")
-          .style
-          .display = "none";
-        document
-          .querySelector("#btnNoteLoader")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#noteFormMessages")
-          .classList
-          .remove("alert");
-
-        document
-          .querySelector("#noteFormMessages")
-          .classList
-          .remove("alert-danger");
-
-        document
-          .querySelector("#noteFormMessages")
-          .innerHTML = "";
-
-    },
-
-    error: function (error) {
-      console.log("Error!", error);
-    },
-
-    success: function (response) {
-      //console.log(response);
-
-      if (response.edited === true) {
-
-        const noteBody = document.querySelector("#studentNoteBody");
-
-        const htmlNote = `<tr id="trNote${response.id}">
+			if (response.edited === true) {
+				const noteBody = document.querySelector("#studentNoteBody");
+				const htmlNote = `<tr id="trNote${response.id}">
             <td>
               <h6>
                 <strong id="noteUsername${response.id}">@${response.username}:</strong>
@@ -144,110 +114,41 @@
               <button onclick="editNote(${response.id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalNote">✏️</button>
 
             </td>
-          </tr>`
+          </tr>`;
+				noteBody.insertAdjacentHTML("afterbegin", htmlNote);
+				$("#modalCreateNote").modal("hide");
+			}
+			afterFunc("btnNoteSubmit", "btnNoteLoader", "noteFormMessages", messages, response.edited);
+		},
+	});
+});
 
-        noteBody.insertAdjacentHTML("afterbegin", htmlNote);
+$("#noteEditForm").submit(function (e) {
+	e.preventDefault();
 
+	let form = $(this);
+	const action = form.attr("action");
 
-        document
-            .querySelector("#noteFormMessages")
-            .classList
-            .add("alert");
-        document
-          .querySelector("#noteFormMessages")
-          .classList
-          .add("alert-success");
+	$.ajax({
+		type: "POST",
+		url: `${mysite}${action}`,
+		data: form.serialize(),
 
-        document.querySelector("#noteFormMessages").innerHTML = "Nueva Nota Agregada!";
+		beforeSend: beforeFunc("btnNoteEditSubmit", "btnNoteEditLoader", "noteEditFormMessages"),
 
-        $('#modalCreateNote').modal('hide');
+		error: function (error) {
+			console.log("Error!", error);
+		},
 
-      } else {
+		success: function (response) {
+			const messages = response.messages.length > 0 ? response.messages : ["Nota Editada!"];
 
-        for (let messageID in response.messages) {
-            document
-              .querySelector("#noteFormMessages")
-              .classList
-              .add("alert");
-            document
-              .querySelector("#noteFormMessages")
-              .classList
-              .add("alert-danger");
-             document
-              .querySelector("#noteFormMessages").innerHTML = `<li class="ml-2">${response.messages[messageID]}</li>`;
-          }
+			if (response.edited === true) {
+				document.querySelector(`#trNote${response.id}`).remove();
 
+				const noteBody = document.querySelector("#studentNoteBody");
 
-      }
-
-      document
-          .querySelector("#btnNoteLoader")
-          .classList
-          .remove("loader");
-
-      document
-          .querySelector("#btnNoteSubmit")
-          .style
-          .display = "block";
-
-    }
-
-  })
-
-
- })
-
- $("#noteEditForm").submit(function(e){
-   e.preventDefault();
-
-   let form = $(this);
-   const action = form.attr("action");
-
-   $.ajax({
-
-     type:"POST",
-     url: `${mysite}${action}`,
-     data: form.serialize(),
-
-     beforeSend: function () {
-        document
-          .querySelector("#btnNoteEditSubmit")
-          .style
-          .display = "none";
-        document
-          .querySelector("#btnNoteEditLoader")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#noteEditFormMessages")
-          .classList
-          .remove("alert");
-
-        document
-          .querySelector("#noteEditFormMessages")
-          .classList
-          .remove("alert-danger");
-
-        document
-          .querySelector("#noteEditFormMessages")
-          .innerHTML = "";
-
-     },
-
-     error: function (error) {
-       console.log("Error!", error);
-     },
-
-     success: function (response) {
-       //console.log(response);
-
-       if (response.edited === true) {
-
-        document.querySelector(`#trNote${response.id}`).remove();
-
-        const noteBody = document.querySelector("#studentNoteBody");
-
-        const htmlNote = `<tr id="trNote${response.id}">
+				const htmlNote = `<tr id="trNote${response.id}">
             <td>
               <h6>
                 <strong id="noteUsername${response.id}">@${response.username}:</strong>
@@ -261,139 +162,67 @@
               <button onclick="editNote(${response.id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalNote">✏️</button>
 
             </td>
-          </tr>`
+          </tr>`;
 
-        noteBody.insertAdjacentHTML("afterbegin", htmlNote);
+				noteBody.insertAdjacentHTML("afterbegin", htmlNote);
+				$("#modalNote").modal("hide");
+			}
 
+			afterFunc("btnNoteEditSubmit", "btnNoteEditLoader", "noteEditFormMessages", messages, response.edited);
+		},
+	});
+});
 
-        document
-            .querySelector("#noteFormMessages")
-            .classList
-            .add("alert");
-        document
-          .querySelector("#noteFormMessages")
-          .classList
-          .add("alert-success");
+$("#addNote").click(function (e) {
+	document.querySelector("#noteFormMessages").classList.remove("alert");
 
-        document.querySelector("#noteFormMessages").innerHTML = "Nota Editada!";
+	document.querySelector("#noteFormMessages").classList.remove("alert-danger");
 
-        $('#modalNote').modal('hide');
+	document.querySelector("#noteFormMessages").classList.remove("alert-success");
 
-       }
+	document.querySelector("#noteFormMessages").innerHTML = "";
 
-       else {
+	$("#id_note").val("");
+});
 
-         document
-            .querySelector("#btnNoteEditLoader")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#btnNoteEditSubmit")
-            .style
-            .display = "block";
+$("#deleteThisNote").click(function (e) {
+	let button = $(this);
+	const action = button.attr("href");
 
-          for (let messageID in response.messages) {
-            document
-              .querySelector("#noteEditFormMessages")
-              .classList
-              .add("alert");
-            document
-              .querySelector("#noteEditFormMessages")
-              .classList
-              .add("alert-danger");
-             document
-              .querySelector("#noteEditFormMessages").innerHTML = `<li class="ml-2">${response.messages[messageID]}</li>`;
-          }
-       }
-      document
-        .querySelector("#btnNoteEditLoader")
-        .classList
-        .remove("loader");
+	fetch(`${mysite}${action}`)
+		.then((response) => response.json())
+		.then((response) => {
+			if (response.deleted) {
+				document.querySelector(`#trNote${response.noteID}`).remove();
+				$("#modalNote").modal("hide");
+			}
+		});
+});
 
-        document
-        .querySelector("#btnNoteEditSubmit")
-        .style
-        .display = "block";
-     }
+function loadNote(userID, currentUserID) {
+	const start = noteCounter;
+	const end = noteCounter + noteQuantity;
+	noteCounter = end + 1;
 
-   })
+	$.ajax({
+		type: "GET",
+		url: `${mysite}/users/load_notes/`,
+		data: {
+			start: start,
+			end: end,
+			userID: userID,
+		},
+		beforeSend: beforeFunc("loadMoreNote", "loadNote"),
+		error: (error) => console.log("Error!", error),
+		success: function (response) {
+			//console.log(response);
 
- })
+			if (response.all_loaded === true) {
+				allNoteLoaded = true;
+			}
 
- $("#addNote").click(function(e) {
-  document
-    .querySelector("#noteFormMessages")
-    .classList
-    .remove("alert");
-
-  document
-    .querySelector("#noteFormMessages")
-    .classList
-    .remove("alert-danger");
-
-  document
-    .querySelector("#noteFormMessages")
-    .classList
-    .remove("alert-success");
-
-  document
-    .querySelector("#noteFormMessages")
-    .innerHTML = "";
-  
-  $("#id_note").val('');
- });
-
- $("#deleteThisNote").click(function(e){
-   let button = $(this);
-   const action = button.attr("href");
-
-   fetch(`${mysite}${action}`)
-   .then((response) => response.json())
-   .then((response) => {
-
-     if (response.deleted === true) {
-       document.querySelector(`#trNote${response.noteID}`).remove()
-       $('#modalNote').modal('hide');
-     }
-
-   })
- })
-
- function loadNote(userID, currentUserID) {
-    const start = noteCounter;
-    const end = noteCounter + noteQuantity;
-    noteCounter = end + 1;
-
-   $.ajax({
-
-     type: "GET",
-     url: `${mysite}/users/load_notes/`,
-     data: {
-       start: start,
-       end: end,
-       userID: userID
-     },
-
-     beforeSend: function () {
-       document
-            .querySelector("#loadNote")
-            .classList
-            .add("loader");
-     },
-
-     error: function (error) {
-       console.log("Error!", error);
-     },
-
-     success: function (response) {
-       //console.log(response);
-
-       if (response.all_loaded === true) {
-        allNoteLoaded = true;
-        }
-
-        for (let noteID = 0; noteID < response.notes.length; noteID++) {
-          $("#studentNoteBody").append(`<tr id="trNote${response.notes[noteID].id}">
+			for (let noteID = 0; noteID < response.notes.length; noteID++) {
+				$("#studentNoteBody").append(`<tr id="trNote${response.notes[noteID].id}">
             <td>
               <h6>
                 <strong id="noteUsername${response.notes[noteID].id}">@${response.notes[noteID].teacher__username}:</strong>
@@ -408,73 +237,52 @@
               ${response.notes[noteID].teacher__id == currentUserID ? `<button onclick="editNote(${response.notes[noteID].id});" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalNote">✏️</button>` : ""}
 
             </td>
-          </tr>`)
-        }
-        document
-            .querySelector("#loadNote")
-            .classList
-            .remove("loader");
-     }
-   })
- }
+          </tr>`);
+			}
+			afterFunc("loadMoreNote", "loadNote");
+		},
+	});
+}
 
- function editNote(noteID) {
+function editNote(noteID) {
+	fetch(`${mysite}/users/note_info/${noteID}`)
+		.then((response) => response.json())
+		.then((response) => {
+			document.querySelector("#noteEditFormMessages").classList.remove("alert");
 
-   fetch(`${mysite}/users/note_info/${noteID}`)
-   .then((response) => response.json())
-   .then((response) => {
-     document
-        .querySelector("#noteEditFormMessages")
-        .classList
-        .remove("alert");
+			document.querySelector("#noteEditFormMessages").classList.remove("alert-danger");
 
-        document
-             .querySelector("#noteEditFormMessages")
-        .classList
-        .remove("alert-danger");
+			document.querySelector("#noteEditFormMessages").classList.remove("alert-success");
 
-        document
-             .querySelector("#noteEditFormMessages")
-        .classList
-        .remove("alert-success");
+			document.querySelector("#noteEditFormMessages").innerHTML = "";
 
-        document
-             .querySelector("#noteEditFormMessages")
-        .innerHTML = "";
-
-
-     $("#noteFormDiv").html(response.form);
-     $("#noteEditForm").attr("action", `/users/edit_note/${noteID}`);
-     $("#deleteThisNote").attr("href", `/users/delete_note/${noteID}`);
-     $("#noteFormDiv").append(`<button id="btnNoteEditSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
+			$("#noteFormDiv").html(response.form);
+			$("#noteEditForm").attr("action", `/users/edit_note/${noteID}`);
+			$("#deleteThisNote").attr("href", `/users/delete_note/${noteID}`);
+			$("#noteFormDiv").append(`<button id="btnNoteEditSubmit" class="btn btn-secondary" type="submit">Guardar</button> \
 				<div id="btnNoteEditLoader"></div>`);
+		});
+}
 
-   })
+function studentNote(userID, currentUserID) {
+	document.querySelector("#studentNoteButton").style.display = "none";
+	document.querySelector("#showStudentNoteButton").style.visibility = "visible";
+	document.querySelector("#studentNote").style.display = "block";
+	document.querySelector("#addNote").style.display = "block";
 
- } 
+	loadNote(userID, currentUserID);
+}
 
- function studentNote(userID, currentUserID) {
-   document.querySelector("#studentNoteButton").style.display = "none";
-   document.querySelector("#showStudentNoteButton").style.visibility = "visible";
-   document.querySelector("#studentNote").style.display = "block";
-   document.querySelector("#addNote").style.display = "block";
-
-  loadNote(userID, currentUserID);
-
- }
-
- function showStudentNote(button) {
+function showStudentNote(button) {
 	if (document.querySelector(`#studentNote`).style.display === "block") {
 		document.querySelector(`#studentNote`).style.display = "none";
-    document.querySelector("#addNote").style.display = "none";
+		document.querySelector("#addNote").style.display = "none";
 		button.innerHTML = "Abrir";
 	} else {
 		document.querySelector(`#studentNote`).style.display = "block";
-    document.querySelector("#addNote").style.display = "block";
+		document.querySelector("#addNote").style.display = "block";
 		button.innerHTML = "Cerrar";
 	}
- }
-
-
+}
 
 </script>

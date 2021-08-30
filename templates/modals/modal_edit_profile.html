@@ -76,54 +76,13 @@
       type: "POST",
       url: `${mysite}${action}`,
       data: form.serialize(),
-      beforeSend: function () {
-        document
-          .querySelector("#editStudentButton")
-          .style
-          .display = "none";
-        document
-          .querySelector("#loadEditStudent")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#editStudentMessages")
-          .classList
-          .remove("alert");
-        document
-          .querySelector("#editStudentMessages")
-          .classList
-          .remove("alert-danger");
-        document
-          .querySelector("#editStudentMessages")
-          .innerHTML = "";
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc("editStudentButton", "loadEditStudent", "editStudentMessages"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-        if (response.edited !== false) {
+        if (response.edited) 
           location.reload();
-        } else {
-          document
-            .querySelector("#loadEditStudent")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#editStudentButton")
-            .style
-            .display = "block";
-          for (let messageID in response.messages) {
-            document
-              .querySelector("#editStudentMessages")
-              .classList
-              .add("alert");
-            document
-              .querySelector("#editStudentMessages")
-              .classList
-              .add("alert-danger");
-            $("#editStudentMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
-          }
-        }
+        else 
+          afterFunc("editStudentButton", "loadEditStudent", "editStudentMessages", response.messages, response.edited)
       }
     });
   });

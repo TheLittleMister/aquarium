@@ -206,73 +206,23 @@
         type: "POST",
         url: `${mysite}/courses/create_courses/`,
         data: form.serialize(),
-        beforeSend: function () {
-          document
-            .querySelector("#createCoursesButton")
-            .style
-            .display = "none";
-          document
-            .querySelector("#loadCreateCourses")
-            .classList
-            .add("loader");
-          document
-            .querySelector("#createCoursesMessages")
-            .classList
-            .remove("alert");
-
-          document
-            .querySelector("#createCoursesMessages")
-            .classList
-            .remove("alert-danger");
-
-          document
-            .querySelector("#createCoursesMessages")
-            .innerHTML = "";
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("createCoursesButton", "loadCreateCourses", "createCoursesMessages"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          // console.log(response);
-
-          document
-            .querySelector("#loadCreateCourses")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#createCoursesButton")
-            .style
-            .display = "block";
-
-          if (response.messages.length > 0) {
-            for (let messageID in response.messages) {
-              document
-                .querySelector("#createCoursesMessages")
-                .classList
-                .add("alert");
-              document
-                .querySelector("#createCoursesMessages")
-                .classList
-                .add("alert-danger");
-              $("#createCoursesMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
-            }
-          } else {
-            document
-              .querySelector("#createdCoursesTableBody")
-              .innerHTML = "";
-            for (let courseID = 0; courseID < response.courses.length; courseID++) {
+          if (response.messages.length === 0) {
+            for (let courseID = 0; courseID < response.courses.length; courseID++) 
               $("#createdCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}">${response.courses[courseID].count}</a>\
+                                                  <a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}">${response.courses[courseID].count}</a>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
                                                     <a id="courseName${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}">${response.courses[courseID].str}</a>\
                                                 </td>\
                                             </tr>`);
-            }
-
+            
             $("#modalShowCreatedCourse").modal("show");
           }
+          afterFunc("createCoursesButton", "loadCreateCourses", "createCoursesMessages", response.messages);
         }
       });
     });
@@ -346,38 +296,20 @@
 
     $("#courseSearchForm").submit(function (e) {
       e.preventDefault();
-
       const form = $(this);
-
       $.ajax({
         type: "GET",
         url: `${mysite}/courses/search_course/`,
         data: form.serialize(),
-        beforeSend: function () {
-          document
-            .querySelector("#searchCoursesTableBody")
-            .innerHTML = "";
-          document
-            .querySelector("#searchDateButton")
-            .style
-            .display = "none";
-          document
-            .querySelector("#searchDateLoader")
-            .classList
-            .add("loader");
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("searchDateButton", "searchDateLoader", null, "searchCoursesTableBody"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          // console.log(response);
-
           if (response.courses.length > 0) {
             for (let courseID = 0; courseID < response.courses.length; courseID++) {
               $("#searchCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
-													<span id="today${response.courses[courseID].id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
+                                                  <a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
+                                                  <span id="today${response.courses[courseID].id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
                                                     <a id="courseName${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
@@ -408,14 +340,7 @@
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">SIN RESULTADOS</td>\
                                             </tr>`);
           }
-          document
-            .querySelector("#searchDateLoader")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#searchDateButton")
-            .style
-            .display = "block";
+          afterFunc("searchDateButton", "searchDateLoader");
         }
       });
     });
@@ -427,7 +352,6 @@
       pastCourseCounter = end + 1;
 
       // Fetch new past courses and add them
-
       $.ajax({
         type: "GET",
         url: `${mysite}/courses/load_past_courses/`,
@@ -435,27 +359,12 @@
           start: start,
           end: end
         },
-        beforeSend: function () {
-          document
-            .querySelector("#loadPastCourses")
-            .classList
-            .add("loader");
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("loadMorePastCourses", "loadPastCourses"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          // console.log(response);
-
-          document
-            .querySelector("#loadPastCourses")
-            .classList
-            .remove("loader");
-
-          if (response.all_loaded === true) {
+          if (response.all_loaded === true) 
             allPastCoursesLoaded = true;
-          }
-
+          
           for (let courseID = 0; courseID < response.courses.length; courseID++) {
             $("#pastCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
@@ -478,6 +387,7 @@
                   .innerHTML = data.courseCount;
               });
           }
+          afterFunc("loadMorePastCourses", "loadPastCourses");
         }
       });
     }
@@ -489,7 +399,6 @@
       futureCourseCounter = end + 1;
 
       // Fetch new future courses and add them
-
       $.ajax({
         type: "GET",
         url: `${mysite}/courses/load_future_courses/`,
@@ -497,32 +406,17 @@
           start: start,
           end: end
         },
-        beforeSend: function () {
-          document
-            .querySelector("#loadFutureCourses")
-            .classList
-            .add("loader");
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("loadMoreFutureCourses", "loadFutureCourses"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          // console.log(response);
-
-          document
-            .querySelector("#loadFutureCourses")
-            .classList
-            .remove("loader");
-
-          if (response.all_loaded === true) {
+          if (response.all_loaded === true) 
             allFutureCoursesLoaded = true;
-          }
-
+          
           for (let courseID = 0; courseID < response.courses.length; courseID++) {
             $("#futureCoursesTableBody").append(`<tr> \
                                                 <td scope="row" data-label="No."> \
-													<a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
-													<span id="today${response.courses[courseID].id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
+                                                  <a id="count${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
+                                                  <span id="today${response.courses[courseID].id}" class="badge bg-success" style="font-size: small; color: white;"></span>\
                                                 </td>\
                                                 <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Clase">\
                                                     <a id="courseName${response.courses[courseID].id}" href="${mysite}/courses/course/${response.courses[courseID].id}"></a>\
@@ -547,32 +441,27 @@
                 }
               });
           }
+          afterFunc("loadMoreFutureCourses", "loadFutureCourses");
         }
       });
     }
 
     /////////////////////////////////////////////////////////////////////////
 
-    function clickFutureCourses() {
-      $("#loadMoreFutureCourses").click();
-    }
+    document.addEventListener("DOMContentLoaded", load_future_courses);
 
-    document.addEventListener("DOMContentLoaded", clickFutureCourses);
     $(window).scroll(function () {
-      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureCoursesLoaded === false) {
-        clickFutureCourses();
+      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureCoursesLoaded === false) 
+        load_future_courses();
       }
-    });
+    );
 
-    function clickPastCourses() {
-      $("#loadMorePastCourses").click();
-    }
+    document.addEventListener("DOMContentLoaded", load_past_courses);
 
-    document.addEventListener("DOMContentLoaded", clickPastCourses);
     $(window).scroll(function () {
-      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastCoursesLoaded === false) {
-        clickPastCourses();
+      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastCoursesLoaded === false) 
+        load_past_courses();
       }
-    });
+    );
   </script>
 {% endblock %}

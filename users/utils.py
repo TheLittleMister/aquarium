@@ -1,4 +1,5 @@
 from courses.models import *
+from django.db.models import F
 
 
 # This function allows teacher schedule creation on profile (Can be better?)
@@ -89,3 +90,222 @@ def get_schedule(courses):
     schedule.sort(key=lambda course: course[0])
 
     return schedule
+
+# FILTERS
+
+
+def filter_it(user, filter, level, start, end):
+
+    if filter == 0:  # TODOS
+
+        if user.is_admin:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+        else:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    student__teacher=user,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+    elif filter == 1:  # CERTIFICADOS
+        # MyQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
+
+        if user.is_admin:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .exclude(certificate_img="")
+                .exclude(certificate_img__isnull=True)
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+        else:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    student__teacher=user,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .exclude(certificate_img="")
+                .exclude(certificate_img__isnull=True)
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+    elif filter == 2:  # NO CERTIFICADOS
+
+        if user.is_admin:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    certificate_img="",
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+        else:
+
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    certificate_img="",
+                    student__teacher=user,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+    else:
+
+        deliver = None  # Pendiente
+
+        if filter == 3:  # Entregado
+            deliver = False
+
+        elif filter == 4:  # No Entregago
+            deliver = True
+
+        if user.is_admin:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    delivered=deliver,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )
+
+        else:
+            return list(
+                level.levels.filter(
+                    is_active=True,
+                    delivered=deliver,
+                    student__teacher=user,
+                    student__courses__date__gte=datetime.datetime.now()
+                    - datetime.timedelta(15),
+                    student__attendances__quota="PAGO",
+                )
+                .values(
+                    "student__teacher__color__hex_code",
+                    "student__teacher__username",
+                    "student__id",
+                    "student__identity_document",
+                    "student__first_name",
+                    "student__last_name",
+                    "certificate_img",
+                    "certificate_pdf",
+                    "delivered",
+                )
+                .distinct()
+                .order_by(F("delivered").desc(nulls_last=True))[start:end]
+            )

@@ -59,34 +59,17 @@
             : ""}`)
           .style
           .display = "block";
-        document
-          .querySelector(
-            `#studentStatisticsButton${modal
-            ? "Modal"
-            : ""}`)
-          .style
-          .display = "none";
-        document
-          .querySelector(
-            `#loadStudentStatistics${modal
-            ? "Modal"
-            : ""}`)
-          .classList
-          .add("loader");
+
+        beforeFunc(
+          `studentStatisticsButton${modal
+          ? "Modal"
+          : ""}`,
+        `loadStudentStatistics${modal
+          ? "Modal"
+          : ""}`);
       },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-
-        document
-          .querySelector(
-            `#loadStudentStatistics${modal
-            ? "Modal"
-            : ""}`)
-          .classList
-          .remove("loader");
-
         document
           .querySelector(
             `#showStudentStatisticsButton${modal
@@ -94,47 +77,49 @@
             : ""}`)
           .style
           .visibility = "visible";
-
         $(
           `#studentAttendanceStatsBody${modal
           ? "Modal"
           : ""}`).append(`<tr> \
-                                                <td scope="row" data-label="Asistió"> \
-                                                    ${response.attended}\
-                                                </td>\
-                                                <td scope="row" data-label="Faltó">\
-                                                    ${response.failed}\
-                                                </td>\
-                                                <td scope="row" data-label="Recuperó">\
-                                                    ${response.recovered}\
-                                                </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
-                                                    ${response.can_recover}\
-                                                </td>\
-                                            </tr>`);
-
+                            <td scope="row" data-label="Asistió"> \
+                                ${response.attended}\
+                            </td>\
+                            <td scope="row" data-label="Faltó">\
+                                ${response.failed}\
+                            </td>\
+                            <td scope="row" data-label="Recuperó">\
+                                ${response.recovered}\
+                            </td>\
+                            <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Puede Recuperar">\
+                                ${response.can_recover}\
+                            </td>\
+                        </tr>`);
         if (admin) {
           $(
             `#studentPaymentStatsBody${modal
             ? "Modal"
             : ""}`).append(`<tr> \
-                                                <td scope="row" data-label="Pago"> \
-                                                    ${response.paid}\
-                                                </td>\
-                                                <td scope="row" data-label="Pago Día">\
-                                                    ${response.onlyday}\
-                                                </td>\
-                                                <td scope="row" data-label="No pago">\
-                                                    ${response.n_paid}\
-                                                </td>\
-                                                <td scope="row" data-label="Separado">\
-                                                    ${response.sep}\
-                                                </td>\
-                                                <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Total">\
-                                                    ${response.total}\
-                                                </td>\
-                                            </tr>`);
+                            <td scope="row" data-label="Pago"> \
+                                ${response.paid}\
+                            </td>\
+                            <td scope="row" data-label="Pago Día">\
+                                ${response.onlyday}\
+                            </td>\
+                            <td scope="row" data-label="No pago">\
+                                ${response.n_paid}\
+                            </td>\
+                            <td scope="row" data-label="Separado">\
+                                ${response.sep}\
+                            </td>\
+                            <td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Total">\
+                                ${response.total}\
+                            </td>\
+                        </tr>`);
         }
+        afterFunc(
+          null, `loadStudentStatistics${modal
+          ? "Modal"
+          : ""}`);
       }
     });
   }

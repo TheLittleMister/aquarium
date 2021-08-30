@@ -48,80 +48,8 @@
     <!-- <script src="https://www.google.com/recaptcha/api.js?render=6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"></script> -->
     <script data-ad-client="ca-pub-9848347625525796" async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-XTNLXDS27T"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-
-      gtag('config', 'G-XTNLXDS27T');
-
-      {% comment %} const mysite = "http://127.0.0.1:8000"; {% endcomment %}
-      const mysite = "https://aquariumschool.co";
-
-      // ---------THIS FUNCTION DELAYS OUR AJAX DABATASE QUERIES----------
-      function delay(fn, ms) {
-        let timer = 0;
-        return function (...args) {
-          clearTimeout(timer);
-          timer = setTimeout(fn.bind(this, ...args), ms || 0);
-        };
-      }
-
-      // Takes an ISO time and returns a string representing how
-      // long ago the date represents.
-      function prettyDate(time) {
-        const date = new Date(time),
-          diff = (new Date().getTime() - date.getTime()) / 1000,
-          day_diff = Math.floor(diff / 86400);
-        const year = date.getFullYear(),
-          month = date.getMonth() + 1,
-          day = date.getDate();
-
-        if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) return year.toString() + "-" + (month < 10 ? "0" + month.toString() : month.toString()) + "-" + (day < 10 ? "0" + day.toString() : day.toString());
-
-        const r =
-          (day_diff == 0 && ((diff < 60 && "justo ahora") || (diff < 120 && "Hace 1 minuto") || (diff < 3600 && "Hace " + Math.floor(diff / 60) + " minutos") || (diff < 7200 && "Hace 1 hora") || (diff < 86400 && "Hace " + Math.floor(diff / 3600) + " horas"))) ||
-          (day_diff == 1 && "Ayer") ||
-          (day_diff < 7 && "Hace " + day_diff + " días") ||
-          (day_diff < 31 && "Hace " + Math.ceil(day_diff / 7) + " semanas");
-        return r;
-      }
-
-      function tConvert(time) {
-        // Check correct time format and split into components
-        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-        if (time.length > 1) {
-          // If time format correct
-          time = time.slice(1); // Remove full string match value
-          time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
-          time[0] = +time[0] % 12 || 12; // Adjust hours
-        }
-        return time.join(""); // return adjusted time or original string
-      }
-
-      // THIS FUNCTION ACTIVATES TOOLTIPS
-      function activateToolTip() {
-	      $('[data-toggle="tooltip"]').tooltip();
-      }
-
-      if (typeof jQuery != "undefined") {
-        jQuery.fn.prettyDate = function () {
-          return this.each(function () {
-            const date = prettyDate(this.title);
-            if (date) jQuery(this).text(date);
-          });
-        };
-      }
-
-    </script>
-
+    <script src="{% static 'js/myGlobalFunctions.js' %}"></script>
     <!-- END GOOGLE -->
-
-
     {% block head %}{% endblock %}
   </head>
 
@@ -232,7 +160,7 @@
               <br>
               <form id="loginForm" action="#" method="POST" autocomplete="off" enctype="multipart/form-data">
                 {% csrf_token %}
-                <span id="loginMessage" style="color: crimson;"></span>
+                <ul id="loginMessage"></ul>
                 <input id="loginUsername" type="text" class="form-control" placeholder="Documento / Correo electrónico" name="username" required="required">
                 <br>
                 <input id="loginPassword" type="password" class="form-control" placeholder="Contraseña" name="password" required="required">

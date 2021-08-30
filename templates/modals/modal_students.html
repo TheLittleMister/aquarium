@@ -124,7 +124,7 @@
         <input id="activeStudentsSearch" type="text" placeholder="Buscar Estudiante Activo" class="form-control"/>
         <input id="activeStudentsSearchValue" type="hidden" value=""/>
         <br/>
-        <table id="searchActiveStudentsTable" style="visibility: hidden; background-color: lightgoldenrodyellow">
+        <table id="searchActiveStudentsTable" style="background-color: lightgoldenrodyellow">
           <thead>
             <tr>
               <th scope="col">Documento</th>
@@ -171,7 +171,7 @@
         <form id="createStudentForm" action="" method="POST">
           {% csrf_token %}
           {{ studentForm|crispy }}
-          <div id="createStudentMessages"></div>
+          <ul id="createStudentMessages"></ul>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button id="createStudentButton" type="submit" class="btn btn-primary">Crear</button>
@@ -191,24 +191,9 @@
       data: {
         student: $(this).val()
       },
-      beforeSend: function () {
-        document
-          .querySelector("#searchLoadActiveStudents")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#searchActiveStudentsTableBody")
-          .innerHTML = "";
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc(null, "searchLoadActiveStudents", null, "searchActiveStudentsTableBody"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-        document
-          .querySelector("#searchActiveStudentsTable")
-          .style
-          .visibility = "visible";
-
         if (response.students.length > 0) {
           for (let studentsID = 0; studentsID < response.students.length; studentsID++) {
             $(`#searchActiveStudentsTableBody`).append(`<tr> \
@@ -248,11 +233,7 @@
 									</td>\
 								</tr>`);
         }
-
-        document
-          .querySelector("#searchLoadActiveStudents")
-          .classList
-          .remove("loader");
+        afterFunc(null, "searchLoadActiveStudents");
       }
     });
   }, 1000));
@@ -448,24 +429,12 @@
           start: start,
           end: end
         },
-        beforeSend: function () {
-          document
-            .querySelector("#loadActiveStudents")
-            .classList
-            .add("loader");
-          document
-            .querySelector("#loadMoreActiveStudentsBtn")
-            .style
-            .display = "none";
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("loadMoreActiveStudentsBtn", "loadActiveStudents"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          if (response.all_loaded == true) {
+          if (response.all_loaded == true) 
             allActiveStudentsLoaded = true;
-          }
-
+          
           for (let studentsID = 0; studentsID < response.students.length; studentsID++) {
             $(`#activeStudentsTableBody`).append(`<tr> \
 									<td scope="row" data-label="Documento"> \
@@ -485,21 +454,9 @@
 									</td>\
 								</tr>`);
           }
-          document
-            .querySelector("#loadActiveStudents")
-            .classList
-            .remove("loader");
-          document
-            .querySelector("#loadMoreActiveStudentsBtn")
-            .style
-            .display = "block";
+          afterFunc("loadMoreActiveStudentsBtn", "loadActiveStudents");
         }
       });
-    } else {
-      document
-        .querySelector("#loadMoreActiveStudentsBtn")
-        .style
-        .display = "none";
     }
   }
 </script>

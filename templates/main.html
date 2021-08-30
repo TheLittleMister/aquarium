@@ -1440,42 +1440,17 @@
         type: "POST",
         url: `${mysite}/users/login/`,
         data: form.serialize(),
-        beforeSend: function () {
-          document
-            .querySelector("#loginMessage")
-            .innerHTML = "";
-          document
-            .querySelector("#loginButton")
-            .style
-            .display = "none";
-          document
-            .querySelector("#loadLogin")
-            .classList
-            .add("loader");
-        },
-        error: function (error) {
-          console.error(error);
-        },
+        beforeSend: beforeFunc("loginButton", "loadLogin", "loginMessage"),
+        error: (error) => console.error(error),
         success: function (response) {
-          if (response.user !== null) {
+          if (response.user !== null) 
             window
               .location
               .replace(`${mysite}/users/profile/`);
-          } else {
-            document
-              .querySelector("#loginMessage")
-              .innerHTML = "Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas.";
-            document
-              .querySelector("#loadLogin")
-              .classList
-              .remove("loader");
-            document
-              .querySelector("#loginButton")
-              .style
-              .display = "block";
+          else 
+            afterFunc("loginButton", "loadLogin", "loginMessage", ["Por favor, introduzca un Usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas."]);
           }
-        }
-      });
+        });
     });
   </script>
 {% endblock %}

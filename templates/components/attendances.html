@@ -134,30 +134,15 @@
         end: end,
         userID: userID
       },
-      beforeSend: () => document
-        .querySelector(
-          `#loadPastAttendances${modal
-          ? "Modal"
-          : ""}`)
-        .classList
-        .add("loader"),
+      beforeSend: beforeFunc(
+        "loadMorePastAttendances", `loadPastAttendances${modal
+        ? "Modal"
+        : ""}`),
       error: (error) => console.log("Error!", error),
       success: function (response) {
-        // console.log(response);
-
-        document
-          .querySelector(
-            `#loadPastAttendances${modal
-            ? "Modal"
-            : ""}`)
-          .classList
-          .remove("loader");
-
         if (response.all_loaded === true) 
           allPastAttendancesLoaded = true;
         
-        // let count = response.attendances.length;
-
         for (let studentID = 0; studentID < response.attendances.length; studentID++) {
           let attendanceBtnColor;
           let attendanceStr;
@@ -201,8 +186,8 @@
 
           const toAppend = admin
             ? `<tr> \
-                                                <td scope="row" data-label="Clase"> \
-                                                    <a id="courseName${response
+              <td scope="row" data-label="Clase"> \
+                <a id="courseName${response
               .attendances[studentID]
               .course__id}" href="${mysite}/courses/course/${response
               .attendances[studentID]
@@ -217,8 +202,8 @@
               .attendances[studentID]
               .id}" class="badge bg-primary" style="font-size: small; color: white;">${day}</span>\
 												</td>\
-                                                <td scope="row" data-label="Asistencia">\
-                                                    <button id="attendanceButton${response
+              <td scope="row" data-label="Asistencia">\
+                  <button id="attendanceButton${response
               .attendances[studentID]
               .id}" onclick="changeAttendance(${response
               .attendances[studentID]
@@ -295,6 +280,11 @@
         }
 
         $('[data-toggle="tooltip"]').tooltip();
+
+        afterFunc(
+          "loadMorePastAttendances", `loadPastAttendances${modal
+          ? "Modal"
+          : ""}`)
       }
     });
   }
@@ -320,22 +310,12 @@
         end: end,
         userID: userID
       },
-      beforeSend: () => document
-        .querySelector(
-          `#loadFutureAttendances${modal
-          ? "Modal"
-          : ""}`)
-        .classList
-        .add("loader"),
+      beforeSend: beforeFunc(
+        "loadMoreFutureAttendances", `loadFutureAttendances${modal
+        ? "Modal"
+        : ""}`),
       error: (error) => console.log("Error!", error),
       success: function (response) {
-        document
-          .querySelector(
-            `#loadFutureAttendances${modal
-            ? "Modal"
-            : ""}`)
-          .classList
-          .remove("loader");
 
         if (response.all_loaded === true) 
           allFutureAttendancesLoaded = true;
@@ -484,6 +464,11 @@
         }
 
         $('[data-toggle="tooltip"]').tooltip();
+
+        afterFunc(
+          "loadMoreFutureAttendances", `loadFutureAttendances${modal
+          ? "Modal"
+          : ""}`)
       }
     });
   }
@@ -492,65 +477,36 @@
     fetch(`${mysite}/courses/change_attendance/${attendanceID}`)
       .then((response) => response.json())
       .then((response) => {
-        document
-          .querySelectorAll(`#attendanceButton${attendanceID}`)
-          .forEach((element) => {
-            if (response.attendance === true) {
+        [
+          ...document.querySelectorAll(`#attendanceButton${attendanceID}`),
+          ...document.querySelectorAll(`#attendanceButtonSearch${attendanceID}`)
+        ].forEach((element) => {
+          if (response.attendance === true) {
+            element
+              .classList
+              .remove("btn-danger");
+            element
+              .classList
+              .add("btn-success");
+            element.innerHTML = "ASISTIÓ";
+          } else {
+            element
+              .classList
+              .remove("btn-success");
+
+            if (response.past === true) {
               element
                 .classList
-                .remove("btn-danger");
-              element
-                .classList
-                .add("btn-success");
-              element.innerHTML = "ASISTIÓ";
+                .add("btn-danger");
+              element.innerHTML = "NO ASISTIÓ";
             } else {
               element
                 .classList
-                .remove("btn-success");
-
-              if (response.past === true) {
-                element
-                  .classList
-                  .add("btn-danger");
-                element.innerHTML = "NO ASISTIÓ";
-              } else {
-                element
-                  .classList
-                  .add("btn-secondary");
-                element.innerHTML = "PENDIENTE";
-              }
+                .add("btn-secondary");
+              element.innerHTML = "PENDIENTE";
             }
-          });
-
-        document
-          .querySelectorAll(`#attendanceButtonSearch${attendanceID}`)
-          .forEach((element) => {
-            if (response.attendance === true) {
-              element
-                .classList
-                .remove("btn-danger");
-              element
-                .classList
-                .add("btn-success");
-              element.innerHTML = "ASISTIÓ";
-            } else {
-              element
-                .classList
-                .remove("btn-success");
-
-              if (response.past === true) {
-                element
-                  .classList
-                  .add("btn-danger");
-                element.innerHTML = "NO ASISTIÓ";
-              } else {
-                element
-                  .classList
-                  .add("btn-secondary");
-                element.innerHTML = "PENDIENTE";
-              }
-            }
-          });
+          }
+        });
       });
   }
 
@@ -558,61 +514,29 @@
     fetch(`${mysite}/courses/change_quota/${attendanceID}`)
       .then((response) => response.json())
       .then((response) => {
-        // console.log(response);
-
-        document
-          .querySelectorAll(`#quotaButton${attendanceID}`)
-          .forEach((element) => {
-            if (response.quota === "PAGO") {
-              element
-                .classList
-                .remove("btn-secondary");
-              element
-                .classList
-                .add("btn-success");
-              element.innerHTML = response.quota;
-            } else {
-              element
-                .classList
-                .remove("btn-success");
-              element
-                .classList
-                .add("btn-secondary");
-              element.innerHTML = response.quota;
-            }
-          });
-
-        document
-          .querySelectorAll(`#quotaButtonSearch${attendanceID}`)
-          .forEach((element) => {
-            if (response.quota === "PAGO") {
-              element
-                .classList
-                .remove("btn-secondary");
-              element
-                .classList
-                .add("btn-success");
-              element.innerHTML = response.quota;
-            } else {
-              element
-                .classList
-                .remove("btn-success");
-              element
-                .classList
-                .add("btn-secondary");
-              element.innerHTML = response.quota;
-            }
-          });
+        [
+          ...document.querySelectorAll(`#quotaButton${attendanceID}`),
+          ...document.querySelectorAll(`#quotaButtonSearch${attendanceID}`)
+        ].forEach((element) => {
+          if (response.quota === "PAGO") {
+            element
+              .classList
+              .remove("btn-secondary");
+            element
+              .classList
+              .add("btn-success");
+            element.innerHTML = response.quota;
+          } else {
+            element
+              .classList
+              .remove("btn-success");
+            element
+              .classList
+              .add("btn-secondary");
+            element.innerHTML = response.quota;
+          }
+        });
       });
-  }
-
-  /////////////////////////////////////////////////////////////////////////
-  function clickPastAttendances() {
-    $("#loadMorePastAttendances").click();
-  }
-
-  function clickFutureAttendances() {
-    $("#loadMoreFutureAttendances").click();
   }
 </script>
 
@@ -620,18 +544,10 @@
 
   <script>
     //document.addEventListener("DOMContentLoaded", clickFutureAttendances);
-    $(window).scroll(function () {
-      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureAttendancesLoaded === false) {
-        clickFutureAttendances();
-      }
-    });
+    $(window).scroll(() => ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allFutureAttendancesLoaded === false) && $("#loadMoreFutureAttendances").click());
 
     //document.addEventListener("DOMContentLoaded", clickPastAttendances);
-    $(window).scroll(function () {
-      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastAttendancesLoaded === false) {
-        clickPastAttendances();
-      }
-    });
+    $(window).scroll(() => ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && allPastAttendancesLoaded === false) && $("#loadMorePastAttendances").click());
   </script>
 
 {% endif %}

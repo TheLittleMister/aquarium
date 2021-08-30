@@ -63,4 +63,15 @@ urlpatterns = [
     ),
     # TEACHER PATHS
     path("signature/<int:user_id>", signature, name="signature"),
+
+    # CHECKER PATHS
+    path("active_without_level/",
+         active_without_level, name="active_without_level"),
+    path("hundred_no_certificate/",
+         hundred_no_certificate, name="hundred_no_certificate"),
+    path("no_hundred_certificate/",
+         no_hundred_certificate, name="no_hundred_certificate"),
+    path("hundred_no_delivered/",
+         hundred_no_delivered, name="hundred_no_delivered"),
+
 ]

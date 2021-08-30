@@ -60,3 +60,9 @@ def attendances(current_user, user, modal=False, coursesForm=None): return {
     "modal": modal,
     "coursesForm": coursesForm,
 }
+
+
+@register.inclusion_tag(os.path.join(modals, "checker.html"))
+def checker(current_user): return {
+    "current_user": current_user,
+}

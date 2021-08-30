@@ -78,6 +78,8 @@
             </table>
             <div id="loadStudents"></div>
             <br/>
+            <button id="loadMoreStudents" onclick="load_students();" type="button" class="btn btn-outline-primary">Cargar Más</button>
+            <br><br>
           </div>
         </div>
         <!-- End Right Column -->
@@ -92,68 +94,22 @@
   <script>
     $("#createStudentForm").submit(function (e) {
       e.preventDefault();
-
       const form = $(this);
-
       $.ajax({
         type: "POST",
         url: `${mysite}/courses/create_student/`,
         data: form.serialize(),
-        beforeSend: function () {
-          document
-            .querySelector("#createStudentButton")
-            .style
-            .display = "none";
-          document
-            .querySelector("#loadCreateStudent")
-            .classList
-            .add("loader");
-          document
-            .querySelector("#createStudentMessages")
-            .classList
-            .remove("alert");
-
-          document
-            .querySelector("#createStudentMessages")
-            .classList
-            .remove("alert-danger");
-
-          document
-            .querySelector("#createStudentMessages")
-            .innerHTML = "";
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("createStudentButton", "loadCreateStudent", "createStudentMessages"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
-          if (response.userID !== null) {
+          if (response.userID) //!== null
             window
               .location
               .replace(`${mysite}/courses/student/${response.userID}`);
-          } else {
-            document
-              .querySelector("#loadCreateStudent")
-              .classList
-              .remove("loader");
-            document
-              .querySelector("#createStudentButton")
-              .style
-              .display = "block";
-
-            for (let messageID in response.messages) {
-              document
-                .querySelector("#createStudentMessages")
-                .classList
-                .add("alert");
-              document
-                .querySelector("#createStudentMessages")
-                .classList
-                .add("alert-danger");
-              $("#createStudentMessages").append(`<li class="ml-2">${response.messages[messageID]}</li>`);
-            }
+          else 
+            afterFunc("createStudentButton", "loadCreateStudent", "createStudentMessages", response.messages);
           }
-        }
-      });
+        });
     });
 
     function load_students() {
@@ -170,26 +126,14 @@
           start: start,
           end: end
         },
-        beforeSend: function () {
-          document
-            .querySelector("#loadStudents")
-            .classList
-            .add("loader");
-        },
-        error: function (error) {
-          console.log("Error!", error);
-        },
+        beforeSend: beforeFunc("loadMoreStudents", "loadStudents"),
+        error: (error) => console.log("Error!", error),
         success: function (response) {
           // console.log(response);
-          document
-            .querySelector("#loadStudents")
-            .classList
-            .remove("loader");
 
-          if (response.all_loaded === true) {
+          if (response.all_loaded === true) 
             allStudents = true;
-          }
-
+          
           for (let studentID = 0; studentID < response.students.length; studentID++) {
             login = prettyDate(response.students[studentID].real_last_login);
             login = login && login !== "1969-12-31"
@@ -217,6 +161,7 @@
                                                 </td>\
                                             </tr>`);
           }
+          afterFunc("loadMoreStudents", "loadStudents")
         }
       });
     }

@@ -10,7 +10,7 @@
         <input id="levelSearch" type="text" placeholder="Buscar Estudiante" class="form-control"/>
         <input id="levelSearchValue" type="hidden" value=""/>
         <br/>
-        <table id="searchLevelTable" style="visibility: hidden; background-color: lightgoldenrodyellow">
+        <table id="searchLevelTable" style="background-color: lightgoldenrodyellow">
           <thead>
             <tr>
               <th scope="col">Profesor</th>
@@ -63,23 +63,9 @@
         student: $(this).val(),
         levelID: levelID
       },
-      beforeSend: function () {
-        document
-          .querySelector("#searchLoadLevel")
-          .classList
-          .add("loader");
-        document
-          .querySelector("#searchLevelTableBody")
-          .innerHTML = "";
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc(null, "searchLoadLevel", null, "searchLevelTableBody"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-        document
-          .querySelector("#searchLevelTable")
-          .style
-          .visibility = "visible";
 
         if (response.students.length > 0) {
           for (let studentsID = 0; studentsID < response.students.length; studentsID++) {
@@ -149,12 +135,90 @@
 									</td>\
 								</tr>`);
         }
-
-        document
-          .querySelector("#searchLoadLevel")
-          .classList
-          .remove("loader");
+        afterFunc(null, "searchLoadLevel", null);
       }
     });
   }, 1000));
+
+  function load_students_levels(levelID, filter) {
+
+    const start = levelStudentsCounter;
+    const end = levelStudentsCounter + levelStudentsQuantity;
+    levelStudentsCounter = end + 1;
+
+    if (!allLevelStudentsLoaded) {
+      $.ajax({
+        type: "GET",
+        url: `${mysite}/users/load_level_students/`,
+        data: {
+          start: start,
+          end: end,
+          levelID: levelID,
+          filter: filter
+        },
+        beforeSend: beforeFunc("loadMoreLevelBtn", "loadLevel"),
+        error: (error) => console.log("Error!", error),
+        success: function (response) {
+          // console.log(response);
+          document
+            .querySelector("#searchlevelName")
+            .innerHTML = response.levelName;
+
+          if (response.all_loaded) 
+            allLevelStudentsLoaded = true;
+          
+          for (let studentsID = 0; studentsID < response.students.length; studentsID++) {
+            let deliveredBtn;
+            let delivered;
+
+            if (response.students[studentsID].delivered) {
+              deliveredBtn = "btn btn-sm btn-danger";
+              delivered = "NO ENTREGADO";
+            } else if (response.students[studentsID].delivered === false) {
+              deliveredBtn = "btn btn-sm btn-success";
+              delivered = "ENTREGADO";
+            } else {
+              // null
+              deliveredBtn = "btn btn-sm btn-secondary";
+              delivered = "PENDIENTE";
+            }
+
+            $(`#levelTableBody`).append(
+              `<tr> \
+									<td scope="row" data-label="Profesor" style="background-color: ${response.students[studentsID].student__teacher__color__hex_code};"> \
+										<button onclick="changeStudentTeacher(${response.students[studentsID].student__id});" id="studentTeacherBtn${response.students[studentsID].student__id}" class="btn-sm">${response.students[studentsID].student__teacher__username !== null
+              ? response.students[studentsID].student__teacher__username
+              : "Reclamar"}</button>\
+									</td>\
+									<td scope="row" data-label="Documento"> \
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__identity_document}</a>\
+									</td>\
+									<td scope="row" data-label="Nombres">\
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__first_name}</a>\
+									</td>\
+									<td scope="row" data-label="Apellidos">\
+										<a href="#" onclick="load_profile_data(${response.students[studentsID].student__id});" data-bs-toggle="modal" data-bs-target="#profileModal">${response.students[studentsID].student__last_name}</a>\
+									</td>\
+									<td style="border-bottom: 2px solid steelblue;" scope="row" data-label="Certificado">\
+										<span style="font-size: medium;" class="thisPercentage${levelID}${response.students[studentsID].student__id}"></span> <span class="thisCertificate${levelID}${response.students[studentsID].student__id}"></span> <button id="btnDelivered${levelID}${response.students[studentsID].student__id}" onclick="changeDelivered(${levelID}, ${response.students[studentsID].student__id});" class="${deliveredBtn}">${delivered}</button>\
+									</td>\
+								</tr>`);
+
+            if (response.students[studentsID].certificate_img) {
+              document
+                .querySelector(`.thisCertificate${levelID}${response.students[studentsID].student__id}`)
+                .innerHTML = `<button target="_blank" class="btn-sm" onclick="window.open('${mysite + "/media/" + response
+                .students[studentsID]
+                .certificate_img}')">PNG</button><button target="_blank" class="btn-sm" onclick="window.open('${
+              mysite + "/media/" + response
+                .students[studentsID]
+                .certificate_pdf}')">PDF</button>`;
+            }
+            getThisPercentage(levelID, response.students[studentsID].student__id);
+          }
+          afterFunc("loadMoreLevelBtn", "loadLevel");
+        }
+      });
+    }
+  }
 </script>

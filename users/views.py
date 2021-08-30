@@ -417,219 +417,8 @@ def load_level_students(request):
 
         filter = int(request.GET.get("filter"))
 
-        if filter == 0:  # TODOS
-
-            if request.user.is_admin:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-            else:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-        elif filter == 1:  # CERTIFICADOS
-            # MyQuery.query.add_ordering(F("delivered").desc(nulls_last=True))
-
-            if request.user.is_admin:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .exclude(certificate_img="")
-                    .exclude(certificate_img__isnull=True)
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-            else:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .exclude(certificate_img="")
-                    .exclude(certificate_img__isnull=True)
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-        elif filter == 2:  # NO CERTIFICADOS
-
-            if request.user.is_admin:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        certificate_img="",
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-            else:
-
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        certificate_img="",
-                        student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-        else:
-
-            deliver = None  # Pendiente
-
-            if filter == 3:  # Entregado
-                deliver = False
-
-            elif filter == 4:  # No Entregago
-                deliver = True
-
-            if request.user.is_admin:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        delivered=deliver,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
-
-            else:
-                response["students"] += list(
-                    level.levels.filter(
-                        is_active=True,
-                        delivered=deliver,
-                        student__teacher=request.user,
-                        student__courses__date__gte=datetime.datetime.now()
-                        - datetime.timedelta(15),
-                        student__attendances__quota="PAGO",
-                    )
-                    .values(
-                        "student__teacher__color__hex_code",
-                        "student__teacher__username",
-                        "student__id",
-                        "student__identity_document",
-                        "student__first_name",
-                        "student__last_name",
-                        "certificate_img",
-                        "certificate_pdf",
-                        "delivered",
-                    )
-                    .distinct()
-                    .order_by(F("delivered").desc(nulls_last=True))[start:end]
-                )
+        response["students"] += filter_it(request.user,
+                                          filter, level, start, end)
 
         if end >= level.levels.all().count():
             response["all_loaded"] = True
@@ -868,5 +657,147 @@ def delete_note(request, note_id):
 
     else:
         response["Privilege"] = "Restricted"
+
+    return JsonResponse(response, status=200)
+
+# CHECKER
+
+
+def active_without_level(request):
+
+    response = {
+        "students": list(),
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user).distinct()
+
+        for student in students:
+
+            if not student.levels.filter(is_active=True).exists():
+                response["students"].append({
+                    "id": student.id,
+                    "identity_document": student.identity_document,
+                    "first_name": student.first_name,
+                    "last_name": student.last_name,
+                    "phone_1": student.phone_1,
+                    "phone_2": student.phone_2
+                })
+
+    return JsonResponse(response, status=200)
+
+
+def hundred_no_certificate(request):
+
+    response = {
+        "students": list(),
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+
+        for student in students:
+            for level in student.levels.filter(is_active=True, certificate_img=""):
+                percentage = round(
+                    Attendance.objects.filter(
+                        course__date__gte=level.date,
+                        student=student,
+                        attendance=True,
+                    ).count()
+                    * 100
+                    / level.attendances,
+                    1,
+                )
+
+                if percentage >= 100:
+                    response["students"].append({
+                        "id": student.id,
+                        "identity_document": student.identity_document,
+                        "first_name": student.first_name,
+                        "last_name": student.last_name,
+                        "phone_1": student.phone_1,
+                        "phone_2": student.phone_2
+                    })
+                    break
+
+    return JsonResponse(response, status=200)
+
+
+def no_hundred_certificate(request):
+
+    response = {
+        "students": list(),
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+
+        for student in students:
+            for level in student.levels.filter(is_active=True).exclude(certificate_img=""):
+                percentage = round(
+                    Attendance.objects.filter(
+                        course__date__gte=level.date,
+                        student=student,
+                        attendance=True,
+                    ).count()
+                    * 100
+                    / level.attendances,
+                    1,
+                )
+
+                if percentage < 100:
+                    response["students"].append({
+                        "id": student.id,
+                        "identity_document": student.identity_document,
+                        "first_name": student.first_name,
+                        "last_name": student.last_name,
+                        "phone_1": student.phone_1,
+                        "phone_2": student.phone_2
+                    })
+                    break
+
+    return JsonResponse(response, status=200)
+
+
+def hundred_no_delivered(request):
+
+    response = {
+        "students": list(),
+    }
+
+    if request.user.is_admin or request.user.is_teacher:
+
+        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).distinct(
+        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).distinct()
+
+        for student in students:
+            for level in student.levels.filter(is_active=True, delivered=True).exclude(certificate_img=""):
+                percentage = round(
+                    Attendance.objects.filter(
+                        course__date__gte=level.date,
+                        student=student,
+                        attendance=True,
+                    ).count()
+                    * 100
+                    / level.attendances,
+                    1,
+                )
+
+                if percentage >= 100:
+                    response["students"].append({
+                        "id": student.id,
+                        "identity_document": student.identity_document,
+                        "first_name": student.first_name,
+                        "last_name": student.last_name,
+                        "phone_1": student.phone_1,
+                        "phone_2": student.phone_2
+                    })
+                    break
 
     return JsonResponse(response, status=200)

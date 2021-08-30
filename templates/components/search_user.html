@@ -10,7 +10,7 @@
       <input id="searchStudents" type="text" class="form-control" placeholder="Buscar Estudiantes"/>
       <br/>
       <div id="searchStudentsLoader"></div>
-      <table id="resultsSearchStudentsTable" style="visibility: hidden; background-color: lightyellow">
+      <table id="resultsSearchStudentsTable" style="background-color: lightyellow">
         <thead>
           <tr>
             <th scope="col">Documento</th>
@@ -58,33 +58,9 @@
       data: {
         student: $(this).val()
       },
-      beforeSend: function () {
-        document
-          .querySelector("#resultsSearchStudentsTable")
-          .style
-          .visibility = "hidden";
-        document
-          .querySelector("#resultsSearchStudentsTableBody")
-          .innerHTML = "";
-
-        document
-          .querySelector("#searchStudentsLoader")
-          .classList
-          .add("loader");
-      },
-      error: function (error) {
-        console.log("Error!", error);
-      },
+      beforeSend: beforeFunc(null, "searchStudentsLoader", null, "resultsSearchStudentsTableBody"),
+      error: (error) => console.log("Error!", error),
       success: function (response) {
-        document
-          .querySelector("#resultsSearchStudentsTable")
-          .style
-          .visibility = "visible";
-
-        document
-          .querySelector("#searchStudentsLoader")
-          .classList
-          .remove("loader");
 
         for (let studentID in response.students) {
 
@@ -138,6 +114,8 @@
                                                   </td>\
                                               </tr>`);
         }
+
+        afterFunc(null, "searchStudentsLoader");
       }
     });
   }, 1000));
