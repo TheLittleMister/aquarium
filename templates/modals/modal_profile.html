@@ -309,9 +309,11 @@
           .phone_2}">${response
           .user[0]
           .phone_2}</a>`;
+
+        load_future_attendances(true, response.is_admin);
+        load_past_attendances(true, response.is_admin);
+
       }
     });
-    load_future_attendances(true, true);
-    load_past_attendances(true, true);
   }
 </script>
