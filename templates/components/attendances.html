@@ -165,16 +165,16 @@
           else if (response.attendances[studentID].recover === true) 
             day = "RECUPERA";
           
+          if (response.attendances[studentID].cycle === true) 
+            cycle = "INICIA";
+          else if (response.attendances[studentID].end_cycle === true) 
+            cycle = "TERMINA";
+          
           if (admin) {
             if (response.attendances[studentID].quota === "PAGO") 
               quotaBtnColor = "btn-success";
             else 
               quotaBtnColor = "btn-secondary";
-            
-            if (response.attendances[studentID].cycle === true) 
-              cycle = "INICIA";
-            else if (response.attendances[studentID].end_cycle === true) 
-              cycle = "TERMINA";
             
             if (response.attendances[studentID].note !== null && response.attendances[studentID].note !== "") {
               note = response
@@ -346,17 +346,17 @@
             day = "RECUPERA";
           }
 
+          if (response.attendances[studentID].cycle === true) {
+            cycle = "INICIA";
+          } else if (response.attendances[studentID].end_cycle === true) {
+            cycle = "TERMINA";
+          }
+
           if (admin) {
             if (response.attendances[studentID].quota === "PAGO") {
               quotaBtnColor = "btn-success";
             } else {
               quotaBtnColor = "btn-secondary";
-            }
-
-            if (response.attendances[studentID].cycle === true) {
-              cycle = "INICIA";
-            } else if (response.attendances[studentID].end_cycle === true) {
-              cycle = "TERMINA";
             }
 
             if (response.attendances[studentID].note !== null && response.attendances[studentID].note !== "") {
