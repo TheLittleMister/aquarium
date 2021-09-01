@@ -957,7 +957,7 @@ input[type="checkbox"] {
 .navbar-custom .navbar-brand.logo-image img {
 	width: 10.0625rem;
 	height: 2rem;
-	-webkit-backface-visibility: hidden;
+	/* -webkit-backface-visibility: hidden; */
 }
 
 .navbar-custom .navbar-brand.logo-text {
@@ -2283,9 +2283,6 @@ a:hover.back-to-top {
 	/* About */
 	.counter #counter {
 		text-align: left;
-	}
-
-	.counter #counter .cell {
 	}
 	/* end of about */
 
