@@ -205,7 +205,7 @@
                                     <button onclick="editLevel(${ajaxResponse.studentLevelID}, ${modal});" class="btn btn-sm btn-outline-primary mb-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalLevel">EDITAR</button>\
                                     <strong>Desde:</strong> ${ajaxResponse.date}\
                                     <br>\
-                                    <strong>Asistencias:</strong> ${ajaxResponse.attendances_count}/${ajaxResponse.levelAttendances}\
+                                    <strong>Asistencias:</strong> ${ajaxResponse.percentage < 100 ? ajaxResponse.attendances_count : ajaxResponse.levelAttendances}/${ajaxResponse.levelAttendances}\
                                 </div>\
 								<button id="btnDelivered${ajaxResponse.levelID}${userID}" onclick="changeDelivered(${ajaxResponse.levelID}, ${userID});" class="${deliveredBtn}">${delivered}</button><br><br>\
 								<a class="btn btn-sm btn-primary mb-2" href="${ajaxResponse.certificate_img}">CERTIFICADO PNG</a>\
@@ -227,7 +227,7 @@
                                     <button onclick="editLevel(${ajaxResponse.studentLevelID}, ${modal});" class="btn btn-sm btn-outline-primary mb-2" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalLevel">EDITAR</button>\
                                     <strong>Desde:</strong> ${ajaxResponse.date}\
                                     <br>\
-                                    <strong>Asistencias:</strong> ${ajaxResponse.attendances_count}/${ajaxResponse.levelAttendances}\
+                                    <strong>Asistencias:</strong> ${ajaxResponse.percentage < 100 ? ajaxResponse.attendances_count : ajaxResponse.levelAttendances}/${ajaxResponse.levelAttendances}\
                                 </div>\
 								<button id="btnDelivered${ajaxResponse.levelID}${userID}" onclick="changeDelivered(${ajaxResponse.levelID}, ${userID});" class="${deliveredBtn}">${delivered}</button><br><br>\
 								<button onclick="this.style.display='none'; generateCertificate(${ajaxResponse.studentLevelID}, ${modal});" class="btn btn-sm btn-warning mb-2" href="#">GENERAR CERTIFICADO</button>\
