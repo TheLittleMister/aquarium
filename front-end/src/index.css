@@ -1,0 +1,83 @@
+/* COLOR VARIABLES */
+:root {
+  --white: #fff;
+
+  --blue: #66b2ff;
+  --blue-light: #e0f0ff;
+  --blue-font: #3d6b99;
+
+  --pink: #e455e6;
+  --pink-light: #fceafc;
+  --pink-font: #8c0d97;
+}
+
+/* BASIC RESET */
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  font-size: 1.6rem;
+  font-family: "Inter", sans-serif !important;
+}
+
+html {
+  /*
+    10 / 16 = 0.625
+    1 rem === 10px
+    1 em === 16px
+  */
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+}
+
+body {
+  box-sizing: border-box;
+  /* rem is always measured relative to the document’s root font-size. */
+  /* e.g. padding: 3rem; /* 30px */
+}
+
+a {
+  text-decoration: none;
+}
+
+@media only screen and (max-width: 35em) {
+  html {
+    font-size: 50%;
+  }
+}
+
+@media only screen and (max-width: 33em) {
+  html {
+    font-size: 40%;
+  }
+}
+
+@media only screen and (max-width: 21em) {
+  html {
+    font-size: 30%;
+  }
+}
+
+::-webkit-scrollbar {
+  background-color: var(--blue-light);
+  color: var(--blue);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--blue-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--blue);
+}
+
+::selection {
+  background-color: var(--blue) !important;
+  color: var(--blue-light) !important;
+}
+
+.dontUseThisClass {
+  color: #ff4500;
+}

@@ -1,0 +1,16 @@
+.contact {
+  background: var(--white);
+  background: linear-gradient(180deg, transparent 20%, var(--blue-light) 70%),
+    url("./images/water.webp") center center no-repeat;
+
+  background-size: cover;
+  padding: 8rem 0;
+}
+
+.map {
+  border: 0.2rem solid var(--blue);
+  border-radius: 1.6rem;
+  max-width: 100%;
+  width: 100%;
+  height: 56rem;
+}
