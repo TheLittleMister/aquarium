@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 from django.core.management.utils import get_random_secret_key
-from pathlib import Path
+from datetime import timedelta
+
+# from pathlib import Path
 import os
 import json
 
@@ -26,19 +29,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
+
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_random_secret_key() if DEBUG else config.get('SECRET_KEY')
+SECRET_KEY = get_random_secret_key() if DEBUG else config.get("SECRET_KEY")
 
-
-ALLOWED_HOSTS = [
-    "localhost",
-    "172.104.13.4" if not DEBUG else '127.0.0.1',
-    "aquariumschool.co",
-    "www.aquariumschool.co",
-]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"] if DEBUG else config.get(
+    "ALLOWED_HOSTS")
 
 
 # Application definition
@@ -46,7 +45,6 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     "users",
     "courses",
-    "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -54,12 +52,20 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_cleanup.apps.CleanupConfig",
+    "rest_framework",
+    "corsheaders",
+    "django_rest_passwordreset",
 ]
-# MIDDLEWARE_CLASSES = [
-#    'djangosecure.middleware.SecurityMiddleware',
-# ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -73,7 +79,10 @@ ROOT_URLCONF = "aquarium.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [
+            os.path.join(BASE_DIR, "front-end/build"),
+            os.path.join(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -87,18 +96,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "aquarium.wsgi.application"
-
 AUTH_USER_MODEL = "users.Account"
 
 
 # Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 if DEBUG:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
 
@@ -106,8 +114,8 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "aquarium",
-            "USER": "franklin",
+            "NAME": config.get("DBNAME"),
+            "USER": config.get("DBUSER"),
             "PASSWORD": config.get("DBPASSWORD"),
             "HOST": "localhost",
             "PORT": "",
@@ -116,7 +124,7 @@ else:
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -135,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
+# https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = "es"
 
@@ -149,52 +157,83 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+# https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates/static/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "front-end/build/static/"),
+    os.path.join(BASE_DIR, "templates/static/"),
+]
 
 # SESSION
-# opional, as this will log you out when browser is closed
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 10000  # 3600s = 1h
-# Will prrevent from logging you out after N seconds
+SESSION_COOKIE_AGE = 7200  # SECONDS
 SESSION_SAVE_EVERY_REQUEST = True
 
-# HTTPS
-# SECURE_SSL_REDIRECT = True
-# SECURE_HSTS_SECONDS = 60
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_FRAME_DENY =  True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SESSION_COOKIE_SECURE = True
-# SESSION_COOKIE_HTTPONLY = True
-# CSRF_COOKIE_SECURE = True
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
-
-GOOGLE_RECAPTCHA_SECRET_KEY = "6LfvUi4aAAAAAMNeZ1Uaradte3Rcg8V9F66bNpCH"
-RECAPTCHA_SITE_KEY = "6LfvUi4aAAAAAAsmt0oluwusZwigl1lTG87hk9BC"
-RECAPTCHA_SECRET_KEY = "6LfvUi4aAAAAAMNeZ1Uaradte3Rcg8V9F66bNpCH"
 
 # AUTHENTICATION (LOGIN)
-
 AUTHENTICATION_BACKENDS = ("users.backends.AuthBackend",)
 
+# AUTO FIELD (DJANGO >= 3.2)
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# LOGIN URL
+LOGIN_URL = "/login"
+
+# Google reCAPTCHA
+# GOOGLE_RECAPTCHA_SECRET_KEY = "_" if DEBUG else config.get("RECAPTCHA_SECRET")
+# GOOGLE_RECAPTCHA_SITE_KEY = "_" if DEBUG else config.get("RECAPTCHA_SITE")
 
 # EMAIL STMP
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "_" if DEBUG else config.get("EMAIL_HOST")
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "aquariumschool@gmail.com"
-EMAIL_HOST_PASSWORD = "" if DEBUG else config.get("GPASS")
+EMAIL_HOST_USER = "_" if DEBUG else config.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = "_" if DEBUG else config.get("EMAIL_PASS")
 EMAIL_USE_TLS = True
-SERVER_EMAIL = "aquariumschool@gmail.com"
-DEFAULT_FROM_EMAIL = "aquariumschool@gmail.com"
+SERVER_EMAIL = "_" if DEBUG else config.get("EMAIL_USER")
+DEFAULT_FROM_EMAIL = "_" if DEBUG else config.get("EMAIL_USER")
 
 
-# CRISPY
+# CSRF
+"""
+    CSRF is required to make a POST, it is NOT invalid until the data is POSTED.
+    When a CSRF token is used and the data is POSTED, all CSRF tokens are no longer valid.
+    When a new CSRF token is generated, all the others remain valid.
+"""
+CSRF_COOKIE_SECURE = False if DEBUG else True
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+# CORS HEADERS
+CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
+
+
+# SIMPLE JWT
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=12),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    "JTI_CLAIM": "jti",
+    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+}

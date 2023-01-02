@@ -13,14 +13,3 @@ class Sex(models.Model):
 
     def __str__(self):
         return f"{self.sex_name}"
-
-
-class Nationality(models.Model):
-    nationality_name = models.CharField(max_length=60)  # identity_document
-
-    def __str__(self):
-        return f"{self.nationality_name}"
-
-
-class Color(models.Model):
-    hex_code = models.CharField(max_length=30)

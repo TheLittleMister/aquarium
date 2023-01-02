@@ -62,7 +62,6 @@ class Attendance(models.Model):
         Account, on_delete=models.CASCADE, related_name="attendances")
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="attendances")
-    image = models.ImageField("Imagen", upload_to="receipts", blank=True)
 
     attendance = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
@@ -111,23 +110,17 @@ class Student_Level(models.Model):
     certificate_pdf = models.FileField(
         upload_to="certificates", null=True, blank=True)
 
-    is_active = models.BooleanField(default=False)
 
-    delivered = models.BooleanField(
-        default=True, null=True, blank=True)  # Inverted bool
+class Schedule(models.Model):
+    weekday = models.ForeignKey(
+        Weekday, on_delete=models.CASCADE, related_name="schedules")
 
-
-class Note(models.Model):
-
-    student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="all_notes")
-
-    teacher = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="notes")
-
-    note = models.CharField("Nota", max_length=600)
-
-    updated_at = models.DateTimeField(auto_now=True)
+    start_time = models.TimeField("Hora Inicio")  # Time START
+    end_time = models.TimeField("Hora Termina")  # Time END
 
     class Meta:
-        ordering = ['-updated_at']
+        ordering = ['weekday']
+
+
+class Price(models.Model):
+    price = models.IntegerField(default=0)

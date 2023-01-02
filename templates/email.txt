@@ -1,0 +1,12 @@
+Está recibiendo este correo electrónico porque ha solicitado un restablecimiento
+de contraseña para su cuenta de usuario.
+
+Vaya a la página siguiente y elija una nueva contraseña:
+
+{{ reset_password_url }}
+
+Su nombre de usuario, en caso de que lo haya olvidado: {{ username }}
+
+Gracias por preferirnos!
+
+Aquarium School

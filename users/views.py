@@ -1,22 +1,12 @@
-from django.shortcuts import render
-import datetime
-from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
-from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from users.models import *
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 from django.db.models import Q, F
-from PIL import Image
 from django.utils import timezone
 from unidecode import unidecode
 from django.contrib.auth.models import BaseUserManager
 from django.db.models.functions import Concat
 from django.db.models import Value
-from django.conf import settings
+from django.core.paginator import Paginator
 
 from courses.forms import *
 from .forms import *
@@ -24,814 +14,406 @@ from .utils import *
 from .labels import *
 from courses.models import *
 
-mysite = "http://127.0.0.1:8000/" if settings.DEBUG else "https://aquariumschool.co/"
+# REST FRAMEWORK
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 # USER AUTHENTICATION
-
-
-def login_view(request):
-
-    response = {
-        "user": None,
-    }
-
-    post = request.POST.copy()
-
-    post["username"] = str(post["username"]).lower()
-
+@api_view(["POST"])
+def login(request):
+    response = {"errors": list()}
+    post = request.data.copy()
+    post["username"] = str(post["username"]).strip().lower()
     form = AuthenticationForm(data=post)
 
     if form.is_valid():
         user = form.get_user()
-        login(request, user)
+        refresh = RefreshToken.for_user(user)
+        response = {
+            "user": getUser(user),
+            "tokens": {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+        }
         user.real_last_login = timezone.now()
         user.save()
-        response["user"] = user.id
 
-    return JsonResponse(response, status=200)
+    else:
+        response["errors"] += getFormErrors(form)
 
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect("/")
+    return Response(response)
 
 
-def available(request):
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def changePassword(request):
+    response = {"errors": list()}
 
-    response = {
-        "email": None,
-        "username": None,
-        "identity_document": None,
-    }
+    form = PasswordChangeForm(user=request.user, data=request.data)
 
-    if request.GET.get("email", ""):
+    if form.is_valid():
+        form.save()  # update_session_auth_hash(request, form.user)
+        response = {"messages": ["Contraseña Actualizada!"]}
 
-        email = str(request.GET["email"]).lower()
+    else:
+        response["errors"] += getFormErrors(form)
 
-        try:
-            validate_email(email)
-
-            if Account.objects.filter(email=email).exists():
-                response["email"] = "Taken"
-
-            else:
-                response["email"] = "Not taken"
-
-            if not request.user.is_anonymous:
-                if request.user.email == email:
-                    response["email"] = False
-
-        except:
-            response["email"] = "Invalid"
-
-    if request.GET.get("username", ""):
-
-        username = str(request.GET["username"]).lower()
-        user_valid = UnicodeUsernameValidator()
-
-        try:
-            user_valid(username)
-
-            if Account.objects.filter(username=username).exists():
-                response["username"] = "Taken"
-
-            else:
-                response["username"] = "Not taken"
-
-            if not request.user.is_anonymous:
-                if request.user.username == username:
-                    response["username"] = False
-
-        except:
-            response["username"] = "Invalid"
-
-    if request.GET.get("identity_document", "") or request.GET.get(
-        "identity_document_1", ""
-    ):
-
-        identity_document = int(request.GET["identity_document"])
-
-        try:
-            if not str(identity_document).isdigit():  # CHECK THIS!
-                raise ValidationError()
-
-            if Account.objects.filter(identity_document=identity_document).exists():
-                response["identity_document"] = "Taken"
-
-            else:
-                response["identity_document"] = "Not taken"
-
-            if not request.user.is_anonymous:
-                if request.user.identity_document == identity_document:
-                    response["identity_document"] = False
-
-        except:
-            response["identity_document"] = "Invalid"
-
-    return JsonResponse(response, status=200)
+    return Response(response)
 
 
-# USER PROFILE
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def defaultUserPassword(request):
+    response = {"errors": list()}
+
+    username = request.data["username"]
+    user = Account.objects.get(username=username)
+
+    if not request.user.check_password(request.data["password"]):
+        response["errors"].append("Contraseña Incorrecta.")
+
+    else:
+        user.set_password("AquariumSchool")
+        user.save()
+        response = {"messages": ["Contraseña reseteada!"]}
+
+    return Response(response)
 
 
+@api_view(["GET", "PUT", "POST"])
+@permission_classes([IsAuthenticated])
 def profile(request):
+    response = {"errors": list()}
 
-    if request.user.is_authenticated:
+    user = request.user
+    username = request.GET.get("username", "")
 
-        age = (
-            round((datetime.date.today() - request.user.date_birth).days // 365.25)
-            if request.user.date_birth
+    if username and (request.user.is_admin or request.user.is_teacher):
+        user = Account.objects.get(username=username)
+
+    if request.method == "GET":
+        return Response(getUser(user))
+
+    data = request.data.copy()
+    data["username"] = str(data["username"]).strip().lower()
+
+    if request.method == "PUT":
+        form = ProfileForm(data=data, instance=user)
+
+    elif request.method == "POST" and request.user.is_admin:
+        form = ProfileForm(data=data)
+
+    else:
+        response["errors"] += ["403 (Forbidden)"]
+        return Response(response)
+
+    if form.is_valid():
+        user = form.save(commit=False)
+
+        user.email = (
+            str(BaseUserManager.normalize_email(user.email)).lower()
+            if user.email
             else None
         )
 
-        return render(
-            request,
-            "users/teacher_profile.html" if request.user.is_admin or request.user.is_teacher else "users/profile.html",
-            {
-                "user": request.user,
-                "age": age,
-                "studentForm": StudentForm(instance=request.user) if request.user.is_admin else ProfileForm(instance=request.user),
-                "userBar": False if request.user.is_admin else True,
-                "adminBar": True if request.user.is_admin else False,
-                "noteForm": NoteForm(),
-                "signatureForm": SignatureForm(instance=request.user) if request.user.is_admin else None,
-            },
-        )
+        user.first_name = unidecode(str(user.first_name).upper())
+        user.last_name = unidecode(str(user.last_name).upper())
 
-    return HttpResponseRedirect("/")
+        if user.parent:
+            user.parent = unidecode(str(user.parent).upper())
 
+        if request.method == "POST" and request.user.is_admin:
+            user.set_password("AquariumSchool")
 
-def profile_photo(request, user_id):
-
-    user = Account.objects.get(pk=user_id)
-
-    if request.user.is_admin or request.user == user:
-
-        if (
-            request.FILES.get("image", False) != False
-            and "image" in request.FILES["image"].content_type
-        ):
-
-            if user.image != "default-profile.png":
-                user.image.delete()
-
-            user.image = request.FILES["image"]
-            user.save()  # Can we just pass args to save???
-
-            img = Image.open(user.image.path)
-
-            x = float(request.POST["x"])
-            y = float(request.POST["y"])
-            h = float(request.POST["h"])
-            w = float(request.POST["w"])
-
-            img = img.crop((x, y, w + x, h + y))
-            img.save(user.image.path)
-
-    if request.user.is_admin:
-        return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
-
-    else:
-        return HttpResponseRedirect(reverse("users:profile"))
-
-
-# @staff_member_required(login_url=mysite)
-def edit_student(request, user_id):
-
-    response = {
-        "edited": False,
-        "messages": list(),
-    }
-
-    user = Account.objects.get(pk=user_id)
-
-    if request.user.is_admin:
-        studentform = StudentForm(request.POST, instance=user)
-
-        if studentform.is_valid():
-            user = studentform.save()
-
-            user.email = (
-                str(BaseUserManager.normalize_email(user.email)).lower()
-                if user.email
-                else None
-            )
-
-            user.first_name = unidecode(str(user.first_name).upper())
-            user.last_name = unidecode(str(user.last_name).upper())
-
-            if user.parent:
-                user.parent = unidecode(str(user.parent).upper())
-
-            user.save()
-
-            response["edited"] = True
-
-        else:
-            for key in studentform.errors.as_data():
-                response["messages"].append(
-                    str(studentform.errors.as_data()[key][0])[2:-2].replace(
-                        "Account", "cuenta"
-                    )
-                )
-
-    elif request.user == user:
-        profileform = ProfileForm(request.POST, instance=user)
-
-        if profileform.is_valid():
-            user = profileform.save()
-            user.newrequest = True
-
-            user.email = (
-                str(BaseUserManager.normalize_email(user.email)).lower()
-                if user.email
-                else None
-            )
-
-            if user.first_name_1:
-                user.first_name_1 = unidecode(str(user.first_name_1).upper())
-
-            if user.last_name_1:
-                user.last_name_1 = unidecode(str(user.last_name_1).upper())
-
-            if user.parent:
-                user.parent = unidecode(str(user.parent).upper())
-
-            user.save()
-            response["edited"] = True
-
-        else:
-            for key in profileform.errors.as_data():
-                response["messages"].append(
-                    str(profileform.errors.as_data()[key][0])[2:-2].replace(
-                        "Account", "cuenta"
-                    )
-                )
-
-    else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-
-@staff_member_required(login_url=mysite)
-def default_password(request, user_id):
-
-    user = Account.objects.get(pk=user_id)
-    user.set_password("AquariumSchool")
-    user.save()
-
-    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
-
-
-@staff_member_required(login_url=mysite)
-def delete_student(request, user_id):
-    Account.objects.get(pk=user_id).delete()
-    return HttpResponseRedirect(reverse("courses:students"))
-
-
-def cancel_request(request, user_id):
-
-    user = Account.objects.get(pk=user_id)
-
-    if request.user.is_admin or request.user == user:
-        user.newrequest = False
         user.save()
 
-    if request.user.is_admin:
-        return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
+        response = getUser(user)
 
     else:
-        return HttpResponseRedirect(reverse("users:profile"))
+        response["errors"] += getFormErrors(form)
+
+    return Response(response)
 
 
-@staff_member_required(login_url=mysite)
-def approve_request(request, user_id):
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def users(request):
+    # response = {"errors": list()}
 
-    user = Account.objects.get(pk=user_id)
+    search = " ".join(request.data.get("search").split())
+    userType = request.data.get("type")
+    order = request.data.get("order")
+    filter = dict()
+    qObjects = Q()
 
-    try:
-        user.first_name = user.first_name_1
-        user.last_name = user.last_name_1
-        user.identity_document = user.identity_document_1
-        user.phone_1 = user.phone_1_1
-        user.phone_2 = user.phone_2_1
-        user.save()
+    if search:
+        filters = ["full_name__icontains",
+                   "username__icontains",
+                   "email__icontains",
+                   "identity_document__icontains",
+                   "parent__icontains",
+                   "phone_1__icontains",
+                   "phone_2__icontains"]
 
-    except:
-        pass
+        tags = [{filter: search} for filter in filters]
 
-    user.newrequest = False
-    user.save()
+        for tag in tags:
+            qObjects |= Q(**tag)
 
-    return HttpResponseRedirect(reverse("courses:student", args=(user.id,)))
+    if userType == 1:
+        filter["is_admin"] = False
+        filter["is_teacher"] = False
 
+    elif userType == 2:
+        filter["is_admin"] = False
+        filter["is_teacher"] = True
 
-# TEACHER FUNCTIONS
+    elif userType == 3:
+        filter["is_admin"] = True
+        filter["is_teacher"] = False
 
+    elif userType == 4:
+        filter["is_admin"] = False
+        filter["is_teacher"] = False
+        filter["attendances__course__date__gte"] = datetime.datetime.now()
+        filter["attendances__quota"] = "PAGO"
 
-def create_schedule(request):
+    elif userType == 5:
+        filter["is_admin"] = False
+        filter["is_teacher"] = False
+        filter["teacher__isnull"] = True
 
-    if request.user.is_teacher and not request.user.is_admin:
-
-        courses = (
-            Account.objects.get(pk=request.GET.get("userID"))
-            .teacher_courses.filter(
-                date__gte=datetime.datetime.now() - datetime.timedelta(15)
-            )
-            .order_by("date", "start_time")
-        )
-
-        return JsonResponse({"schedule": get_schedule(courses)}, status=200)
-
-    elif request.user.is_admin:
-
-        courses = Course.objects.filter(date__gte=datetime.datetime.now(
-        ) - datetime.timedelta(15)).order_by("date", "start_time")
-        return JsonResponse({"schedule": get_schedule(courses)}, status=200)
-
-    else:
-        return JsonResponse({"Privilege": "Restricted"}, status=200)
-
-
-def change_student_teacher(request, user_id):
-
-    response = dict()
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        student = Account.objects.get(pk=user_id)
-
-        student.teacher = None if student.teacher else request.user
-
-        student.save()
-
-        response["teacher"] = (
-            student.teacher.username if student.teacher else "Reclamar"
-        )
-
-        response["color"] = (
-            student.teacher.color.hex_code
-            if student.teacher and student.teacher.color
-            else None
-        )
-
-        return JsonResponse(response, status=200)
+    if userType in [1, 2, 3, 4, 5]:
+        accounts = list(Account.objects.annotate(
+            full_name=Concat("first_name", Value(" "), "last_name"),
+        ).filter(qObjects, **filter).values("username", "id", "identity_document", "first_name", "last_name",
+                                            "phone_1", "real_last_login").order_by(F(order).desc(nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct())
 
     else:
-        return JsonResponse({"Privilege": "Restricted"}, status=200)
+        filter["is_admin"] = False
+        filter["is_teacher"] = False
+        filter["courses__date__gte"] = datetime.datetime.now()
+
+        accountObjects = Account.objects.annotate(
+            full_name=Concat("first_name", Value(" "), "last_name"),
+        ).filter(qObjects, **filter).order_by(F(order).desc(
+            nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct()
+
+        if userType == 6:
+            accounts = getPlus(accountObjects)
+
+        elif userType == 7:
+            accounts = getInconsistencies(accountObjects)
+
+        elif userType == 8:
+            accounts = getUsersWithoutLevel(accountObjects)
+
+        elif userType == 9:
+            accounts = getHundredWithoutCertificate(accountObjects)
+
+        elif userType == 10:
+            accounts = getNoHundredWithCertificate(accountObjects)
+
+    accountPaginator = Paginator(accounts, 14)
+    page_num = request.data.get("page")
+    page = accountPaginator.get_page(page_num)
+
+    return Response({
+        "page": page.object_list,
+        "count": accountPaginator.count,
+        "paginationCount": accountPaginator.num_pages
+    })
 
 
-@staff_member_required(login_url=mysite)
-def signature(request, user_id):
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def changePhoto(request):
+    response = {"url": "", "field": "image"}
 
-    teacher = Account.objects.get(pk=user_id)
-
-    signatureForm = SignatureForm(
-        request.POST, request.FILES, instance=teacher)
-
-    if signatureForm.is_valid():
-        signatureForm.save()
-
-    return HttpResponseRedirect(reverse("courses:student", args=(user_id,)))
-
-
-# LEVEL FUNCTIONS
-
-
-def load_level_students(request):
-
-    response = {
-        "students": list(),
-        "all_loaded": False,
-        "levelName": None,
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        start = int(request.GET.get("start"))
-        end = int(request.GET.get("end")) + 1
-        level_id = int(request.GET.get("levelID"))
-
-        level = Level.objects.get(pk=level_id)
-        response["levelName"] = level.name
-
-        filter = int(request.GET.get("filter"))
-
-        response["students"] += filter_it(request.user,
-                                          filter, level, start, end)
-
-        if end >= level.levels.all().count():
-            response["all_loaded"] = True
-
-    else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-
-def search_level_students(request):
-
-    response = {
-        "students": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-        search = request.GET.get("student")
-        level_id = int(request.GET.get("levelID"))
-        level = Level.objects.get(pk=level_id)
-
-        if len(search) > 1:
-            response["students"] += list(
-                level.levels.annotate(
-                    student_full_name=Concat(
-                        "student__first_name", Value(" "), "student__last_name")
-                ).filter(
-                    Q(student_full_name__icontains=search) |
-                    Q(student__username__icontains=search)
-                    | Q(student__email__icontains=search)
-                    # | Q(student__first_name__icontains=search)
-                    # | Q(student__last_name__icontains=search)
-                    | Q(student__identity_document__icontains=search)
-                    | Q(student__phone_1__icontains=search)
-                    | Q(student__phone_2__icontains=search),
-                    is_active=True,
-                ).values(
-                    "student__teacher__color__hex_code",
-                    "student__teacher__username",
-                    "student__id",
-                    "student__identity_document",
-                    "student__first_name",
-                    "student__last_name",
-                    "certificate_img",
-                    "certificate_pdf",
-                    "delivered",
-                )
-            )
-
-    else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-
-def get_this_percentage(request):
-
-    response = {
-        "percentage": "Inactivo",
-        "certificate_img": None,
-        "certificate_pdf": None,
-        "is_active": False,
-        "delivered": False,
-    }
-
-    student_level = Student_Level.objects.get(
-        student=request.GET.get("studentID"), level=request.GET.get("levelID")
-    )
-
-    if student_level.is_active:
-
-        percentage = round(
-            Attendance.objects.filter(
-                course__date__gte=student_level.date,
-                student=student_level.student,
-                attendance=True,
-            ).count()
-            * 100
-            / student_level.attendances,
-            1,
-        )
-
-        response["delivered"] = student_level.delivered
-        response["is_active"] = student_level.is_active
-
-        if student_level.certificate_img:
-            response["certificate_img"] = student_level.certificate_img.url
-            response["certificate_pdf"] = student_level.certificate_pdf.url
-        response["percentage"] = f"{percentage if percentage < 101 else 100} %"
-
-    return JsonResponse(response, status=200)
-
-
-def change_delivered(request, levelID, studentID):
-
-    response = {
-        "delivered": False,
-    }
+    user = request.user
+    username = request.data["username"]
 
     if request.user.is_admin:
-
-        student_level = Student_Level.objects.get(
-            student=studentID, level=levelID)
-
-        if student_level.delivered:
-            student_level.delivered = None
-
-        elif student_level.delivered == False:  # ENTR ==> PEN ==> NO ENTR
-            student_level.delivered = True
-
-        else:
-            student_level.delivered = False
-
-        student_level.save()
-
-        response["delivered"] = student_level.delivered
-
-    return JsonResponse(response, status=200)
-
-
-def create_note(request, user_id):
-
-    response = {
-        # "modal": modal,
-        "edited": False,
-        "messages": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-        form = NoteForm(request.POST)
-
-        if form.is_valid():
-            note = form.save(commit=False)  # Save Note in a variable.
-            note.student = Account.objects.get(pk=user_id)
-            note.teacher = request.user
-            note.save()
-
-            response["edited"] = True
-            response["id"] = note.id
-            response["note"] = note.note
-            response["username"] = note.teacher.username
-            response["date"] = note.updated_at
-
-        else:
-            for key in form.errors.as_data():
-                response["messages"].append(
-                    str(form.errors.as_data()[key][0])[2:-2])
-
-    else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-
-def load_notes(request):
-
-    response = {
-        "notes": list(),
-        "all_loaded": False,
-    }
-
-    start = int(request.GET.get("start") or 0)
-    end = int(request.GET.get("end") or (start + 20)) + 1
-    user_id = int(request.GET.get("userID"))
-
-    response["notes"] += list(
-        Note.objects.filter(student=user_id).values(
-            "id", "note", "updated_at", "teacher__username", "teacher__id")[start:end]
-    )
+        user = Account.objects.get(username=username)
 
     if (
-        end
-        >= Note.objects.filter(student=user_id).count()
+        request.FILES.get("image", False) != False
+        and "image" in request.FILES["image"].content_type
     ):
-        response["all_loaded"] = True
+        user.image.save("profile.png", request.FILES["image"])
+        response["url"] = mysite + user.image.url
 
-    # Return serialized student attendances data
-    return JsonResponse(response, status=200)
-
-
-def note_info(request, note_id):
-    form = NoteForm(instance=Note.objects.get(pk=int(note_id)))
-    return JsonResponse({"form": form.as_p()}, status=200)
+    return Response(response)
 
 
-def edit_note(request, note_id):
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def changeSignature(request):
+    response = {"url": "", "field": "signature"}
 
-    response = {
-        "edited": False,
-        "form": None,
-        "messages": list()
-    }
+    username = request.data["username"]
+    user = Account.objects.get(username=username)
 
-    note = Note.objects.get(pk=int(note_id))
+    if (
+        request.FILES.get("image", False) != False
+        and "image" in request.FILES["image"].content_type
+    ):
+        user.signature.save("signature.png", request.FILES["image"])
+        response["url"] = mysite + user.signature.url
 
-    if request.user.is_admin or request.user.is_teacher and request.user == note.teacher:
+    return Response(response)
 
-        form = NoteForm(request.POST, instance=note)
 
-        if form.is_valid():
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def changeRole(request):
+    response = {"errors": list()}
 
-            note = form.save()
+    username = request.data["username"]
+    user = Account.objects.get(username=username)
 
-            response["edited"] = True
-            response["id"] = note.id
-            response["note"] = note.note
-            response["username"] = note.teacher.username
-            response["date"] = note.updated_at
+    if not request.user.check_password(request.data["password"]):
+        response["errors"].append("Contraseña Incorrecta.")
 
-            form = NoteForm(instance=note)
-            response["form"] = form.as_p()
+    else:
+        type = request.data["radio-buttons-group"]
+        user.is_admin = False
+        user.is_staff = False
+        user.is_superuser = False
+        user.is_teacher = False
+
+        if type == "Profesor":
+            user.is_teacher = True
+
+        elif type == "Administrador":
+            user.is_admin = True
+            user.is_staff = True
+            user.is_superuser = True
+
+        user.save()
+
+        if not user.is_teacher:
+            for account in Account.objects.filter(teacher=user):
+                account.teacher = None
+                account.save()
+
+        response["type"] = type
+
+    return Response(response)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAdminUser])
+def deleteProfile(request):
+    response = {"errors": list()}
+
+    username = request.data["username"]
+    user = Account.objects.get(username=username)
+
+    if not request.user.check_password(request.data["password"]):
+        response["errors"].append("Contraseña Incorrecta.")
+
+    else:
+        user.delete()
+
+    return Response(response)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAdminUser])
+def teacher(request):
+
+    response = {"teachers": list()}
+
+    if request.method == "GET":
+
+        response["teachers"] += list(Account.objects.filter(is_admin=False, is_teacher=True).annotate(
+            label=Concat("first_name", Value(" "), "last_name")).values("label", "id").order_by("id"))
+
+    else:
+
+        username = request.data["username"]
+        user = Account.objects.get(username=username)
+        teacher = request.data["teacher"]
+
+        if teacher:
+            teacher = Account.objects.get(pk=teacher["id"])
+
+        user.teacher = teacher
+        user.save()
+
+        response["teacher"] = teacher.first_name + \
+            " " + teacher.last_name if teacher else ""
+
+        response["teacherID"] = teacher.id if user.teacher else ""
+
+    return Response(response)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def students(request):
+
+    if request.user.is_teacher:
+        search = " ".join(request.data.get("search").split())
+        userType = request.data.get("type")
+        order = request.data.get("order")
+        filter = {"teacher": request.user}
+        qObjects = Q()
+
+        if search:
+            filters = ["full_name__icontains",
+                       "username__icontains",
+                       "email__icontains",
+                       "identity_document__icontains",
+                       "parent__icontains",
+                       "phone_1__icontains",
+                       "phone_2__icontains"]
+
+            tags = [{filter: search} for filter in filters]
+
+            for tag in tags:
+                qObjects |= Q(**tag)
+
+        if userType == 1:
+            filter["is_admin"] = False
+            filter["is_teacher"] = False
+
+        if userType in [1]:
+            accounts = list(Account.objects.annotate(
+                full_name=Concat("first_name", Value(" "), "last_name"),
+            ).filter(qObjects, **filter).values("username", "id", "identity_document", "first_name", "last_name",
+                                                "phone_1", "real_last_login").order_by(F(order).desc(nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct())
 
         else:
-            for key in form.errors.as_data():
-                response["messages"].append(
-                    str(form.errors.as_data()[key][0])[2:-2])
+            filter["is_admin"] = False
+            filter["is_teacher"] = False
+            filter["courses__date__gte"] = datetime.datetime.now()
+
+            accountObjects = Account.objects.annotate(
+                full_name=Concat("first_name", Value(" "), "last_name"),
+            ).filter(qObjects, **filter).order_by(F(order).desc(
+                nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct()
+
+            if userType == 8:
+                accounts = getUsersWithoutLevel(accountObjects)
+
+            elif userType == 9:
+                accounts = getHundredWithoutCertificate(accountObjects)
+
+        accountPaginator = Paginator(accounts, 14)
+        page_num = request.data.get("page")
+        page = accountPaginator.get_page(page_num)
+
+        return Response({
+            "page": page.object_list,
+            "count": accountPaginator.count,
+            "paginationCount": accountPaginator.num_pages
+        })
 
     else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-
-def delete_note(request, note_id):
-
-    response = {
-        "deleted": False,
-        "noteID": note_id
-    }
-
-    note = Note.objects.get(pk=int(note_id))
-
-    if request.user.is_admin or request.user.is_teacher and request.user == note.teacher:
-        note.delete()
-        response["deleted"] = True
-
-    else:
-        response["Privilege"] = "Restricted"
-
-    return JsonResponse(response, status=200)
-
-# CHECKER
-
-
-def active_without_level(request):
-
-    response = {
-        "students": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO").order_by("teacher").distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user).order_by("teacher").distinct()
-
-        for student in students:
-
-            if not student.levels.filter(is_active=True).exists():
-                response["students"].append({
-                    "id": student.id,
-                    "identity_document": student.identity_document,
-                    "first_name": student.first_name,
-                    "last_name": student.last_name,
-                    "phone_1": student.phone_1,
-                    "phone_2": student.phone_2,
-                    "teacher": student.teacher.username if student.teacher else None
-                })
-
-            else:
-                to_append = True
-                for level in student.levels.filter(is_active=True):
-                    percentage = round(
-                        Attendance.objects.filter(
-                            course__date__gte=level.date,
-                            student=student,
-                            attendance=True,
-                        ).count()
-                        * 100
-                        / level.attendances,
-                        1,
-                    )
-
-                    if percentage < 100:
-                        to_append = False
-                        break
-
-                if to_append:
-                    response["students"].append({
-                        "id": student.id,
-                        "identity_document": student.identity_document,
-                        "first_name": student.first_name,
-                        "last_name": student.last_name,
-                        "phone_1": student.phone_1,
-                        "phone_2": student.phone_2,
-                        "teacher": student.teacher.username if student.teacher else None
-                    })
-
-    return JsonResponse(response, status=200)
-
-
-def hundred_no_certificate(request):
-
-    response = {
-        "students": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
-
-        for student in students:
-            for level in student.levels.filter(is_active=True, certificate_img=""):
-                percentage = round(
-                    Attendance.objects.filter(
-                        course__date__gte=level.date,
-                        student=student,
-                        attendance=True,
-                    ).count()
-                    * 100
-                    / level.attendances,
-                    1,
-                )
-
-                if percentage >= 100:
-                    response["students"].append({
-                        "id": student.id,
-                        "identity_document": student.identity_document,
-                        "first_name": student.first_name,
-                        "last_name": student.last_name,
-                        "phone_1": student.phone_1,
-                        "phone_2": student.phone_2,
-                        "teacher": student.teacher.username if student.teacher else None
-                    })
-                    break
-
-    return JsonResponse(response, status=200)
-
-
-def no_hundred_certificate(request):
-
-    response = {
-        "students": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
-
-        for student in students:
-            for level in student.levels.filter(is_active=True).exclude(certificate_img=""):
-                percentage = round(
-                    Attendance.objects.filter(
-                        course__date__gte=level.date,
-                        student=student,
-                        attendance=True,
-                    ).count()
-                    * 100
-                    / level.attendances,
-                    1,
-                )
-
-                if percentage < 100:
-                    response["students"].append({
-                        "id": student.id,
-                        "identity_document": student.identity_document,
-                        "first_name": student.first_name,
-                        "last_name": student.last_name,
-                        "phone_1": student.phone_1,
-                        "phone_2": student.phone_2,
-                        "teacher": student.teacher.username if student.teacher else None
-                    })
-                    break
-
-    return JsonResponse(response, status=200)
-
-
-def hundred_no_delivered(request):
-
-    response = {
-        "students": list(),
-    }
-
-    if request.user.is_admin or request.user.is_teacher:
-
-        students = Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", levels__is_active=True).order_by("teacher").distinct(
-        ) if request.user.is_admin else Account.objects.filter(courses__date__gte=datetime.datetime.now(), attendances__quota="PAGO", teacher=request.user, levels__is_active=True).order_by("teacher").distinct()
-
-        for student in students:
-            for level in student.levels.filter(is_active=True, delivered=True).exclude(certificate_img=""):
-                percentage = round(
-                    Attendance.objects.filter(
-                        course__date__gte=level.date,
-                        student=student,
-                        attendance=True,
-                    ).count()
-                    * 100
-                    / level.attendances,
-                    1,
-                )
-
-                if percentage >= 100:
-                    response["students"].append({
-                        "id": student.id,
-                        "identity_document": student.identity_document,
-                        "first_name": student.first_name,
-                        "last_name": student.last_name,
-                        "phone_1": student.phone_1,
-                        "phone_2": student.phone_2,
-                        "teacher": student.teacher.username if student.teacher else None
-                    })
-                    break
-
-    return JsonResponse(response, status=200)
+        return Response({"errors": ["403 (Forbidden)"]})

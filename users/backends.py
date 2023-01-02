@@ -13,8 +13,7 @@ class AuthBackend(object):
 
             if username.isdigit():
                 user = Account.objects.get(
-                    Q(identity_document=username) | Q(
-                        identity_document_1=username) | Q(username=username)
+                    Q(identity_document=username) | Q(username=username)
                 )
 
             else:

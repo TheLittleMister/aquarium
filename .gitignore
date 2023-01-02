@@ -142,3 +142,12 @@ cython_debug/
 
 # Media
 media
+
+# Static
+/static/
+
+# GitHub
+.github
+
+# Copy
+COPYING.txt

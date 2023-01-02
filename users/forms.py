@@ -9,20 +9,17 @@ class ProfileForm(forms.ModelForm):
         model = Account
         fields = (
             'username',
-            'first_name_1',
-            'last_name_1',
+            'email',
+            'first_name',
+            'last_name',
             'id_type',
-            'identity_document_1',
+            'identity_document',
             'sex',
             'date_birth',
-            'email',
             'parent',
-            'phone_1_1',
-            'phone_2_1',
+            'phone_1',
+            'phone_2',
         )
-        widgets = {
-            'date_birth': forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
-        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -31,14 +28,5 @@ class ProfileForm(forms.ModelForm):
         user_valid = UnicodeUsernameValidator()
         user_valid(username)
 
-        if username.isalpha() and not username.islower():
+        if not username or not username.islower():
             raise forms.ValidationError("Usuarios deben estar en minúscula")
-
-
-class SignatureForm(forms.ModelForm):
-
-    class Meta:
-        model = Account
-        fields = (
-            'signature',
-        )
