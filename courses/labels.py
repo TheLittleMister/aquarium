@@ -36,7 +36,7 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         related_name="tasks",
     )
-    task = models.CharField(max_length=60)
+    task = models.CharField(max_length=150)
 
     def __str__(self):
         return f"{self.task}"

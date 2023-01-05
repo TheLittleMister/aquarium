@@ -88,6 +88,7 @@ def attendances(request):
 
     username = request.data["username"]
     user = Account.objects.get(username=username)
+    paginatorAmount = 10
 
     filter = {
         "quota": "PAGO"} if not request.user.is_admin and not request.user.is_teacher else dict()
@@ -109,6 +110,8 @@ def attendances(request):
                   "quota",
                   "note"]
 
+        paginatorAmount = 6
+
     else:
         values = ["id",
                   "course__date",
@@ -121,7 +124,7 @@ def attendances(request):
                            .annotate(count=Count('course__students'))
                            .values(*values).order_by("-course__date"))
 
-    attendancesPaginator = Paginator(userAttendances, 6)
+    attendancesPaginator = Paginator(userAttendances, paginatorAmount)
     page_num = request.data.get("page")
     page = attendancesPaginator.get_page(page_num)
 
@@ -544,7 +547,7 @@ def schedulesInfo(request):
     response = {
         "price": Price.objects.get(pk=1).price,
         "schedules": list(
-            Schedule.objects.all().values(
+            Schedule.objects.filter().values(
                 "weekday__weekday",
                 "start_time",
                 "end_time"
@@ -578,6 +581,8 @@ def studentLevel(request):
                 1,
             )
 
+            percentage = percentage if percentage < 101 else 100
+
             values = dict()
 
             if request.user.is_teacher or request.user.is_admin:
@@ -590,8 +595,8 @@ def studentLevel(request):
                     "attendances": studentLevel.attendances,
                     "certificate_img": studentLevel.certificate_img.url if studentLevel.certificate_img else "",
                     "certificate_pdf": studentLevel.certificate_pdf.url if studentLevel.certificate_pdf else "",
-                    "percentage": percentage if percentage < 101 else 100,
-                    "attendances_count": attendances_count
+                    "percentage": percentage,
+                    "attendances_count": attendances_count if percentage < 100 else studentLevel.attendances
                 }
 
             else:
@@ -602,7 +607,7 @@ def studentLevel(request):
                     "level__name": studentLevel.level.name,
                     "certificate_img": studentLevel.certificate_img.url if studentLevel.certificate_img else "",
                     "certificate_pdf": studentLevel.certificate_pdf.url if studentLevel.certificate_pdf else "",
-                    "percentage": percentage if percentage < 101 else 100,
+                    "percentage": percentage,
                 }
 
             response["studentLevels"].append(values)

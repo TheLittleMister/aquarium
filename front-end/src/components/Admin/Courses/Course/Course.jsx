@@ -65,7 +65,7 @@ const Content = ({ course }) => {
             <TableBody>
               {course.attendances.map((attendance, index, arr) => (
                 <React.Fragment key={attendance.id}>
-                  <Attendance attendance={attendance} isCourse={true} />
+                  <Attendance attendance={attendance} courseDate={course.course.date} />
                 </React.Fragment>
               ))}
             </TableBody>

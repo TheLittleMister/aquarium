@@ -22,7 +22,7 @@ import { AuthContext } from "../../../../../context/AuthContext";
 import Note from "./Note/Note";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Attendance = ({ attendance }) => {
+const Attendance = ({ attendance, courseDate }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const authCtx = useContext(AuthContext);
@@ -39,7 +39,7 @@ const Attendance = ({ attendance }) => {
   const [onlyDay, setOnlyDay] = useState(attendance.onlyday);
 
   const today = new Date();
-  const date = new Date(attendance.course__date + " ");
+  const date = new Date(courseDate + " ");
 
   const change = async (type) => {
     const tokens = getTokens();

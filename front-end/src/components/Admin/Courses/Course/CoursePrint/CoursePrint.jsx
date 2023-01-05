@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import {
   completeDate,
+  shortDate,
   getHour,
   getTokens,
   refreshTokens,
@@ -170,7 +171,7 @@ const CoursePrint = ({ course }) => {
                                       fontWeight="bold"
                                       textAlign="center"
                                     >
-                                      {completeDate(item.course__date)}
+                                      {shortDate(item.course__date)}
                                     </Text>
                                   </TableCell>
                                 </TableRowNoBorder>

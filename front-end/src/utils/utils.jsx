@@ -28,7 +28,7 @@ export const userBase = {
 };
 
 export const prettyDate = (time) => {
-  const date = new Date(time + " "),
+  const date = new Date(time + " 00:00"),
     diff = (new Date().getTime() - date.getTime()) / 1000,
     day_diff = Math.floor(diff / 86400);
 
@@ -64,8 +64,19 @@ export const completeDate = (time) =>
     })
     .toUpperCase();
 
+export const shortDate = (time) =>
+  new Date(time + " 00:00")
+    .toLocaleDateString("es-ES", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "America/Bogota",
+    })
+    .toUpperCase();
+
 export const refreshTokens = async (statusText, refresh, setUser = null) => {
-  if (statusText !== "Unauthorized") return false;
+  // if (statusText !== "Unauthorized") return false;
 
   const response = await fetch(urlAPI + "users/token/refresh/", {
     method: "POST",
@@ -76,6 +87,7 @@ export const refreshTokens = async (statusText, refresh, setUser = null) => {
   });
 
   const responseData = await response.json();
+  console.log(response, responseData);
 
   if (!response.ok) {
     localStorage.removeItem("tokens");

@@ -32,10 +32,10 @@ const AuthProvider = (props) => {
           else setReady(true);
 
           return;
+        } else {
+          setUser(data);
+          setReady(true);
         }
-
-        setUser(data);
-        setReady(true);
       };
 
       getUser(tokens);

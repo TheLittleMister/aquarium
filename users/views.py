@@ -186,6 +186,7 @@ def users(request):
         filter["is_admin"] = False
         filter["is_teacher"] = False
         filter["teacher__isnull"] = True
+        filter["attendances__course__date__gte"] = datetime.datetime.now()
 
     if userType in [1, 2, 3, 4, 5]:
         accounts = list(Account.objects.annotate(
