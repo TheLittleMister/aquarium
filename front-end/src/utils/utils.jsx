@@ -87,7 +87,7 @@ export const refreshTokens = async (statusText, refresh, setUser = null) => {
   });
 
   const responseData = await response.json();
-  console.log(response, responseData);
+  // console.log(response, responseData);
 
   if (!response.ok) {
     localStorage.removeItem("tokens");
