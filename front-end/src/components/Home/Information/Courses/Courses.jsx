@@ -4,7 +4,7 @@ import { Box, Typography as Text } from "@mui/material";
 import * as styles from "./CoursesStyles";
 import CoursesTable from "./CoursesTable/CoursesTable";
 import CoursesAccordion from "./CoursesAccordion/CoursesAccordion";
-import { urlAPI } from "../../../../utils/utils";
+import { urlAPI, fixPrice } from "../../../../utils/utils";
 
 const Courses = () => {
   const [price, setPrice] = useState(0);
@@ -40,7 +40,7 @@ const Courses = () => {
         Clases
       </Text>
       <Box p={3} sx={styles.cost}>
-        <Text variant="h6">Mensualidad: ${price}</Text>
+        <Text variant="h6">Mensualidad: ${fixPrice(price)}</Text>
         <Text>Una clase por semana para un total de 4 clases al mes.</Text>
         <br />
         <CoursesTable schedules={schedules} />

@@ -103,7 +103,7 @@ const AddCourseForm = (props) => {
             name="date_course"
             inputFormat="dd/MM/yyyy"
             label="Fecha de clase"
-            minDate={new Date()}
+            // minDate={new Date()}
             value={date}
             onChange={(newValue) => {
               setDate(newValue);

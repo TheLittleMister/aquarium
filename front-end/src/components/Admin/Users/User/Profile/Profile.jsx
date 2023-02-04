@@ -228,7 +228,13 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Tel / Cel (1)</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone1}</Text>
+                <Link
+                  href={`https://api.whatsapp.com/send?phone=57${props.user.phone1}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Text>{props.user.phone1}</Text>
+                </Link>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -239,7 +245,13 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Tel / Cel (2)</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone2}</Text>
+                <Link
+                    href={`https://api.whatsapp.com/send?phone=57${props.user.phone2}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Text>{props.user.phone2}</Text>
+                  </Link>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
