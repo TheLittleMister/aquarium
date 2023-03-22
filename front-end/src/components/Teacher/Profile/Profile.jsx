@@ -67,7 +67,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Nombres</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.firstName.slice(0, 15)}</Text>
+                <Text>{props.user.firstName}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -78,7 +78,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Apellidos</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.lastName.slice(0, 15)}</Text>
+                <Text>{props.user.lastName}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -124,7 +124,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Correo</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.email.slice(0, 15)}</Text>
+                <Text>{props.user.email}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -135,7 +135,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Tel / Cel (1)</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone1.slice(0, 15)}</Text>
+                <Text>{props.user.phone1}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -146,7 +146,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Tel / Cel (2)</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone2.slice(0, 15)}</Text>
+                <Text>{props.user.phone2}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
