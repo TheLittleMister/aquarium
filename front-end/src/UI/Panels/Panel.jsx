@@ -87,7 +87,7 @@ const Panel = (props) => {
                         }}
                         badgeContent={
                           authCtx.user.type === "Administrador" ||
-                          props.user.id === authCtx.user.id ? (
+                            props.user.id === authCtx.user.id ? (
                             <Button
                               variant="contained"
                               sx={styles.changePhoto}
@@ -131,7 +131,12 @@ const Panel = (props) => {
                   </TableRowNoBorder>
                   <TableRowNoBorder>
                     <TableCell>
-                      <Text fontWeight={500}>@{props.user.username}</Text>
+                      <Text fontWeight={500}>{props.user.lastName.slice(0, 15)}</Text>
+                    </TableCell>
+                  </TableRowNoBorder>
+                  <TableRowNoBorder>
+                    <TableCell>
+                      <Text fontWeight={500}>{props.user.firstName.slice(0, 15)}</Text>
                     </TableCell>
                   </TableRowNoBorder>
                   <TableRowNoBorder>
@@ -139,6 +144,12 @@ const Panel = (props) => {
                       <ChipPrimary label={props.user.type} />
                     </TableCell>
                   </TableRowNoBorder>
+                  <TableRowNoBorder>
+                    <TableCell>
+                      <Text fontWeight={500}>@{props.user.username.slice(0, 15)}</Text>
+                    </TableCell>
+                  </TableRowNoBorder>
+
                 </TableBody>
               </Table>
             </TableContainer>

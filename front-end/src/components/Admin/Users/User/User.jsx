@@ -57,7 +57,7 @@ const User = ({ setClosePath }) => {
       const tokens = getTokens();
       const result = await fetch(
         urlAPI +
-          `users/profile/?username=${params.username ? params.username : ""}`,
+        `users/profile/?username=${params.username ? params.username : ""}`,
         {
           method: "GET",
           headers: {

@@ -38,8 +38,11 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import * as styles from "./CourseStyles";
 import CoursePrint from "./CoursePrint/CoursePrint";
+import ChipPrimary from "../../../../UI/Chips/ChipPrimary";
 
 const Content = ({ course }) => {
+  const [attendancesCount, setAttendancesCount] = useState(course.attendances.filter((item, index, arr) => item.attendance === true).length);
+
   return (
     <Container>
       <br />
@@ -48,6 +51,8 @@ const Content = ({ course }) => {
           {completeDate(course.course.date)} DE{" "}
           {getHour(course.course.start_time)} A{" "}
           {getHour(course.course.end_time)}
+          <br />
+          <ChipPrimary label={`ASISTENCIAS: ${attendancesCount} / ${course.attendances.length}`} />
         </ModalTitle>
         <Stack direction="row" justifyContent="space-around" p={2}>
           <Link to="print/">
@@ -65,7 +70,7 @@ const Content = ({ course }) => {
             <TableBody>
               {course.attendances.map((attendance, index, arr) => (
                 <React.Fragment key={attendance.id}>
-                  <Attendance attendance={attendance} courseDate={course.course.date} />
+                  <Attendance count={index + 1} attendance={attendance} courseDate={course.course.date} setAttendancesCount={setAttendancesCount} />
                 </React.Fragment>
               ))}
             </TableBody>

@@ -24,8 +24,10 @@ import {
   refreshTokens,
 } from "../../../../../../utils/utils";
 import { AuthContext } from "../../../../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ProfileForm = (props) => {
+  const navigate = useNavigate();
   const authCtx = useContext(AuthContext);
 
   const [messages, setMessages] = useState([]);
@@ -78,11 +80,12 @@ const ProfileForm = (props) => {
     if (data.errors && data.errors.length > 0) {
       setMessages(data.errors);
       setCollapseOpen(true);
-      setLoading(false);
     } else {
       props.setUser(data);
       props.setOpen(false);
+      navigate(`/admin/users/${data.username}/profile/`, { replace: true });
     }
+    setLoading(false);
   };
 
   return (
@@ -112,7 +115,7 @@ const ProfileForm = (props) => {
             name="email"
             type="email"
             defaultValue={props.user.email}
-            // required
+          // required
           />
         </Stack>
 
@@ -167,7 +170,7 @@ const ProfileForm = (props) => {
             name="identity_document"
             type="number"
             defaultValue={props.user.identityDocument}
-            // required
+          // required
           />
         </Stack>
 
@@ -226,7 +229,7 @@ const ProfileForm = (props) => {
             name="phone_1"
             defaultValue={props.user.phone1}
             type="number"
-            // required
+          // required
           />
           <TextField
             id="outlined-textarea"
@@ -235,7 +238,7 @@ const ProfileForm = (props) => {
             name="phone_2"
             defaultValue={props.user.phone2}
             type="number"
-            // required
+          // required
           />
         </Stack>
       </Form>

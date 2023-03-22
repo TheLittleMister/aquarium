@@ -14,7 +14,7 @@ def getAttendances(course):
 
         attendances.append({
             "cycle": None,
-            "name": attendance.student.first_name + " " + attendance.student.last_name,
+            "name": attendance.student.last_name + " " + attendance.student.first_name,
             "recover": attendance.recover,
             "cycleStatus": attendance.cycle,
             "endCycleStatus": attendance.end_cycle,

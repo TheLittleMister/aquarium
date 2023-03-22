@@ -190,7 +190,7 @@ const Content = (props) => {
         messages={[]}
         loading={loading}
         collapseOpen={false}
-        setCollapseOpen={() => {}}
+        setCollapseOpen={() => { }}
         submitText="Buscar"
         direction="row"
       >

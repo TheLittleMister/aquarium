@@ -36,7 +36,9 @@ const CoursePrint = ({ course }) => {
   const authCtx = useContext(AuthContext);
 
   const [attendances, setAttendances] = useState();
+  const [attendancesTotal, setAttendancesTotal] = useState(0);
   const [ready, setReady] = useState(false);
+
 
   useEffect(() => {
     const getAttendances = async () => {
@@ -66,6 +68,7 @@ const CoursePrint = ({ course }) => {
         return;
       }
       setAttendances(data.attendances);
+      setAttendancesTotal(data.attendances.length);
       setReady(true);
       await new Promise((r) => setTimeout(r, 2000));
       window.print();
@@ -87,6 +90,10 @@ const CoursePrint = ({ course }) => {
           <Text>
             DE {getHour(course.start_time)} A {getHour(course.end_time)}
           </Text>
+          <br />
+          <Text>
+            {attendancesTotal} ESTUDIANTES
+          </Text>
         </Box>
         <Box width="50%">
           <img
@@ -103,127 +110,127 @@ const CoursePrint = ({ course }) => {
         {!ready
           ? "Loading..."
           : attendances.map((item, index, arr) => {
-              return (
-                <React.Fragment key={index}>
-                  <Table aria-label="simple table" size="small">
-                    <TableBody>
-                      <TableRowNoBorder>
-                        <TableCell>
-                          <Stack direction="row" gap={1}>
-                            <Text variant="body2">{index + 1}.</Text>
-                            <CircleOutlinedIcon
-                              color="primary"
-                              fontSize="small"
-                            />
-                            <Text variant="body2">
-                              {item.name}
-                              <Button
-                                sx={styles.spaceButton}
-                                size="small"
-                                onClick={(e) =>
-                                  e.target.parentElement.parentElement.parentElement.parentElement.before(
-                                    document.createElement("br")
-                                  )
-                                }
-                              >
-                                +
-                              </Button>
-                              <Button
-                                sx={styles.spaceButton}
-                                size="small"
-                                onClick={(e) =>
-                                  e.target.parentElement.parentElement
-                                    .parentElement.parentElement.parentElement
-                                    .firstChild.nodeName === "BR" &&
-                                  e.target.parentElement.parentElement.parentElement.parentElement.parentElement.firstChild.remove()
-                                }
-                              >
-                                -
-                              </Button>
-                            </Text>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <Text variant="caption">
-                            {item.recover && " • RECUPERA CLASE"}
-                            {item.cycleStatus && " • INICIA CICLO"}
-                            {item.endCycleStatus && " • TERMINA CICLO"}
-                            {item.onlyday && " • SOLO DÍA"}
-                            {item.lastCourse && " • ÚLTIMA CLASE"}
+            return (
+              <React.Fragment key={index}>
+                <Table aria-label="simple table" size="small">
+                  <TableBody>
+                    <TableRowNoBorder>
+                      <TableCell>
+                        <Stack direction="row" gap={1}>
+                          <Text variant="body2">{index + 1}.</Text>
+                          <CircleOutlinedIcon
+                            color="primary"
+                            fontSize="small"
+                          />
+                          <Text variant="body2">
+                            {item.name}
+                            <Button
+                              sx={styles.spaceButton}
+                              size="small"
+                              onClick={(e) =>
+                                e.target.parentElement.parentElement.parentElement.parentElement.before(
+                                  document.createElement("br")
+                                )
+                              }
+                            >
+                              +
+                            </Button>
+                            <Button
+                              sx={styles.spaceButton}
+                              size="small"
+                              onClick={(e) =>
+                                e.target.parentElement.parentElement
+                                  .parentElement.parentElement.parentElement
+                                  .firstChild.nodeName === "BR" &&
+                                e.target.parentElement.parentElement.parentElement.parentElement.parentElement.firstChild.remove()
+                              }
+                            >
+                              -
+                            </Button>
                           </Text>
-                        </TableCell>
-                      </TableRowNoBorder>
-                    </TableBody>
-                  </Table>
+                        </Stack>
+                      </TableCell>
 
-                  <Grid container wrap="wrap">
-                    {item.cycle &&
-                      item.cycle.map((item, index, arr) => {
-                        return (
-                          <Grid item xs key={index} sx={styles.gridItem}>
-                            <Table aria-label="simple table" size="small">
-                              <TableHead>
-                                <TableRowNoBorder>
-                                  <TableCell>
-                                    <Text
-                                      fontSize={10}
-                                      fontWeight="bold"
-                                      textAlign="center"
-                                    >
-                                      {shortDate(item.course__date)}
-                                    </Text>
-                                  </TableCell>
-                                </TableRowNoBorder>
-                              </TableHead>
-                              <TableBody>
-                                <TableRowNoBorder>
-                                  <TableCell>
-                                    <Grid container wrap="wrap">
-                                      <Grid item xs>
-                                        <Text fontSize={8} fontWeight="bold">
-                                          {item.attendance ? (
-                                            <CheckIcon fontSize="small" />
-                                          ) : new Date(
-                                              new Date()
-                                                .toISOString()
-                                                .split("T")[0] + " "
-                                            ) >
-                                            new Date(
-                                              item.course__date + " "
-                                            ) ? (
-                                            <CloseIcon fontSize="small" />
-                                          ) : (
-                                            course.date === item.course__date &&
-                                            "ESTE DÍA"
-                                          )}
-                                        </Text>
-                                      </Grid>
-                                      <Grid item xs>
-                                        {item.recover && (
-                                          <Text fontSize={8} fontWeight="bold">
-                                            RECUPERA
-                                          </Text>
+                      <TableCell align="right">
+                        <Text variant="caption">
+                          {item.recover && " • RECUPERA CLASE"}
+                          {item.cycleStatus && " • INICIA CICLO"}
+                          {item.endCycleStatus && " • TERMINA CICLO"}
+                          {item.onlyday && " • SOLO DÍA"}
+                          {item.lastCourse && " • ÚLTIMA CLASE"}
+                        </Text>
+                      </TableCell>
+                    </TableRowNoBorder>
+                  </TableBody>
+                </Table>
+
+                <Grid container wrap="wrap">
+                  {item.cycle &&
+                    item.cycle.map((item, index, arr) => {
+                      return (
+                        <Grid item xs key={index} sx={styles.gridItem}>
+                          <Table aria-label="simple table" size="small">
+                            <TableHead>
+                              <TableRowNoBorder>
+                                <TableCell>
+                                  <Text
+                                    fontSize={10}
+                                    fontWeight="bold"
+                                    textAlign="center"
+                                  >
+                                    {shortDate(item.course__date)}
+                                  </Text>
+                                </TableCell>
+                              </TableRowNoBorder>
+                            </TableHead>
+                            <TableBody>
+                              <TableRowNoBorder>
+                                <TableCell>
+                                  <Grid container wrap="wrap">
+                                    <Grid item xs>
+                                      <Text fontSize={8} fontWeight="bold">
+                                        {item.attendance ? (
+                                          <CheckIcon fontSize="small" />
+                                        ) : new Date(
+                                          new Date()
+                                            .toISOString()
+                                            .split("T")[0] + " "
+                                        ) >
+                                          new Date(
+                                            item.course__date + " "
+                                          ) ? (
+                                          <CloseIcon fontSize="small" />
+                                        ) : (
+                                          course.date === item.course__date &&
+                                          "ESTE DÍA"
                                         )}
-                                        {item.note && (
-                                          <Text fontSize={8} fontWeight="bold">
-                                            {item.note.toUpperCase()}
-                                          </Text>
-                                        )}
-                                      </Grid>
+                                      </Text>
                                     </Grid>
-                                  </TableCell>
-                                </TableRowNoBorder>
-                              </TableBody>
-                            </Table>
-                          </Grid>
-                        );
-                      })}
-                  </Grid>
-                  <br />
-                </React.Fragment>
-              );
-            })}
+                                    <Grid item xs>
+                                      {item.recover && (
+                                        <Text fontSize={8} fontWeight="bold">
+                                          RECUPERA
+                                        </Text>
+                                      )}
+                                      {item.note && (
+                                        <Text fontSize={8} fontWeight="bold">
+                                          {item.note.toUpperCase()}
+                                        </Text>
+                                      )}
+                                    </Grid>
+                                  </Grid>
+                                </TableCell>
+                              </TableRowNoBorder>
+                            </TableBody>
+                          </Table>
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+                <br />
+              </React.Fragment>
+            );
+          })}
       </TableContainer>
     </Container>
   );

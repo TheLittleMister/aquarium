@@ -25,24 +25,24 @@ def getFormErrors(form):
 def getUser(user):
     return {
         "id": user.id,
-        "username": user.username,
+        "username": user.username if user.username else "",
         "image": mysite + user.image.url,
         "type": "Administrador" if user.is_admin else "Profesor" if user.is_teacher else "Estudiante",
-        "firstName": user.first_name,
-        "lastName": user.last_name,
+        "firstName": user.first_name if user.first_name else "",
+        "lastName": user.last_name if user.last_name else "",
         "idType": user.id_type.id_type if user.id_type else "",
         "idTypeID": user.id_type.id if user.id_type else "",
-        "identityDocument": user.identity_document,
+        "identityDocument": user.identity_document if user.identity_document else "",
         "sex": user.sex.sex_name if user.sex else "",
         "sexID": user.sex.id if user.sex else "",
         "dateBirth": user.date_birth,
         "age": round((datetime.date.today() - user.date_birth).days // 365.25) if user.date_birth else None,
         "teacher": user.teacher.first_name + " " + user.teacher.last_name if user.teacher else "",
         "teacherID": user.teacher.id if user.teacher else "",
-        "parent": user.parent,
-        "email": user.email,
-        "phone1": user.phone_1,
-        "phone2": user.phone_2,
+        "parent": user.parent if user.parent else "",
+        "email": user.email if user.email else "",
+        "phone1": user.phone_1 if user.phone_1 else "",
+        "phone2": user.phone_2 if user.phone_2 else "",
         "signature":  mysite + user.signature.url if user.signature else ""
     }
 

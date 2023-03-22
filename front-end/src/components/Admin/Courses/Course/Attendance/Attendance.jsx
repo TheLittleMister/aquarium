@@ -22,7 +22,7 @@ import { AuthContext } from "../../../../../context/AuthContext";
 import Note from "./Note/Note";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Attendance = ({ attendance, courseDate }) => {
+const Attendance = ({ attendance, courseDate, count, setAttendancesCount }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const authCtx = useContext(AuthContext);
@@ -65,7 +65,11 @@ const Attendance = ({ attendance, courseDate }) => {
       return;
     }
 
-    if (type === "attendance") setAttendanceStatus(data.attendance);
+    if (type === "attendance") {
+      if (data.attendance) setAttendancesCount(prevState => prevState + 1);
+      else setAttendancesCount(prevState => prevState - 1);
+      setAttendanceStatus(data.attendance);
+    }
     if (type === "quota") setQuota(data.quota);
     if (type === "cycle") {
       setCycle(data.cycle);
@@ -100,9 +104,9 @@ const Attendance = ({ attendance, courseDate }) => {
       >
         <TableCell align="left">
           <Text color="blue.light">
-            {attendance.student__first_name +
+            {count + ". " + attendance.student__last_name +
               " " +
-              attendance.student__last_name}
+              attendance.student__first_name}
           </Text>
         </TableCell>
         <TableCell align="center">

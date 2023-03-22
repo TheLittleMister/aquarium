@@ -128,7 +128,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Nombres</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.firstName}</Text>
+                <Text>{props.user.firstName.slice(0, 15)}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -139,7 +139,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Apellidos</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.lastName}</Text>
+                <Text>{props.user.lastName.slice(0, 15)}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -150,7 +150,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>{props.user.idType}</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.identityDocument}</Text>
+                <Text>{props.user.identityDocument.slice(0, 15)}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -188,7 +188,7 @@ const Profile = (props) => {
                   </TableCell>
                   <TableCell>
                     <Text>
-                      {props.user.teacher}
+                      {props.user.teacher.slice(0, 15)}
                       <Tooltip title="Editar">
                         <IconButton onClick={() => setOpenEditTeacher(true)}>
                           <EditIcon color="primary" />
@@ -205,7 +205,7 @@ const Profile = (props) => {
                     <Text fontWeight={500}>Acudiente</Text>
                   </TableCell>
                   <TableCell>
-                    <Text>{props.user.parent}</Text>
+                    <Text>{props.user.parent.slice(0, 15)}</Text>
                   </TableCell>
                 </TableRowNoBorder>
               </>
@@ -218,7 +218,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>Correo</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.email}</Text>
+                <Text>{props.user.email.slice(0, 15)}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -234,7 +234,7 @@ const Profile = (props) => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Text>{props.user.phone1}</Text>
+                  <Text>{props.user.phone1.slice(0, 15)}</Text>
                 </Link>
               </TableCell>
             </TableRowNoBorder>
@@ -247,12 +247,12 @@ const Profile = (props) => {
               </TableCell>
               <TableCell>
                 <Link
-                    href={`https://api.whatsapp.com/send?phone=57${props.user.phone2}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Text>{props.user.phone2}</Text>
-                  </Link>
+                  href={`https://api.whatsapp.com/send?phone=57${props.user.phone2}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Text>{props.user.phone2.slice(0, 15)}</Text>
+                </Link>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>

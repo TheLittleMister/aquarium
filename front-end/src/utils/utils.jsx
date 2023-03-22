@@ -176,12 +176,12 @@ export const getHour = (time) => {
 export const fixPrice = (price) => {
   let newStringPrice = "";
   const stringPriceList = String(price).split("");
-  
+
   for (let i = stringPriceList.length - 1; i >= 0; i--) {
     const index = stringPriceList.length - (i + 1);
     if (index % 3 === 0 && index !== 0) newStringPrice = stringPriceList[i] + "." + newStringPrice;
     else newStringPrice = stringPriceList[i] + newStringPrice;
   }
-  
+
   return newStringPrice;
 }
