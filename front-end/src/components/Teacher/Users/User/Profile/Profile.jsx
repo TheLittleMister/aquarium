@@ -55,7 +55,7 @@ const Profile = (props) => {
                 <Text fontWeight={500}>{props.user.idType}</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.identityDocument.slice(0, 15)}</Text>
+                <Text>{props.user.identityDocument}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
