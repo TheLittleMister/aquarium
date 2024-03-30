@@ -12,7 +12,12 @@ import SchedulesTable from "./SchedulesTable/SchedulesTable";
 
 import EditIcon from "@mui/icons-material/Edit";
 import PriceForm from "./PriceForm/PriceForm";
-import { getTokens, refreshTokens, urlAPI, fixPrice } from "../../../utils/utils";
+import {
+  getTokens,
+  refreshTokens,
+  urlAPI,
+  fixPrice,
+} from "../../../utils/utils";
 import { AuthContext } from "../../../context/AuthContext";
 import ButtonSecondary from "../../../UI/Buttons/ButtonSecondary";
 import ScheduleForm from "./ScheduleForm/ScheduleForm";
@@ -89,7 +94,7 @@ const Schedules = () => {
           flexWrap="wrap"
         >
           <Text variant="h6">
-            Mensualidad: ${fixPrice(price)}{" "}
+            Mensualidad desde ${fixPrice(price)}{" "}
             <Tooltip title="Editar Precio">
               <IconButton onClick={() => setOpen(true)}>
                 <EditIcon color="primary" />
