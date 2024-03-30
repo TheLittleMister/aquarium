@@ -122,7 +122,7 @@ def attendances(request):
     userAttendances = list(Attendance.objects
                            .filter(student=user, **filter)
                            .annotate(count=Count('course__students'))
-                           .values(*values).order_by("-course__date"))
+                           .values(*values).order_by("-course__date", "-course__start_time"))
 
     attendancesPaginator = Paginator(userAttendances, paginatorAmount)
     page_num = request.data.get("page")
@@ -466,7 +466,8 @@ def level(request):
 @api_view(["GET"])
 def levelsInfo(request):
     response = {"levels": list()}
-    for level in Level.objects.filter(category=Category.objects.get(name=request.GET.get("category", ""))):
+    category, created = Category.objects.get_or_create(name=request.GET.get("category", ""))
+    for level in Level.objects.filter(category=category):
         response["levels"].append(
             {"name": level.name, "content": list(level.tasks.all().values("task"))})
 
@@ -500,7 +501,7 @@ def price(request):
     newPrice = int(request.data["price"])
 
     if newPrice > 0:
-        price = Price.objects.get(pk=1)
+        price, created = Price.objects.get_or_create(pk=1)
         price.price = newPrice
         price.save()
         response["price"] = newPrice
@@ -527,6 +528,10 @@ def schedules(request):
             ).order_by("weekday__day_number", "start_time"))
 
     elif request.method == "POST":
+        if not Weekday.objects.filter(pk=1).exists():
+            for key, value in get_weekdays().items():
+                Weekday.objects.create(weekday=value, day_number=key)
+
         form = ScheduleForm(request.data)
 
         if form.is_valid():
@@ -545,7 +550,7 @@ def schedules(request):
 @api_view(["GET"])
 def schedulesInfo(request):
     response = {
-        "price": Price.objects.get(pk=1).price,
+        "price": Price.objects.get_or_create(pk=1)[0].price,
         "schedules": list(
             Schedule.objects.filter().values(
                 "weekday__weekday",
