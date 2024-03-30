@@ -5,17 +5,17 @@ import ScubaDivingIcon from "@mui/icons-material/ScubaDiving";
 export const information = [
   {
     title: "Principiante",
-    text: "Aquí podrá empezar a familiarizarse con el medio acuático, adquiriendo habilidades básicas.",
+    text: "Aquí tus hijos podrán empezar a familiarizarse con el medio acuático, adquiriendo habilidades básicas.",
     Icon: WavesIcon,
   },
   {
     title: "Intermedio",
-    text: "Aquí aprenderás las habilidades iniciales de los diferentes estilos de natación.",
+    text: "Aquí tus hijos aprenderán las habilidades iniciales de los diferentes estilos de natación.",
     Icon: PoolIcon,
   },
   {
     title: "Avanzado",
-    text: "Aquí podrás reforzar tus habilidades y conocimientos de los estilos de natación aprendidos.",
+    text: "Aquí tus hijos podrán reforzar sus habilidades y conocimientos de los estilos de natación aprendidos.",
     Icon: ScubaDivingIcon,
   },
 ];

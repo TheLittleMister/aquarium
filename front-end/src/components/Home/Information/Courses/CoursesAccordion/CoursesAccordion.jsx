@@ -20,7 +20,7 @@ const CoursesAccordion = () => {
   const requiredList = [
     "Gorro",
     "Gafas",
-    "Chanclas",
+    "Crocs",
     "Vestido de baño",
     "Toalla",
   ];
