@@ -2,6 +2,7 @@ import jwt_decode from "jwt-decode";
 
 import { useTheme, useMediaQuery } from "@mui/material";
 
+// export const url = "http://127.0.0.1:8000";
 export const url = "https://aquariumschool.co";
 export const urlAPI = url + "/api/";
 
@@ -172,16 +173,16 @@ export const getHour = (time) => {
   return myTime;
 };
 
-
 export const fixPrice = (price) => {
   let newStringPrice = "";
   const stringPriceList = String(price).split("");
 
   for (let i = stringPriceList.length - 1; i >= 0; i--) {
     const index = stringPriceList.length - (i + 1);
-    if (index % 3 === 0 && index !== 0) newStringPrice = stringPriceList[i] + "." + newStringPrice;
+    if (index % 3 === 0 && index !== 0)
+      newStringPrice = stringPriceList[i] + "." + newStringPrice;
     else newStringPrice = stringPriceList[i] + newStringPrice;
   }
 
   return newStringPrice;
-}
+};
