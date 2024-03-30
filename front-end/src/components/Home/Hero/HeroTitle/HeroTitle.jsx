@@ -18,7 +18,7 @@ const HeroTitle = () => {
       </Text>
       <br />
       <Text variant="h6" fontWeight={400}>
-        En nuestra escuela de natación aprenderás a nadar rápido, fácil y
+        En nuestra escuela de natación tus hijos aprenderán a nadar rápido, fácil y
         seguro.
       </Text>
       <br />
