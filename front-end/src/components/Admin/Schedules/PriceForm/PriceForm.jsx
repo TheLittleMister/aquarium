@@ -66,7 +66,7 @@ const PriceForm = (props) => {
       >
         <TextField
           id="outlined-price-input"
-          label="Mensualidad"
+          label="Mensualidad desde"
           placeholder="Precio"
           type="number"
           autoComplete="current-price"

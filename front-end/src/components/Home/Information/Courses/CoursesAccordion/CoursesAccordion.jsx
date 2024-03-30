@@ -22,7 +22,9 @@ const CoursesAccordion = () => {
     "Gafas",
     "Crocs",
     "Vestido de baño",
-    "Toalla",
+    "Toalla marcada",
+    "Pañal para piscina (si es necesario)",
+    "Bolsa para ropa mojada",
   ];
 
   return (

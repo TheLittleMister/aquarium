@@ -40,8 +40,7 @@ const Courses = () => {
         Clases
       </Text>
       <Box p={3} sx={styles.cost}>
-        <Text variant="h6">Mensualidad: ${fixPrice(price)}</Text>
-        <Text>Una clase por semana para un total de 4 clases al mes.</Text>
+        <Text variant="h6">Mensualidad desde ${fixPrice(price)}</Text>
         <br />
         <CoursesTable schedules={schedules} />
         <br />
