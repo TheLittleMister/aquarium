@@ -85,7 +85,6 @@ def editCourses(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def attendances(request):
-
     username = request.data["username"]
     user = Account.objects.get(username=username)
     paginatorAmount = 10
@@ -193,7 +192,6 @@ def change(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser])
 def courses(request):
-
     filter = dict()
     search = request.data.get("search")
     if search:
@@ -223,7 +221,6 @@ def courses(request):
 @permission_classes([IsAdminUser])
 def course(request):
     response = {"errors": list()}
-
     courseID = request.GET.get("id", "")
     course = Course.objects.get(pk=courseID)
     response["course"] = {
@@ -334,14 +331,11 @@ def printCourse(request):
     return Response(response)
 
 # LEVELS
-
-
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
 def category(request):
     categoryID = request.GET.get("id", "")
     category = Category.objects.get(pk=categoryID)
-
     return Response({"positions": category.levels.all().count()})
 
 
@@ -359,7 +353,6 @@ def tasks(request):
 @permission_classes([IsAdminUser])
 def task(request):
     response = {"errors": list()}
-
     task = request.data["task"]
 
     if task:
@@ -432,7 +425,6 @@ def level(request):
                     pk=int(request.data["category"]))
 
                 if levelCategory == category:
-
                     if targetPosition > levelPosition:
 
                         for level in Level.objects.filter(category=category, position__gt=levelPosition, position__lte=targetPosition):
@@ -618,7 +610,6 @@ def studentLevel(request):
             response["studentLevels"].append(values)
 
     if request.user.is_admin or request.user.is_teacher:
-
         if request.method == "POST":
             form = StudentLevelForm(request.data)
 
@@ -663,7 +654,6 @@ def studentLevel(request):
                 response["errors"] += ["Debe ser profesor de este estudiante"]
 
         if request.method == "DELETE":
-
             student = Account.objects.get(pk=request.data["userID"])
             studentLevelID = request.data["studentLevelID"]
             studentLevel = Student_Level.objects.get(pk=studentLevelID)
@@ -695,13 +685,11 @@ def certificate(request):
     response = {"errors": list()}
 
     if request.user.is_admin or request.user.is_teacher:
-
         student = Account.objects.get(pk=request.data["userID"])
         student_level = Student_Level.objects.get(
             pk=request.data["studentLevelID"])
 
         if request.user == student.teacher:
-
             if request.user.signature:
                 if request.method == "POST":
                     img_src = (
