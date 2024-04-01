@@ -25,6 +25,7 @@ import PhonelinkRingOutlinedIcon from "@mui/icons-material/PhonelinkRingOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import ChipPrimary from "../../../UI/Chips/ChipPrimary";
 
 const Contact = () => {
@@ -125,6 +126,19 @@ const Contact = () => {
               p={5}
               gap={2}
             >
+              <Tooltip title="aquarium.git">
+                <Link
+                  href="https://github.com/thelittlemister/aquarium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconButton>
+                    <Text>
+                      <GitHubIcon sx={{ fontSize: "5rem" }} />
+                    </Text>
+                  </IconButton>
+                </Link>
+              </Tooltip>
               <Tooltip title="@AquariumSchoolBogota">
                 <Link
                   href="https://www.facebook.com/AquariumSchoolBogota/"
@@ -165,6 +179,15 @@ const Contact = () => {
         </Stack>
         <Text paddingTop={4}>
           Copyright &#169; {new Date().getFullYear()} Aquarium School, Inc.
+          Powered by{" "}
+          <Link
+            href="https://m.youtube.com/FranklinYulian"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FY
+          </Link>
+          .
         </Text>
       </Container>
     </Box>
