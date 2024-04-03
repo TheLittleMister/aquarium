@@ -92,35 +92,3 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.student}: {self.course}"
-
-
-class Student_Level(models.Model):
-
-    student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="courseslevels")
-
-    level = models.ForeignKey(
-        Level, on_delete=models.CASCADE, related_name="levels")
-    date = models.DateField("Desde", null=True)
-    attendances = models.IntegerField("Asistencias Requeridas", default=0)
-
-    certificate_img = models.ImageField(
-        upload_to="certificates", null=True, blank=True)
-
-    certificate_pdf = models.FileField(
-        upload_to="certificates", null=True, blank=True)
-
-
-class Schedule(models.Model):
-    weekday = models.ForeignKey(
-        Weekday, on_delete=models.CASCADE, related_name="schedules")
-
-    start_time = models.TimeField("Hora Inicio")  # Time START
-    end_time = models.TimeField("Hora Termina")  # Time END
-
-    class Meta:
-        ordering = ['weekday']
-
-
-class Price(models.Model):
-    price = models.IntegerField(default=0)

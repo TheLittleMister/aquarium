@@ -14,22 +14,6 @@ urlpatterns = [
     path("deleteCourse/", deleteCourse, name="deleteCourse"),
     path("printCourse/", printCourse, name="printCourse"),
 
-    # LEVELS
-    path("category/", category, name="category"),
-    path("level/", level, name="level"),
-    path("levelsInfo/", levelsInfo, name="levelsInfo"),
-    path("tasks/", tasks, name="tasks"),
-    path("deleteLevel/", deleteLevel, name="deleteLevel"),
-    path("studentLevel/", studentLevel, name="studentLevel"),
-
-    # CERTIFICATE
-    path("certificate/", certificate, name="certificate"),
-
-
-    # TASKS
-    path("task/", task, name="task"),
-    path("deleteTask/", deleteTask, name="deleteTask"),
-
     # PRICE
     path("price/", price, name="price"),
 

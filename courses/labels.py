@@ -9,34 +9,16 @@ class Weekday(models.Model):
         return f"{self.id} {self.weekday}"
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=60)
+class Schedule(models.Model):
+    weekday = models.ForeignKey(
+        Weekday, on_delete=models.CASCADE, related_name="schedules")
 
-    def __str__(self):
-        return f"{self.id} {self.name}"
+    start_time = models.TimeField("Hora Inicio")  # Time START
+    end_time = models.TimeField("Hora Termina")  # Time END
 
-
-class Level(models.Model):
-    name = models.CharField(max_length=60)
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        related_name="levels",
-        null=True,
-    )
-    position = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f"{self.id} {self.name}"
+    class Meta:
+        ordering = ['weekday']
 
 
-class Task(models.Model):
-    level = models.ForeignKey(
-        Level,
-        on_delete=models.CASCADE,
-        related_name="tasks",
-    )
-    task = models.CharField(max_length=150)
-
-    def __str__(self):
-        return f"{self.task}"
+class Price(models.Model):
+    price = models.IntegerField(default=0)
