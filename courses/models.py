@@ -97,7 +97,7 @@ class Attendance(models.Model):
 class Student_Level(models.Model):
 
     student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="levels")
+        Account, on_delete=models.CASCADE, related_name="courseslevels")
 
     level = models.ForeignKey(
         Level, on_delete=models.CASCADE, related_name="levels")
