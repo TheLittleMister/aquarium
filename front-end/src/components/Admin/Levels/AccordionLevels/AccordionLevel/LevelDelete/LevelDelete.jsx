@@ -27,7 +27,7 @@ const LevelDelete = (props) => {
     const dataObj = Object.fromEntries(dataArr);
 
     const result = await fetch(
-      urlAPI + `courses/deleteLevel/?id=${props.level.id}`,
+      urlAPI + `levels/deleteLevel/?id=${props.level.id}`,
       {
         method: "DELETE",
         headers: {

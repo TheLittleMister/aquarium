@@ -34,16 +34,13 @@ const LevelsForm = (props) => {
     async (categoryID) => {
       const tokens = getTokens();
 
-      const result = await fetch(
-        urlAPI + `courses/category/?id=${categoryID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + tokens.access,
-          },
-        }
-      );
+      const result = await fetch(urlAPI + `levels/category/?id=${categoryID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tokens.access,
+        },
+      });
 
       const data = await result.json();
 
@@ -98,7 +95,7 @@ const LevelsForm = (props) => {
     const dataObj = Object.fromEntries(dataArr);
 
     const result = await fetch(
-      urlAPI + `courses/level/?id=${props.level ? props.level.id : ""}`,
+      urlAPI + `levels/level/?id=${props.level ? props.level.id : ""}`,
       {
         method: props.level ? "PUT" : "POST",
         headers: {

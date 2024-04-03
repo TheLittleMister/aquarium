@@ -31,16 +31,13 @@ const TasksLevel = (props) => {
     const getTasks = async () => {
       const tokens = getTokens();
 
-      const result = await fetch(
-        urlAPI + `courses/tasks/?levelID=${props.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + tokens.access,
-          },
-        }
-      );
+      const result = await fetch(urlAPI + `levels/tasks/?levelID=${props.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tokens.access,
+        },
+      });
 
       const data = await result.json();
 

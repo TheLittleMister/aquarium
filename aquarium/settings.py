@@ -45,6 +45,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"] if DEBUG else config.get(
 INSTALLED_APPS = [
     "users",
     "courses",
+    "levels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

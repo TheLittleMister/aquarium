@@ -25,7 +25,7 @@ const TasksForm = ({ open, setOpen, levelID, setReload, task }) => {
     const tokens = getTokens();
 
     const result = await fetch(
-      urlAPI + `courses/task/?id=${task ? task.id : ""}`,
+      urlAPI + `levels/task/?id=${task ? task.id : ""}`,
       {
         method: task ? "PUT" : "POST",
         headers: {

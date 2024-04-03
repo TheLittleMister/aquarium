@@ -12,7 +12,7 @@ const ModalLevel = (props) => {
   useEffect(() => {
     const getLevels = async () => {
       const result = await fetch(
-        urlAPI + `courses/levelsInfo/?category=${props.title}`,
+        urlAPI + `levels/levelsInfo/?category=${props.title}`,
         {
           method: "GET",
           headers: {

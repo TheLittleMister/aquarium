@@ -39,7 +39,7 @@ const LevelsForm = (props) => {
     const getLevels = async () => {
       const tokens = getTokens();
 
-      const result = await fetch(urlAPI + `courses/level/`, {
+      const result = await fetch(urlAPI + `levels/level/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const LevelsForm = (props) => {
     dataObj["student"] = props.userID;
 
     const result = await fetch(
-      urlAPI + `courses/studentLevel/?id=${props.level ? props.level.id : ""}`,
+      urlAPI + `levels/studentLevel/?id=${props.level ? props.level.id : ""}`,
       {
         method: props.level ? "PUT" : "POST",
         headers: {

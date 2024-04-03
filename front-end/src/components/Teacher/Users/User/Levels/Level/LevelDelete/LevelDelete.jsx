@@ -28,7 +28,7 @@ const LevelDelete = (props) => {
     dataObj["userID"] = props.userID;
     dataObj["studentLevelID"] = props.level.id;
 
-    const result = await fetch(urlAPI + `courses/studentLevel/`, {
+    const result = await fetch(urlAPI + `levels/studentLevel/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

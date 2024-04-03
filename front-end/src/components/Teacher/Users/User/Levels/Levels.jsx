@@ -21,7 +21,7 @@ const Levels = (props) => {
       const tokens = getTokens();
 
       const result = await fetch(
-        urlAPI + `courses/studentLevel/?userID=${props.userID}`,
+        urlAPI + `levels/studentLevel/?userID=${props.userID}`,
         {
           method: "GET",
           headers: {

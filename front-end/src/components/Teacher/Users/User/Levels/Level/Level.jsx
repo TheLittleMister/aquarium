@@ -41,7 +41,7 @@ const Level = ({ level, userID, setReload }) => {
     setLoading(true);
     const tokens = getTokens();
 
-    const result = await fetch(urlAPI + `courses/certificate/`, {
+    const result = await fetch(urlAPI + `levels/certificate/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

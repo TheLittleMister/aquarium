@@ -22,7 +22,7 @@ const TaskDelete = (props) => {
     const tokens = getTokens();
 
     const result = await fetch(
-      urlAPI + `courses/deleteTask/?id=${props.task.id}`,
+      urlAPI + `levels/deleteTask/?id=${props.task.id}`,
       {
         method: "DELETE",
         headers: {

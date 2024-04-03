@@ -7,11 +7,7 @@ Front-End: **React JS**
 
 # Setup
 
-1. Download and Install Python (https://www.python.org/)
-
-   - _Linux_:  
-      Python 3: `sudo apt install python3-pip python3-dev`  
-      Python 2: `sudo apt install python-pip python-dev`
+1. Download and Install Python 3.8.5 (https://www.python.org/)
 
 2. Create a virtual enviroment.
 
@@ -37,7 +33,11 @@ Front-End: **React JS**
 5. Set project DEBUG mode:
 
    - Open up /aquarium/aquarium/settings.py:
+
      - Change Line 21 with: `DEBUG = True`
+
+   - Open up /aquarium/users/utils.py:
+     - If you are using other backend port change line 5 with: `mysite = "http://127.0.0.1:<your backend port>" if settings.DEBUG else "https://aquariumschool.co"`
 
 6. Install front-end dependencies and start react project:
 

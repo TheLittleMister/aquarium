@@ -28,7 +28,7 @@ const CertificateDelete = (props) => {
     dataObj["userID"] = props.userID;
     dataObj["studentLevelID"] = props.level.id;
 
-    const result = await fetch(urlAPI + `courses/certificate/`, {
+    const result = await fetch(urlAPI + `levels/certificate/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

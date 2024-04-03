@@ -17,7 +17,7 @@ const Levels = (props) => {
     const getLevels = async () => {
       const tokens = getTokens();
 
-      const result = await fetch(urlAPI + `courses/level/`, {
+      const result = await fetch(urlAPI + `levels/level/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
