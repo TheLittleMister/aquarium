@@ -204,7 +204,7 @@ def users(request):
         model = Teacher
 
     elif filterOption == 3:
-        model = User
+        model = Account
         filter["type"] = "Administrador"
         order = order[6:]
         values = {value: F(value[6:]) for value in valuesList}
