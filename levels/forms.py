@@ -8,7 +8,7 @@ class StudentLevelForm(forms.ModelForm):
     class Meta:
         model = Student_Level
         fields = (
-            'student',
+            'new_student',
             'level',
             'date',
             'attendances',
