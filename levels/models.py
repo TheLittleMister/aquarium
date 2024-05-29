@@ -7,9 +7,6 @@ from .labels import *
 
 class Student_Level(models.Model):
 
-    student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="levels")
-
     new_student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="levels")
 

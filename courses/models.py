@@ -12,8 +12,6 @@ class Course(models.Model):
     end_time = models.TimeField("Hora Termina")  # Time END
     date = models.DateField("Fecha", null=True)
     # Students(Account.student) M2M
-    students = models.ManyToManyField(
-        Account, blank=True, related_name="courses")
 
     new_students = models.ManyToManyField(
         Student, related_name="courses", blank=True)  # related_name="courses" (?)
@@ -63,8 +61,6 @@ class Attendance(models.Model):
         paid = "PAGO", "PAGO"
         unpaid = "SEPARADO", "SEPARADO"
 
-    student = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name="attendances")
     new_student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="attendances")
     course = models.ForeignKey(
@@ -85,12 +81,6 @@ class Attendance(models.Model):
         (N_PAID, "NO PAGO"),
         (SEP, "SEPARADO"),
     )
-
-    quota = models.CharField(
-        max_length=10,
-        choices=quota_choices,
-        default=SEP,
-    )  # SEPARADO / PAGO / NO PAGO
 
     new_quota = models.CharField(
         max_length=8,

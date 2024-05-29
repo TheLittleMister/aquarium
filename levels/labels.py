@@ -15,12 +15,7 @@ class Level(models.Model):
         advanced = 3, "Avanzado"
 
     name = models.CharField(max_length=60)
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        related_name="levels",
-        null=True,
-    )
+
     new_category = models.SmallIntegerField(choices=Categories.choices)
     position = models.IntegerField(default=0)
 
