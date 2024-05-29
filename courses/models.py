@@ -91,7 +91,7 @@ class Attendance(models.Model):
     note = models.CharField("Nota", max_length=280, null=True, blank=True)
 
     class Meta:
-        ordering = ['student']
+        ordering = ['new_student']
 
     def __str__(self):
         return f"{self.student}: {self.course}"

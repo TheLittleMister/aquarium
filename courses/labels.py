@@ -25,7 +25,7 @@ class Schedule(models.Model):
     end_time = models.TimeField("Hora Termina")  # Time END
 
     class Meta:
-        ordering = ['weekday']
+        ordering = ['new_weekday']
 
 
 class Price(models.Model):
