@@ -13,7 +13,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import Maintenance from "./UI/Maintenance/Maintenance";
 
 const App = () => {
-  const [maintenance, setMaintenance] = useState(true);
+  const [maintenance, setMaintenance] = useState(false);
 
   return (
     <>
