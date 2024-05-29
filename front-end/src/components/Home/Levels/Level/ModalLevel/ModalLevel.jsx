@@ -12,7 +12,7 @@ const ModalLevel = (props) => {
   useEffect(() => {
     const getLevels = async () => {
       const result = await fetch(
-        urlAPI + `levels/levelsInfo/?category=${props.title}`,
+        urlAPI + `levels/levelsInfo/?category=${props.value}`,
         {
           method: "GET",
           headers: {
@@ -26,7 +26,7 @@ const ModalLevel = (props) => {
     };
 
     getLevels();
-  }, [props.title]);
+  }, [props.value]);
 
   return (
     <ModalUI open={props.open} setOpen={props.setOpen}>

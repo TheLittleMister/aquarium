@@ -16,7 +16,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 const LevelsForm = (props) => {
   const authCtx = useContext(AuthContext);
   const [category, setCategory] = useState(
-    props.level ? props.level.category__id : ""
+    props.level ? props.level.category : ""
   );
   const [position, setPosition] = useState(
     props.level ? props.level.position : 1
@@ -31,20 +31,23 @@ const LevelsForm = (props) => {
   const [collapseOpen, setCollapseOpen] = useState(false);
 
   const getAvailablePositions = useCallback(
-    async (categoryID) => {
+    async (category) => {
       const tokens = getTokens();
 
-      const result = await fetch(urlAPI + `levels/category/?id=${categoryID}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + tokens.access,
-        },
-      });
+      const result = await fetch(
+        urlAPI + `levels/category/?category=${category}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + tokens.access,
+          },
+        }
+      );
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -57,7 +60,7 @@ const LevelsForm = (props) => {
 
       setAvailablePositions(
         props.level
-          ? props.level.category__id === categoryID
+          ? props.level.category === category
             ? data.positions
             : data.positions + 1
           : data.positions + 1
@@ -68,7 +71,7 @@ const LevelsForm = (props) => {
   );
 
   useEffect(() => {
-    props.level && getAvailablePositions(props.level.category__id);
+    props.level && getAvailablePositions(props.level.category);
   }, [getAvailablePositions, props.level]);
 
   const handlePositionChange = (e) => {
@@ -107,7 +110,7 @@ const LevelsForm = (props) => {
     );
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -117,8 +120,8 @@ const LevelsForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       getAvailablePositions(dataObj["category"]);

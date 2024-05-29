@@ -28,7 +28,7 @@ import ButtonDanger from "../../../../../../UI/Buttons/ButtonDanger";
 import CertificateDelete from "./CertificateDelete/CertificateDelete";
 import LevelDelete from "./LevelDelete/LevelDelete";
 
-const Level = ({ level, userID, setReload }) => {
+const Level = ({ level, studentID, setReload }) => {
   const authCtx = useContext(AuthContext);
   const [openEditLevel, setOpenEditLevel] = useState(false);
   const [openDeleteCertificate, setOpenDeleteCertificate] = useState(false);
@@ -48,14 +48,14 @@ const Level = ({ level, userID, setReload }) => {
         Authorization: "Bearer " + tokens.access,
       },
       body: JSON.stringify({
-        userID,
+        studentID,
         studentLevelID: level.id,
       }),
     });
 
     const data = await result.json();
 
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -66,7 +66,7 @@ const Level = ({ level, userID, setReload }) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
+    if (data.detail || (data.errors && data.errors.length > 0)) {
       setErrorMessage(data.errors[0]);
     } else {
       setReload(true);
@@ -79,14 +79,14 @@ const Level = ({ level, userID, setReload }) => {
     <PaperPrimary>
       <LevelDelete
         level={level}
-        userID={userID}
+        studentID={studentID}
         open={openDeleteLevel}
         setOpen={setOpenDeleteLevel}
         setReload={setReload}
       />
       <CertificateDelete
         level={level}
-        userID={userID}
+        studentID={studentID}
         open={openDeleteCertificate}
         setOpen={setOpenDeleteCertificate}
         setReload={setReload}
@@ -95,7 +95,7 @@ const Level = ({ level, userID, setReload }) => {
         open={openEditLevel}
         setOpen={setOpenEditLevel}
         level={level}
-        userID={userID}
+        studentID={studentID}
         setReload={setReload}
       />
       <Text variant="h5" fontWeight={600}>

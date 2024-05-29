@@ -18,6 +18,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+# from datetime import datetime, timedelta
+
 # Create your views here.
 
 
@@ -26,7 +28,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 def addCourses(request):
     response = {"errors": list()}
     username = request.GET.get("username", "")
-    user = Account.objects.get(username=username)
+    student = Student.objects.get(user__username=username)
 
     if request.method == "POST":
         form = CourseForm(request.data)
@@ -44,7 +46,7 @@ def addCourses(request):
             response["errors"] += getFormErrors(form)
             return Response(response)
 
-    response["courses"] = list(Course.objects.filter(date__gte=datetime.datetime.now()).annotate(count=Count('students'), default=Exists(user.courses.filter(id=OuterRef("pk"))),).values("id", "date", "start_time", "end_time", "count", "default").order_by(
+    response["courses"] = list(Course.objects.filter(date__gte=datetime.datetime.now()).annotate(count=Count('students'), default=Exists(student.courses.filter(id=OuterRef("pk"))),).values("id", "date", "start_time", "end_time", "count", "default").order_by(
         'date', 'start_time'))
 
     return Response(response)
@@ -55,23 +57,23 @@ def addCourses(request):
 def editCourses(request):
     response = {"errors": list()}
     username = request.GET.get("username", "")
-    user = Account.objects.get(username=username)
+    student = Student.objects.get(user__username=username)
 
     form = CoursesForm(request.data)
 
     if form.is_valid():
-        query = user.courses.filter(date__gte=datetime.datetime.now())
+        query = student.courses.filter(date__gte=datetime.datetime.now())
 
         removeCourses = set(query) - set(form.cleaned_data["courses"])
         addCourses = set(form.cleaned_data["courses"]) - set(query)
 
         for course in removeCourses:
-            Attendance.objects.get(student=user, course=course).delete()
-            user.courses.remove(course)
+            Attendance.objects.get(student=student, course=course).delete()
+            student.courses.remove(course)
 
         for course in addCourses:
-            Attendance.objects.create(student=user, course=course)
-            user.courses.add(course)
+            Attendance.objects.create(student=student, course=course)
+            student.courses.add(course)
 
     else:
         response["errors"] += getFormErrors(form)
@@ -83,11 +85,11 @@ def editCourses(request):
 @permission_classes([IsAuthenticated])
 def attendances(request):
     username = request.data["username"]
-    user = Account.objects.get(username=username)
+    student = Student.objects.get(user__username=username)
     paginatorAmount = 10
 
     filter = {
-        "quota": "PAGO"} if not request.user.is_admin and not request.user.is_teacher else dict()
+        "quota": "PAGO"} if request.user.type == "Estudiante" else dict()
 
     values = list()
 
@@ -116,7 +118,7 @@ def attendances(request):
                   "attendance"]
 
     userAttendances = list(Attendance.objects
-                           .filter(student=user, **filter)
+                           .filter(student=student, **filter)
                            .annotate(count=Count('course__students'))
                            .values(*values).order_by("-course__date", "-course__start_time"))
 
@@ -232,11 +234,11 @@ def course(request):
                                        .filter(course=course)
                                        .annotate(count=Count('course__students'))
                                        .values(
-                                           "student__username",
-                                           "student__id",
-                                           "student__first_name",
-                                           "student__last_name",
-                                           "student__identity_document",
+                                           "student__user__username",
+                                           "student__user__id",
+                                           "student__user__first_name",
+                                           "student__user__last_name",
+                                           "student__user__id_document",
                                            "count",
                                            "id",
                                            "cycle",
@@ -246,7 +248,7 @@ def course(request):
                                            "attendance",
                                            "quota",
                                            "note",
-                                       ).order_by("student__last_name"))
+                                       ).order_by("student__user__last_name"))
 
     return Response(response)
 
@@ -294,8 +296,8 @@ def editCourse(request):
             response["errors"] += getFormErrors(form)
 
     else:
-        response["users"] = list(Account.objects.filter(is_admin=False, is_teacher=False).annotate(default=Exists(course.students.filter(id=OuterRef("pk")))).values(
-            "id", "first_name", "last_name", "default").order_by("-date_joined"))
+        response["users"] = list(Student.objects.all().annotate(default=Exists(course.students.filter(id=OuterRef("pk")))).values(
+            "id", "user__first_name", "user__last_name", "default").order_by("-user__date_joined"))
 
     return Response(response)
 
@@ -334,16 +336,12 @@ def printCourse(request):
 @permission_classes([IsAdminUser])
 def price(request):
     response = {"errors": list()}
-    newPrice = int(request.data["price"])
+    newPrice = str(request.data["price"])
 
-    if newPrice > 0:
-        price, created = Price.objects.get_or_create(pk=1)
-        price.price = newPrice
-        price.save()
-        response["price"] = newPrice
-
-    else:
-        response["errors"].append("Precio debe ser mayor a $0")
+    price, created = Price.objects.get_or_create(pk=1)
+    price.price = newPrice
+    price.save()
+    response["price"] = newPrice
 
     return Response(response)
 
@@ -358,16 +356,12 @@ def schedules(request):
         response["schedules"] = list(
             Schedule.objects.all().values(
                 "id",
-                "weekday__weekday",
+                "weekday",
                 "start_time",
                 "end_time"
-            ).order_by("weekday__day_number", "start_time"))
+            ).order_by("weekday", "start_time"))
 
     elif request.method == "POST":
-        if not Weekday.objects.filter(pk=1).exists():
-            for key, value in get_weekdays().items():
-                Weekday.objects.create(weekday=value, day_number=key)
-
         form = ScheduleForm(request.data)
 
         if form.is_valid():
@@ -389,10 +383,10 @@ def schedulesInfo(request):
         "price": Price.objects.get_or_create(pk=1)[0].price,
         "schedules": list(
             Schedule.objects.filter().values(
-                "weekday__weekday",
+                "weekday",
                 "start_time",
                 "end_time"
-            ).order_by("weekday__day_number", "start_time"))
+            ).order_by("weekday", "start_time"))
     }
 
     return Response(response)

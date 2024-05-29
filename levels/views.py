@@ -25,9 +25,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
 def category(request):
-    categoryID = request.GET.get("id", "")
-    category = Category.objects.get(pk=categoryID)
-    return Response({"positions": category.levels.all().count()})
+    category = request.GET.get("category", "")
+    return Response({"positions": Level.objects.filter(category=category).count()})
 
 
 @api_view(["GET", "POST", "PUT"])
@@ -35,11 +34,10 @@ def category(request):
 def level(request):
     response = {"errors": list()}
 
-    if request.user.is_admin or request.user.is_teacher:
-
+    if request.user.is_admin or request.user.type == "Profesor":
         if request.method == "GET":
             response["levels"] = list(Level.objects.all().values(
-                "id", "name", "category__name", "category__id", "position").order_by("category__id", "position"))
+                "id", "name", "category", "position").order_by("category", "position"))
 
     else:
         response["errors"] += ["403 (Forbidden)"]
@@ -70,8 +68,7 @@ def level(request):
 
             if form.is_valid():
                 targetPosition = int(request.data["position"])
-                category = Category.objects.get(
-                    pk=int(request.data["category"]))
+                category = form.cleaned_data["category"]
 
                 if levelCategory == category:
                     if targetPosition > levelPosition:
@@ -107,8 +104,9 @@ def level(request):
 @api_view(["GET"])
 def levelsInfo(request):
     response = {"levels": list()}
-    category, created = Category.objects.get_or_create(
-        name=request.GET.get("category", ""))
+
+    category = int(request.GET.get("category", ""))
+
     for level in Level.objects.filter(category=category):
         response["levels"].append(
             {"name": level.name, "content": list(level.tasks.all().values("task"))})
@@ -153,13 +151,14 @@ def studentLevel(request):
 
     if request.method == "GET":
         response["studentLevels"] = list()
+        studentID = request.GET.get("studentID", "")
 
-        for studentLevel in Student_Level.objects.filter(student=request.GET.get("userID", "")).order_by("level__category__id", "level__position"):
+        for studentLevel in Student_Level.objects.filter(student=studentID).order_by("level__category", "level__position"):
 
             attendances_count = Attendance.objects.filter(
                 quota="PAGO",
                 course__date__gte=studentLevel.date,
-                student=request.GET.get("userID", ""),
+                student=studentID,
                 attendance=True,
             ).count()
 
@@ -174,11 +173,11 @@ def studentLevel(request):
 
             values = dict()
 
-            if request.user.is_teacher or request.user.is_admin:
+            if request.user.type == "Profesor" or request.user.is_admin:
                 values = {
                     "id": studentLevel.id,
                     "level__id": studentLevel.level.id,
-                    "level__category__id": studentLevel.level.category.id,
+                    "level__category": studentLevel.level.category,
                     "level__name": studentLevel.level.name,
                     "date": studentLevel.date,
                     "attendances": studentLevel.attendances,
@@ -192,7 +191,7 @@ def studentLevel(request):
                 values = {
                     "id": studentLevel.id,
                     "level__id": studentLevel.level.id,
-                    "level__category__id": studentLevel.level.category.id,
+                    "level__category": studentLevel.level.category,
                     "level__name": studentLevel.level.name,
                     "certificate_img": studentLevel.certificate_img.url if studentLevel.certificate_img else "",
                     "certificate_pdf": studentLevel.certificate_pdf.url if studentLevel.certificate_pdf else "",
@@ -201,33 +200,30 @@ def studentLevel(request):
 
             response["studentLevels"].append(values)
 
-    if request.user.is_admin or request.user.is_teacher:
+    if request.user.is_admin or request.user.type == "Profesor":
         if request.method == "POST":
             form = StudentLevelForm(request.data)
 
             if form.is_valid():
+                student = Student.objects.get(pk=request.data["student"])
 
-                student = Account.objects.get(pk=request.data["student"])
-
-                if student.teacher == request.user:
-                    if not Student_Level.objects.filter(student=request.data["student"], level=request.data["level"]).exists():
+                if student.teacher == request.user.teacher:
+                    if not Student_Level.objects.filter(student=student, level=request.data["level"]).exists():
                         form.save()
 
                     else:
                         response["errors"] += ["Nivel ya está activo"]
-
                 else:
                     response["errors"] += ["Debe ser profesor de este estudiante"]
-
             else:
                 response["errors"] += getFormErrors(form)
 
         if request.method == "PUT":
-            student = Account.objects.get(pk=request.data["student"])
-            studentLevelID = request.GET.get("id", "")
-            studentLevel = Student_Level.objects.get(pk=studentLevelID)
+            student = Student.objects.get(pk=request.data["student"])
+            studentLevel = Student_Level.objects.get(
+                pk=request.data["studentLevelID"])
 
-            if student.teacher == request.user:
+            if student.teacher == request.user.teacher:
 
                 if not studentLevel.certificate_img:
                     form = StudentLevelForm(
@@ -238,19 +234,17 @@ def studentLevel(request):
 
                     else:
                         response["errors"] += getFormErrors(form)
-
                 else:
                     response["errors"] += ["Este nivel ya está certificado"]
-
             else:
                 response["errors"] += ["Debe ser profesor de este estudiante"]
 
         if request.method == "DELETE":
-            student = Account.objects.get(pk=request.data["userID"])
+            student = Student.objects.get(pk=request.data["student"])
             studentLevelID = request.data["studentLevelID"]
             studentLevel = Student_Level.objects.get(pk=studentLevelID)
 
-            if student.teacher == request.user:
+            if student.teacher == request.user.teacher:
 
                 if not studentLevel.certificate_img:
                     if not request.user.check_password(request.data["password"]):
@@ -276,20 +270,20 @@ def studentLevel(request):
 def certificate(request):
     response = {"errors": list()}
 
-    if request.user.is_admin or request.user.is_teacher:
-        student = Account.objects.get(pk=request.data["userID"])
+    if request.user.is_admin or request.user.type == "Profesor":
+        student = Student.objects.get(pk=request.data["studentID"])
         student_level = Student_Level.objects.get(
             pk=request.data["studentLevelID"])
 
-        if request.user == student.teacher:
-            if request.user.signature:
+        if request.user == student.teacher.user:
+            if student.teacher.e_signature:
                 if request.method == "POST":
                     img_src = (
                         "media/certificate.png"
-                        if student_level.student.date_birth
+                        if student_level.student.user.birth_date
                         and round(
                             (datetime.date.today() -
-                             student_level.student.date_birth).days
+                             student_level.student.user.birth_date).days
                             // 365.25
                         )
                         > 6
@@ -302,7 +296,7 @@ def certificate(request):
                     # STUDENT NAME
                     font_src = "templates/static/fonts/algerian.ttf"
                     font = ImageFont.truetype(font_src, 28)
-                    text = f"{student_level.student.first_name} {student_level.student.last_name}".upper(
+                    text = f"{student_level.student.user.first_name} {student_level.student.user.last_name}".upper(
                     )
                     x, y = font.getsize(text)
                     draw.text(((img.width // 2) - (x // 2), 370),
@@ -319,22 +313,24 @@ def certificate(request):
 
                     # TEACHER AND ADMIN NAMES WITH SIGNATURES
                     font = ImageFont.truetype(font_src, 17)
-                    text = f"{request.user.first_name} {request.user.last_name}".upper()
+                    text = f"{student.teacher.user.first_name} {student.teacher.user.last_name}".upper(
+                    )
                     draw.text((230, 620), text, (83, 83, 83), font=font)
-                    teacher_signature = (Image.open(request.user.signature.path)
-                                         if request.user.signature
+                    teacher_signature = (Image.open(student.teacher.e_signature.path)
+                                         if student.teacher.e_signature
                                          else None
                                          )
 
                     if teacher_signature:
                         img.paste(teacher_signature, (230, 535))
 
-                    admin = Account.objects.filter(is_admin=True).first()
-                    text = f"{admin.first_name} {admin.last_name}"
+                    admin_teacher = Teacher.objects.filter(
+                        user__is_admin=True).first()
+                    text = f"{admin_teacher.user.first_name} {admin_teacher.user.last_name}"
                     draw.text((580, 620), text, (83, 83, 83), font=font)
                     admin_signature = (
-                        Image.open(admin.signature.path)
-                        if admin.signature
+                        Image.open(admin_teacher.e_signature.path)
+                        if admin_teacher.e_signature
                         else None
                     )
 
@@ -374,7 +370,6 @@ def certificate(request):
                 response["errors"] += ["Debe tener una firma digital"]
         else:
             response["errors"] += ["Debe ser profesor de este estudiante"]
-
     else:
         response["errors"] += ["403 (Forbidden)"]
 

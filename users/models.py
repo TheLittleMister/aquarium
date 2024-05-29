@@ -49,7 +49,7 @@ class Manager(BaseUserManager):
         return user
 
 
-class Account(AbstractBaseUser):
+class User(AbstractBaseUser):
     class Types(models.TextChoices):
         admin = "Administrador", "Administrador"
         teacher = "Profesor", "Profesor"
@@ -61,75 +61,40 @@ class Account(AbstractBaseUser):
 
     type = models.CharField(
         max_length=13, choices=Types.choices)
-
-    username = models.CharField(max_length=150,
-                                unique=True,
-                                validators=[UnicodeUsernameValidator()])
-    email = models.EmailField(max_length=60, unique=True, validators=[
-                              validate_email], null=True, blank=True)
-    profile_image = models.ImageField(
-        default="default-profile.png", upload_to="profile_pics", blank=True
+    email = models.EmailField(
+        max_length=60, unique=True, validators=[validate_email], null=True, blank=True)
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=[UnicodeUsernameValidator()],
     )
-    first_name = models.CharField("Nombres", max_length=30)
-    last_name = models.CharField("Apellidos", max_length=30)
-    id_type = models.ForeignKey(
-        Id_Type,
-        on_delete=models.SET_NULL,
-        related_name="users",
-        null=True,
-        blank=True,
-        verbose_name="Tipo de Documento",
-    )  # Make tests
     id_document = models.BigIntegerField(
-        "Número de Documento", unique=True, null=True, blank=True
-    )  # ID
-
-    parent = models.CharField(
-        "Acudiente", max_length=60, null=True, blank=True)
-    phone_1 = models.BigIntegerField("Tel/Cel (1)", null=True, blank=True)
-    phone_number = models.CharField(max_length=150, null=True, blank=True, validators=[
-                                    validate_international_phonenumber])
-    phone_2 = models.BigIntegerField("Tel/Cel (2)", null=True, blank=True)
-    sex = models.ForeignKey(
-        Sex,
-        on_delete=models.SET_NULL,
-        related_name="users",
-        null=True,
-        blank=True,
-        verbose_name="Sexo Biológico",
-    )
+        unique=True, null=True, blank=True)
+    profile_image = models.ImageField(
+        default="default-profile.png", upload_to="profile_pics")
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     gender = models.CharField(
         max_length=9, choices=Genders.choices)
-    birth_date = models.DateField("Fecha de Nacimiento", null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(max_length=150, null=True, blank=True, validators=[
+                                    validate_international_phonenumber])
+    last_session = models.DateTimeField(null=True, blank=True)
 
-    my_teacher = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        related_name="my_teacher_field",
-        null=True,
-        blank=True,
-    )
-
+    # REQUIRED
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
-    last_session = models.DateTimeField(null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_teacher = models.BooleanField("Profesor", default=False)
-
-    signature = models.ImageField(
-        "Firma", upload_to="signatures", null=True, blank=True
-    )
-
     objects = Manager()
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
 
     class Meta:
-        ordering = ["last_name"]
+        ordering = ["last_name", "first_name"]
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
@@ -143,21 +108,10 @@ class Account(AbstractBaseUser):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.signature:
-            img = Image.open(self.signature.path)
-
-            if img.height != 80:
-
-                new_height = 80
-                new_width = int(new_height * img.width / img.height)
-
-                img = img.resize((new_width, new_height), Image.ANTIALIAS)
-                img.save(self.signature.path)
-
 
 class Teacher(models.Model):
     user = models.OneToOneField(
-        Account, on_delete=models.CASCADE, related_name="teacher")
+        User, on_delete=models.CASCADE, related_name="teacher")
     e_signature = models.ImageField(
         upload_to="signatures", null=True, blank=True)
 
@@ -178,16 +132,15 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(
-        Account, on_delete=models.CASCADE, related_name="student")
+        User, on_delete=models.CASCADE, related_name="student")
     parent_name = models.CharField(max_length=60, null=True, blank=True)
     phone_number_2 = models.CharField(max_length=150, null=True, blank=True, validators=[
-                                      validate_international_phonenumber])
+        validate_international_phonenumber])
     teacher = models.ForeignKey(
         Teacher, on_delete=models.SET_NULL, related_name="students", null=True, blank=True)
 
+
 # RESET PASSWORD EMAIL
-
-
 @receiver(reset_password_token_created)
 def password_reset_token_created(
     sender, instance, reset_password_token, *args, **kwargs

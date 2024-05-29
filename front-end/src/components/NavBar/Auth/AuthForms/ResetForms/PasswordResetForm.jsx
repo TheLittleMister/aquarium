@@ -29,10 +29,9 @@ const PasswordResetForm = () => {
       body: JSON.stringify(dataObj),
     });
 
-    const data = await result.json();
+    // const data = await result.json();
 
     if (!result.ok) {
-      console.log(data.email);
       setMessages([
         "No pudimos encontrar una cuenta asociada con ese correo electrónico.",
       ]);

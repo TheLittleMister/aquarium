@@ -15,6 +15,7 @@ const Level = (props) => {
       <ModalLevel
         open={open}
         setOpen={setOpen}
+        value={props.value}
         title={props.title}
         levels={props.levels}
       />

@@ -55,7 +55,7 @@ const Attendance = ({ attendance, courseDate, count, setAttendancesCount }) => {
 
     const data = await result.json();
 
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -66,8 +66,8 @@ const Attendance = ({ attendance, courseDate, count, setAttendancesCount }) => {
     }
 
     if (type === "attendance") {
-      if (data.attendance) setAttendancesCount(prevState => prevState + 1);
-      else setAttendancesCount(prevState => prevState - 1);
+      if (data.attendance) setAttendancesCount((prevState) => prevState + 1);
+      else setAttendancesCount((prevState) => prevState - 1);
       setAttendanceStatus(data.attendance);
     }
     if (type === "quota") setQuota(data.quota);
@@ -97,16 +97,18 @@ const Attendance = ({ attendance, courseDate, count, setAttendancesCount }) => {
           backgroundColor: "blue.font",
         }}
         onClick={() =>
-          navigate(`/admin/users/${attendance.student__username}`, {
+          navigate(`/admin/users/${attendance.student__user__username}`, {
             state: { previousPath: pathname },
           })
         }
       >
         <TableCell align="left">
           <Text color="blue.light">
-            {count + ". " + attendance.student__last_name +
+            {count +
+              ". " +
+              attendance.student__user__last_name +
               " " +
-              attendance.student__first_name}
+              attendance.student__user__first_name}
           </Text>
         </TableCell>
         <TableCell align="center">

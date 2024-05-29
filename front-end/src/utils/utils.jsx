@@ -7,25 +7,28 @@ export const url = "https://aquariumschool.co";
 export const urlAPI = url + "/api/";
 
 export const userBase = {
-  id: 0,
-  username: "",
-  image: "",
   type: "",
+  id: 0,
+  email: "",
+  username: "",
+  idDocument: "",
+  profileImage: "",
   firstName: "",
   lastName: "",
-  idType: "",
-  idTypeID: 2,
-  identityDocument: "",
-  sex: "",
-  sexID: 3,
-  dateBirth: null,
+  gender: "",
+  birthDate: "",
   age: 0,
-  teacher: "",
-  parent: "",
-  email: "",
-  phone1: "",
-  phone2: "",
-  signature: "",
+  phoneNumber: "",
+};
+
+export const weekday = {
+  1: "Lunes",
+  2: "Martes",
+  3: "Miércoles",
+  4: "Jueves",
+  5: "Viernes",
+  6: "Sábado",
+  7: "Domingo",
 };
 
 export const prettyDate = (time) => {
@@ -88,7 +91,6 @@ export const refreshTokens = async (statusText, refresh, setUser = null) => {
   });
 
   const responseData = await response.json();
-  // console.log(response, responseData);
 
   if (!response.ok) {
     localStorage.removeItem("tokens");

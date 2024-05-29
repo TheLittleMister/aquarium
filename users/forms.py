@@ -1,32 +1,72 @@
 from django import forms
 from .models import *
-from django.contrib.auth.validators import UnicodeUsernameValidator
+
+# User Creation Form?
 
 
-class ProfileForm(forms.ModelForm):
+class UserAdminForm(forms.ModelForm):
 
     class Meta:
-        model = Account
+        model = User
         fields = (
-            'username',
+            'type',
             'email',
+            'username',
+            'id_document',
             'first_name',
             'last_name',
-            'id_type',
-            'id_document',
-            'sex',
+            'gender',
             'birth_date',
-            'parent',
-            'phone_1',
-            'phone_2',
+            'phone_number',
         )
 
     def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get("username")
 
-        user_valid = UnicodeUsernameValidator()
-        user_valid(username)
+        if not username or not username.islower():
+            raise forms.ValidationError("Usuarios deben estar en minúscula")
+
+
+class StudentAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Student
+        fields = (
+            'parent_name',
+            'phone_number_2',
+            'teacher'
+        )
+
+
+class UserForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'username',
+            'id_document',
+            'first_name',
+            'last_name',
+            'gender',
+            'birth_date',
+            'phone_number',
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
 
         if not username or not username.islower():
             raise forms.ValidationError("Usuarios deben estar en minúscula")
+
+
+class StudentForm(forms.ModelForm):
+
+    class Meta:
+        model = Student
+        fields = (
+            'parent_name',
+            'phone_number_2',
+        )

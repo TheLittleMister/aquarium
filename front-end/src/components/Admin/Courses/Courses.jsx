@@ -28,6 +28,7 @@ const Content = (props) => {
   const authCtx = useContext(AuthContext);
 
   const [resultCount, setResultCount] = useState(0);
+  // const [avgAttendances, setAvgAttendances] = useState(0);
   const [paginationCount, setPaginationCount] = useState(0);
   const [courses, setCourses] = useState([]);
   const [page, setPage] = useState(1);
@@ -53,7 +54,7 @@ const Content = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -63,7 +64,6 @@ const Content = (props) => {
         if (refreshed) getCourses();
         return;
       }
-      // console.log(data);
 
       setResultCount(data.count);
       setPaginationCount(data.paginationCount);
@@ -71,6 +71,7 @@ const Content = (props) => {
     };
 
     getCourses();
+    // getAvgAttendances();
 
     if (props.reload) props.setReload(false);
   }, [authCtx.setUser, page, search, props]);
@@ -107,6 +108,10 @@ const Content = (props) => {
       </Stack>
 
       <ChipPrimary label={`${resultCount} resultados`} sx={{ m: 1 }} />
+      {/* <ChipPrimary
+        label={`Cantidad promedio de asistencias: ${avgAttendances}`}
+        sx={{ m: 1 }}
+      /> */}
 
       <CoursesTable courses={courses} />
 

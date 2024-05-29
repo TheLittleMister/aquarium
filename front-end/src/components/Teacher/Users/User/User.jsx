@@ -17,6 +17,7 @@ import { getTokens, refreshTokens, urlAPI } from "../../../../utils/utils";
 import Profile from "./Profile/Profile";
 import Courses from "./Courses/Courses";
 import Levels from "./Levels/Levels";
+import ButtonLoading from "../../../../UI/Buttons/ButtonLoading";
 
 const User = ({ setClosePath }) => {
   const params = useParams();
@@ -57,7 +58,7 @@ const User = ({ setClosePath }) => {
       const tokens = getTokens();
       const result = await fetch(
         urlAPI +
-          `users/profile/?username=${params.username ? params.username : ""}`,
+          `users/students/?username=${params.username ? params.username : ""}`,
         {
           method: "GET",
           headers: {
@@ -69,7 +70,7 @@ const User = ({ setClosePath }) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -95,7 +96,7 @@ const User = ({ setClosePath }) => {
   };
 
   return !ready ? (
-    <h1>Loading User...</h1>
+    <ButtonLoading loading>Cargando Usuario</ButtonLoading>
   ) : (
     <Routes>
       <Route
@@ -119,7 +120,7 @@ const User = ({ setClosePath }) => {
         path="levels/"
         element={
           <Panel tab={2} {...panelOptions}>
-            <Levels userID={user.id} />
+            <Levels studentID={user.studentID} />
           </Panel>
         }
       />

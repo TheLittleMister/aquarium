@@ -12,12 +12,7 @@ import SchedulesTable from "./SchedulesTable/SchedulesTable";
 
 import EditIcon from "@mui/icons-material/Edit";
 import PriceForm from "./PriceForm/PriceForm";
-import {
-  getTokens,
-  refreshTokens,
-  urlAPI,
-  fixPrice,
-} from "../../../utils/utils";
+import { getTokens, refreshTokens, urlAPI } from "../../../utils/utils";
 import { AuthContext } from "../../../context/AuthContext";
 import ButtonSecondary from "../../../UI/Buttons/ButtonSecondary";
 import ScheduleForm from "./ScheduleForm/ScheduleForm";
@@ -44,7 +39,7 @@ const Schedules = () => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -84,7 +79,7 @@ const Schedules = () => {
         textAlign={"center"}
         sx={styles.schedulesTitle}
       >
-        Horarios y Costo
+        Costo y Horarios
       </Text>
       <Box p={3} sx={styles.cost}>
         <Stack
@@ -92,9 +87,10 @@ const Schedules = () => {
           alignItems="center"
           justifyContent="space-around"
           flexWrap="wrap"
+          gap={2}
         >
           <Text variant="h6">
-            Mensualidad desde ${fixPrice(price)}{" "}
+            {price}
             <Tooltip title="Editar Precio">
               <IconButton onClick={() => setOpen(true)}>
                 <EditIcon color="primary" />

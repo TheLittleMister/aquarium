@@ -4,4 +4,7 @@ export const stack = {
   flexWrap: "wrap",
   alignItems: "center",
   justifyContent: "center",
+  "& > *": {
+    width: "25rem",
+  },
 };

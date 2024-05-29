@@ -28,7 +28,7 @@ const PasswordForm = (props) => {
     const dataObj = Object.fromEntries(dataArr);
     dataObj["username"] = props.user.username;
 
-    const result = await fetch(urlAPI + "users/defaultUserPassword/ ", {
+    const result = await fetch(urlAPI + "users/resetUserPassword/ ", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ const PasswordForm = (props) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -49,8 +49,8 @@ const PasswordForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       setMessages(data.messages);
@@ -75,13 +75,14 @@ const PasswordForm = (props) => {
         success={success}
       >
         <Text component="span" textAlign="center" color="red.main">
-          ¿Está seguro que desea resetear la contraseña de
+          ¿Está seguro que desea resetear
+          <br />
+          la contraseña de{" "}
           <strong>
-            <br />
             {props.user.firstName} {props.user.lastName}
             <br />
           </strong>
-          a "AquariumSchool"?
+          a su número de documento?
         </Text>
         <TextField
           color="red"

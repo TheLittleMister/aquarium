@@ -1,11 +1,4 @@
-from .models import *
-from django.conf import settings
-
-mysite = "http://127.0.0.1:8000/" if settings.DEBUG else "https://aquariumschool.co/"
-
 # getAttendances to PRINT
-
-
 def getAttendances(course):
 
     attendances = list()
@@ -14,7 +7,7 @@ def getAttendances(course):
 
         attendances.append({
             "cycle": None,
-            "name": attendance.student.last_name + " " + attendance.student.first_name,
+            "name": attendance.student.user.last_name + " " + attendance.student.user.first_name,
             "recover": attendance.recover,
             "cycleStatus": attendance.cycle,
             "endCycleStatus": attendance.end_cycle,
@@ -42,18 +35,3 @@ def getAttendances(course):
             ).order_by('course'))
 
     return attendances
-
-
-def get_weekdays():
-
-    weekdays = {
-        1: "Lunes",
-        2: "Martes",
-        3: "Miercoles",
-        4: "Jueves",
-        5: "Viernes",
-        6: "Sabado",
-        7: "Domingo",
-    }
-
-    return weekdays

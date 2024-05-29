@@ -87,7 +87,7 @@ const Panel = (props) => {
                         }}
                         badgeContent={
                           authCtx.user.type === "Administrador" ||
-                            props.user.id === authCtx.user.id ? (
+                          props.user.id === authCtx.user.id ? (
                             <Button
                               variant="contained"
                               sx={styles.changePhoto}
@@ -119,11 +119,13 @@ const Panel = (props) => {
                       >
                         <Avatar
                           alt={props.user.username}
-                          src={props.user.image}
+                          src={props.user.profileImage}
                           sx={{
-                            width: "20rem",
-                            height: "20rem",
+                            width: "21rem",
+                            height: "21rem",
                             margin: "0 auto",
+                            border: "0.1rem solid",
+                            borderColor: "blue.font",
                           }}
                         />
                       </Badge>
@@ -131,12 +133,16 @@ const Panel = (props) => {
                   </TableRowNoBorder>
                   <TableRowNoBorder>
                     <TableCell>
-                      <Text fontWeight={500}>{props.user.lastName.slice(0, 15)}</Text>
+                      <Text fontWeight={500}>
+                        {props.user.lastName.slice(0, 15)}
+                      </Text>
                     </TableCell>
                   </TableRowNoBorder>
                   <TableRowNoBorder>
                     <TableCell>
-                      <Text fontWeight={500}>{props.user.firstName.slice(0, 15)}</Text>
+                      <Text fontWeight={500}>
+                        {props.user.firstName.slice(0, 15)}
+                      </Text>
                     </TableCell>
                   </TableRowNoBorder>
                   <TableRowNoBorder>
@@ -146,10 +152,11 @@ const Panel = (props) => {
                   </TableRowNoBorder>
                   <TableRowNoBorder>
                     <TableCell>
-                      <Text fontWeight={500}>@{props.user.username.slice(0, 15)}</Text>
+                      <Text fontWeight={500}>
+                        @{props.user.username.slice(0, 15)}
+                      </Text>
                     </TableCell>
                   </TableRowNoBorder>
-
                 </TableBody>
               </Table>
             </TableContainer>

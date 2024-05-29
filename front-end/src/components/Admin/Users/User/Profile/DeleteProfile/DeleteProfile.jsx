@@ -29,7 +29,7 @@ const DeleteProfile = (props) => {
     const dataObj = Object.fromEntries(dataArr);
     dataObj["username"] = props.user.username;
 
-    const result = await fetch(urlAPI + "users/deleteProfile/ ", {
+    const result = await fetch(urlAPI + "users/user/", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const DeleteProfile = (props) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -50,8 +50,8 @@ const DeleteProfile = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
       setLoading(false);
     } else {

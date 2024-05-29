@@ -98,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "aquarium.wsgi.application"
-AUTH_USER_MODEL = "users.Account"
+AUTH_USER_MODEL = "users.User"
 
 
 # Database

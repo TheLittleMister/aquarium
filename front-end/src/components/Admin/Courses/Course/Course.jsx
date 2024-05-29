@@ -39,9 +39,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import * as styles from "./CourseStyles";
 import CoursePrint from "./CoursePrint/CoursePrint";
 import ChipPrimary from "../../../../UI/Chips/ChipPrimary";
+import ButtonLoading from "../../../../UI/Buttons/ButtonLoading";
 
 const Content = ({ course }) => {
-  const [attendancesCount, setAttendancesCount] = useState(course.attendances.filter((item, index, arr) => item.attendance === true).length);
+  const [attendancesCount, setAttendancesCount] = useState(
+    course.attendances.filter((item, index, arr) => item.attendance === true)
+      .length
+  );
 
   return (
     <Container>
@@ -52,7 +56,9 @@ const Content = ({ course }) => {
           {getHour(course.course.start_time)} A{" "}
           {getHour(course.course.end_time)}
           <br />
-          <ChipPrimary label={`ASISTENCIAS: ${attendancesCount} / ${course.attendances.length}`} />
+          <ChipPrimary
+            label={`ASISTENCIAS: ${attendancesCount} / ${course.attendances.length}`}
+          />
         </ModalTitle>
         <Stack direction="row" justifyContent="space-around" p={2}>
           <Link to="print/">
@@ -70,7 +76,12 @@ const Content = ({ course }) => {
             <TableBody>
               {course.attendances.map((attendance, index, arr) => (
                 <React.Fragment key={attendance.id}>
-                  <Attendance count={index + 1} attendance={attendance} courseDate={course.course.date} setAttendancesCount={setAttendancesCount} />
+                  <Attendance
+                    count={index + 1}
+                    attendance={attendance}
+                    courseDate={course.course.date}
+                    setAttendancesCount={setAttendancesCount}
+                  />
                 </React.Fragment>
               ))}
             </TableBody>
@@ -106,7 +117,7 @@ const Course = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -133,7 +144,7 @@ const Course = (props) => {
   }, [params.course, authCtx.setUser, props, state]);
 
   return !ready ? (
-    <h1>Loading Course...</h1>
+    <ButtonLoading loading>Cargando Curso</ButtonLoading>
   ) : (
     <>
       <Content course={course} />

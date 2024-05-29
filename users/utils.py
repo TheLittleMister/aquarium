@@ -1,6 +1,8 @@
 from courses.models import *
-from django.db.models import F
 from django.conf import settings
+
+import datetime
+
 
 mysite = "http://127.0.0.1:8000" if settings.DEBUG else "https://aquariumschool.co"
 
@@ -11,10 +13,10 @@ def getFormErrors(form):
 
     for field in form:
         for error in field.errors:
-            myError = str(error).replace("Account", "cuenta")
-            messages.add(f"{field.label}: {myError}")
+            # myError = str(error).replace("User", "cuenta")
+            messages.add(f"{field.label}: {str(error)}")
 
-    if list(form.errors.as_data())[-1] == "__all__":
+    if list(form.errors.as_data()) and list(form.errors.as_data())[-1] == "__all__":
         messages.add(
             str(form.errors.as_data()["__all__"][0])[2:-2]
         )
@@ -23,35 +25,69 @@ def getFormErrors(form):
 
 
 def getUser(user):
+    if user.type == "Administrador":
+        return getBaseUser(user)
+
+    elif user.type == "Profesor":
+        return getTeacher(user)
+
+    elif user.type == "Estudiante":
+        return getStudent(user)
+
+
+def getBaseUser(user):
     return {
+        "type": user.type,
         "id": user.id,
-        "username": user.username if user.username else "",
-        "image": mysite + user.profile_image.url,
-        "type": "Administrador" if user.is_admin else "Profesor" if user.is_teacher else "Estudiante",
-        "firstName": user.first_name if user.first_name else "",
-        "lastName": user.last_name if user.last_name else "",
-        "idType": user.id_type.id_type if user.id_type else "",
-        "idTypeID": user.id_type.id if user.id_type else "",
-        "identityDocument": user.id_document if user.id_document else "",
-        "sex": user.sex.sex_name if user.sex else "",
-        "sexID": user.sex.id if user.sex else "",
-        "dateBirth": user.birth_date,
-        "age": round((datetime.date.today() - user.birth_date).days // 365.25) if user.birth_date else None,
-        "teacher": user.my_teacher.first_name + " " + user.my_teacher.last_name if user.my_teacher else "",
-        "teacherID": user.my_teacher.id if user.my_teacher else "",
-        "parent": user.parent if user.parent else "",
-        "email": user.email if user.email else "",
-        "phone1": user.phone_1 if user.phone_1 else "",
-        "phone2": user.phone_2 if user.phone_2 else "",
-        "signature":  mysite + user.signature.url if user.signature else ""
+        "email": user.email or "",
+        "username": user.username,
+        "idDocument": user.id_document or "",
+        "profileImage": mysite + user.profile_image.url,
+        "firstName": user.first_name or "",
+        "lastName": user.last_name or "",
+        "gender": user.gender or "",
+        "birthDate": user.birth_date or "",
+        "age": round((datetime.date.today() - user.birth_date).days // 365.25) if user.birth_date else "",
+        "phoneNumber": user.phone_number or ""
     }
 
 
-def getPlus(accounts):
+def getStudent(user):
+    return {
+        **getBaseUser(user),
+        "studentID": user.student.id,
+        "parentName": user.student.parent_name or "",
+        "phoneNumber2": user.student.phone_number_2 or "",
+        "teacherID": user.student.teacher.user.id if user.student.teacher else "",
+        "teacherName": user.student.teacher.user.first_name + " " + user.student.teacher.user.last_name if user.student.teacher else "",
+    }
 
-    students = list()
 
-    for student in accounts:
+def getTeacher(user):
+    return {
+        **getBaseUser(user),
+        "teacherID": user.teacher.id,
+        "eSignature": mysite + user.teacher.e_signature.url if user.teacher.e_signature else ""
+    }
+
+
+def getStudentInfo(student):
+    return {
+        "user__username": student.user.username,
+        "user__id": student.user.id,
+        "user__id_document": student.user.id_document,
+        "user__first_name": student.user.first_name,
+        "user__last_name": student.user.last_name,
+        "user__phone_number": student.user.phone_number,
+        "user__last_session": student.user.last_session
+    }
+
+
+def getPlus(students):
+
+    studentsFiltered = list()
+
+    for student in students:
         courseDates = []
 
         courses = student.courses.filter(
@@ -63,28 +99,19 @@ def getPlus(accounts):
             if len(courseDates) > 1:
                 timeDelta = courseDates[1] - courseDates[0]
                 if timeDelta.days < 7:
-                    students.append({
-                        "username": student.username,
-                        "id": student.id,
-                        "identity_document": student.id_document,
-                        "first_name": student.first_name,
-                        "last_name": student.last_name,
-                        "phone_1": student.phone_1,
-                        "real_last_login": student.last_session
-                    })
-
+                    studentsFiltered.append(getStudentInfo(student))
                 break
 
             else:
                 courseDates.append(course.date)
 
-    return students
+    return studentsFiltered
 
 
-def getInconsistencies(accounts):
-    students = list()
+def getInconsistencies(students):
+    studentsFiltered = list()
 
-    for student in accounts:
+    for student in students:
         if (
             student.attendances.filter(
                 quota="PAGO", recover=False, onlyday=False
@@ -92,34 +119,18 @@ def getInconsistencies(accounts):
             % 4
             != 0
         ):
-            students.append({
-                "username": student.username,
-                "id": student.id,
-                "identity_document": student.id_document,
-                "first_name": student.first_name,
-                "last_name": student.last_name,
-                "phone_1": student.phone_1,
-                "real_last_login": student.last_session
-            })
+            studentsFiltered.append(getStudentInfo(student))
 
-    return students
+    return studentsFiltered
 
 
-def getUsersWithoutLevel(accounts):
-    students = list()
+def getUsersWithoutLevel(students):
+    studentsFiltered = list()
 
-    for student in accounts:
+    for student in students:
 
         if not student.levels.filter().exists():
-            students.append({
-                "username": student.username,
-                "id": student.id,
-                "identity_document": student.id_document,
-                "first_name": student.first_name,
-                "last_name": student.last_name,
-                "phone_1": student.phone_1,
-                "real_last_login": student.last_session
-            })
+            studentsFiltered.append(getStudentInfo(student))
 
         else:
             to_append = True
@@ -140,23 +151,15 @@ def getUsersWithoutLevel(accounts):
                     break
 
             if to_append:
-                students.append({
-                    "username": student.username,
-                    "id": student.id,
-                    "identity_document": student.id_document,
-                    "first_name": student.first_name,
-                    "last_name": student.last_name,
-                    "phone_1": student.phone_1,
-                    "real_last_login": student.last_session
-                })
+                studentsFiltered.append(getStudentInfo(student))
 
-    return students
+    return studentsFiltered
 
 
-def getHundredWithoutCertificate(accounts):
-    students = list()
+def getHundredWithoutCertificate(students):
+    studentsFiltered = list()
 
-    for student in accounts:
+    for student in students:
         for level in student.levels.filter(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
@@ -170,24 +173,16 @@ def getHundredWithoutCertificate(accounts):
             )
 
             if percentage >= 100:
-                students.append({
-                    "username": student.username,
-                    "id": student.id,
-                    "identity_document": student.id_document,
-                    "first_name": student.first_name,
-                    "last_name": student.last_name,
-                    "phone_1": student.phone_1,
-                    "real_last_login": student.last_session
-                })
+                studentsFiltered.append(getStudentInfo(student))
                 break
 
-    return students
+    return studentsFiltered
 
 
-def getNoHundredWithCertificate(accounts):
-    students = list()
+def getNoHundredWithCertificate(students):
+    studentsFiltered = list()
 
-    for student in accounts:
+    for student in students:
         for level in student.levels.filter().exclude(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
@@ -201,15 +196,7 @@ def getNoHundredWithCertificate(accounts):
             )
 
             if percentage < 100:
-                students.append({
-                    "username": student.username,
-                    "id": student.id,
-                    "identity_document": student.id_document,
-                    "first_name": student.first_name,
-                    "last_name": student.last_name,
-                    "phone_1": student.phone_1,
-                    "real_last_login": student.last_session
-                })
+                studentsFiltered.append(getStudentInfo(student))
                 break
 
-    return students
+    return studentsFiltered

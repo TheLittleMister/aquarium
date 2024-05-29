@@ -39,7 +39,7 @@ const ScheduleForm = (props) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -50,8 +50,8 @@ const ScheduleForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       props.setReload(true);

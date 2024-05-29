@@ -61,7 +61,7 @@ const Attendance = ({ attendance }) => {
 
     const data = await result.json();
 
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,

@@ -29,10 +29,9 @@ const ProfileForm = (props) => {
   const [collapseOpen, setCollapseOpen] = useState(false);
 
   // Form States
-  const [idType, setIdType] = useState(props.user.idTypeID);
-  const [gender, setGender] = useState(props.user.sexID);
+  const [gender, setGender] = useState(props.user.gender);
   const [birth, setBirth] = useState(
-    props.user.dateBirth ? new Date(props.user.dateBirth + " ") : null
+    props.user.birthDate ? new Date(props.user.birthDate + " ") : null
   );
 
   const profileFormHandler = async (e) => {
@@ -43,13 +42,13 @@ const ProfileForm = (props) => {
     const tokens = getTokens();
     const dataArr = [...new FormData(e.target)];
     const dataObj = Object.fromEntries(dataArr);
-    dataObj["date_birth"] =
+    dataObj["birth_date"] =
       birth && birth instanceof Date && !isNaN(birth)
         ? birth.toISOString().split("T")[0]
         : "";
 
-    const result = await fetch(urlAPI + `users/profile/`, {
-      method: "PUT",
+    const result = await fetch(urlAPI + `users/userUpdate/`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + tokens.access,
@@ -58,7 +57,7 @@ const ProfileForm = (props) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -68,8 +67,8 @@ const ProfileForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       props.setUser(data);
@@ -105,7 +104,7 @@ const ProfileForm = (props) => {
             name="email"
             type="email"
             defaultValue={props.user.email}
-            // required
+            required
           />
         </Stack>
 
@@ -130,49 +129,14 @@ const ProfileForm = (props) => {
 
         <Stack sx={styles.stack}>
           <FormControl variant="filled" sx={{ width: "25rem" }}>
-            <InputLabel id="demo-simple-select-label">
-              Tipo de documento
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={idType}
-              label="type"
-              onChange={(e) => setIdType(e.target.value)}
-              name="id_type"
-              sx={{
-                backgroundColor: "transparent",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <MenuItem value={1}>Cédula de Ciudadanía</MenuItem>
-              <MenuItem value={2}>Tarjeta de Identidad</MenuItem>
-              <MenuItem value={3}>Registro Civil</MenuItem>
-              <MenuItem value={4}>Permiso Especial de Permanencia</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            id="outlined-textarea"
-            label="Número de documento"
-            placeholder="Número de documento"
-            name="identity_document"
-            type="number"
-            defaultValue={props.user.identityDocument}
-            // required
-          />
-        </Stack>
-
-        <Stack sx={styles.stack}>
-          <FormControl variant="filled" sx={{ width: "25rem" }}>
             <InputLabel id="demo-simple-select-label">Género</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={gender}
               label="gender"
-              name="sex"
+              name="gender"
+              required
               onChange={(e) => setGender(e.target.value)}
               sx={{
                 backgroundColor: "transparent",
@@ -181,17 +145,30 @@ const ProfileForm = (props) => {
                 },
               }}
             >
-              <MenuItem value={2}>Femenino</MenuItem>
-              <MenuItem value={3}>Masculino</MenuItem>
+              <MenuItem value="Femenino">Femenino</MenuItem>
+              <MenuItem value="Masculino">Masculino</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            id="outlined-textarea"
+            label="Número de documento"
+            placeholder="Número de documento"
+            name="id_document"
+            type="number"
+            defaultValue={props.user.idDocument}
+            required
+          />
+        </Stack>
+
+        <Stack sx={styles.stack}>
           <Box sx={{ width: "25rem" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                name="date_birth"
+                name="birth_date"
                 inputFormat="dd/MM/yyyy"
                 label="Fecha de nacimiento"
                 value={birth}
+                required
                 onChange={(newValue) => {
                   setBirth(newValue);
                 }}
@@ -199,25 +176,14 @@ const ProfileForm = (props) => {
               />
             </LocalizationProvider>
           </Box>
-        </Stack>
-        <Stack sx={styles.stack}>
           <TextField
             id="outlined-textarea"
-            label="Tel / Cel (1)"
+            label="Celular"
             placeholder="+57 (311) 8381534"
-            name="phone_1"
-            defaultValue={props.user.phone1}
-            type="number"
-            // required
-          />
-          <TextField
-            id="outlined-textarea"
-            label="Tel / Cel (2)"
-            placeholder="+57 (311) 8381534"
-            name="phone_2"
-            defaultValue={props.user.phone2}
-            type="number"
-            // required
+            name="phone_number"
+            defaultValue={props.user.phoneNumber}
+            type="text"
+            required
           />
         </Stack>
       </Form>

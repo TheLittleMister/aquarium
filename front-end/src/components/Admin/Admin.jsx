@@ -55,7 +55,7 @@ const Admin = () => {
       options: {
         icon: <DateRangeIcon />,
         iconPosition: "top",
-        label: "Horarios y Costo",
+        label: "Costo y Horarios",
       },
       link: "/admin/schedules",
     },

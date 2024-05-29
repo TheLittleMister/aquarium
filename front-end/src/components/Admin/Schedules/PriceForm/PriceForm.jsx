@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { TextField } from "@mui/material";
+import { TextareaAutosize } from "@mui/material";
 import Form from "../../../../UI/Forms/Form";
 import ModalTitle from "../../../../UI/Modals/ModalTitle";
 import ModalUI from "../../../../UI/Modals/ModalUI";
@@ -32,7 +32,7 @@ const PriceForm = (props) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -43,8 +43,8 @@ const PriceForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       props.setPrice(data.price);
@@ -64,16 +64,14 @@ const PriceForm = (props) => {
         setCollapseOpen={setCollapseOpen}
         submitText={"Editar"}
       >
-        <TextField
-          id="outlined-price-input"
-          label="Mensualidad desde"
-          placeholder="Precio"
-          type="number"
-          autoComplete="current-price"
+        <TextareaAutosize
+          minRows={12}
+          maxRows={15}
           name="price"
-          required
           defaultValue={props.price}
-          // fullWidth
+          placeholder="Informacion de precios..."
+          style={{ borderRadius: "0.5rem", p: 1, outline: "none", border: "0" }}
+          required
         />
       </Form>
     </ModalUI>

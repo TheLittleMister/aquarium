@@ -49,8 +49,8 @@ const UsersTable = ({ users }) => {
             <Tooltip
               key={index}
               title={
-                item.real_last_login
-                  ? prettyDate(item.real_last_login.split("T")[0])
+                item.user__last_session
+                  ? prettyDate(item.user__last_session.split("T")[0])
                   : "Nunca"
               }
               placement="right"
@@ -58,19 +58,21 @@ const UsersTable = ({ users }) => {
               <TableRowBorder
                 hover={true}
                 sx={{ cursor: "pointer" }}
-                onClick={() => navigate(`/teacher/users/${item.username}`)}
+                onClick={() =>
+                  navigate(`/teacher/users/${item.user__username}`)
+                }
               >
                 <TableCell>
-                  <Text>{item.identity_document}</Text>
+                  <Text>{item.user__id_document}</Text>
                 </TableCell>
                 <TableCell>
-                  <Text>{item.first_name}</Text>
+                  <Text>{item.user__first_name}</Text>
                 </TableCell>
                 <TableCell>
-                  <Text>{item.last_name}</Text>
+                  <Text>{item.user__last_name}</Text>
                 </TableCell>
                 <TableCell>
-                  <Text>{item.phone_1}</Text>
+                  <Text>{item.user__phone_number}</Text>
                 </TableCell>
               </TableRowBorder>
             </Tooltip>

@@ -1,13 +1,6 @@
 from django.db import models
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=60)
-
-    def __str__(self):
-        return f"{self.id} {self.name}"
-
-
 class Level(models.Model):
     class Categories(models.IntegerChoices):
         beginner = 1, "Principiante"
@@ -15,9 +8,10 @@ class Level(models.Model):
         advanced = 3, "Avanzado"
 
     name = models.CharField(max_length=60)
-
-    category = models.SmallIntegerField(choices=Categories.choices)
     position = models.IntegerField(default=0)
+
+    category = models.SmallIntegerField(
+        choices=Categories.choices)
 
     def __str__(self):
         return f"{self.id} {self.name}"

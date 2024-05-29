@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 
 import {
-  IconButton,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  Tooltip,
   Typography as Text,
 } from "@mui/material";
 import ShortTextIcon from "@mui/icons-material/ShortText";
@@ -16,32 +14,18 @@ import WcIcon from "@mui/icons-material/Wc";
 import CakeIcon from "@mui/icons-material/Cake";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
-import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import EditIcon from "@mui/icons-material/Edit";
 
 import TableRowNoBorder from "../../../UI/Tables/TableRows/TableRowNoBorder";
 import ButtonSecondary from "../../../UI/Buttons/ButtonSecondary";
 import ButtonWarning from "../../../UI/Buttons/ButtonWarning";
 import { prettyDate } from "../../../utils/utils";
-import UploadImage from "../../../utils/UploadImage/UploadImage";
 import ProfileForm from "./ProfileForm/ProfileForm";
 import PasswordForm from "./PasswordForm/PasswordForm";
 
 const Profile = (props) => {
-  const [open, setOpen] = useState(false);
-  const [photo, setPhoto] = useState("");
-
   const [openProfileForm, setOpenProfileForm] = useState(false);
   const [openPasswordForm, setOpenPasswordForm] = useState(false);
-
-  const imageSelected = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      setPhoto(URL.createObjectURL(file));
-      setOpen(true);
-    }
-  };
 
   return (
     <>
@@ -56,16 +40,6 @@ const Profile = (props) => {
         setUser={props.setUser}
         open={openProfileForm}
         setOpen={setOpenProfileForm}
-      />
-      <UploadImage
-        photo={photo}
-        open={open}
-        setOpen={setOpen}
-        setUser={props.setUser}
-        uploadPath={"users/changeSignature/"}
-        aspect={2 / 1}
-        title="Foto Firma"
-        username={props.user.username}
       />
       <Stack direction="row" justifyContent="space-around" p={3}>
         <ButtonSecondary
@@ -111,10 +85,10 @@ const Profile = (props) => {
                 <AssignmentIndIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>{props.user.idType}</Text>
+                <Text fontWeight={500}>Documento</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.identityDocument}</Text>
+                <Text>{props.user.idDocument}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -122,10 +96,10 @@ const Profile = (props) => {
                 <WcIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Sexo</Text>
+                <Text fontWeight={500}>Género</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.sex}</Text>
+                <Text>{props.user.gender}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -137,7 +111,10 @@ const Profile = (props) => {
               </TableCell>
               <TableCell>
                 <Text>
-                  {prettyDate(props.user.dateBirth)} ({props.user.age} años)
+                  {props.user.birthDate &&
+                    `${prettyDate(props.user.birthDate)} (${
+                      props.user.age
+                    } años)`}
                 </Text>
               </TableCell>
             </TableRowNoBorder>
@@ -157,53 +134,10 @@ const Profile = (props) => {
                 <PhoneIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Tel / Cel (1)</Text>
+                <Text fontWeight={500}>Celular</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone1}</Text>
-              </TableCell>
-            </TableRowNoBorder>
-            <TableRowNoBorder hover={true}>
-              <TableCell align="center" component="th" scope="row">
-                <PhoneIcon sx={{ color: "blue.font" }} />
-              </TableCell>
-              <TableCell>
-                <Text fontWeight={500}>Tel / Cel (2)</Text>
-              </TableCell>
-              <TableCell>
-                <Text>{props.user.phone2}</Text>
-              </TableCell>
-            </TableRowNoBorder>
-            <TableRowNoBorder hover={true}>
-              <TableCell align="center" component="th" scope="row">
-                <HistoryEduIcon sx={{ color: "blue.font" }} />
-              </TableCell>
-              <TableCell>
-                <Text fontWeight={500}>Firma</Text>
-              </TableCell>
-              <TableCell>
-                <img
-                  src={props.user.signature || "/"}
-                  alt="Signature"
-                  style={{ height: "8rem", borderRadius: "1rem" }}
-                />
-                <Tooltip title="Editar">
-                  <IconButton
-                    onClick={() =>
-                      document.querySelector("#upload_signature").click()
-                    }
-                  >
-                    <EditIcon color="primary" />
-                    <input
-                      type="file"
-                      name="image"
-                      id="upload_signature"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={imageSelected}
-                    />
-                  </IconButton>
-                </Tooltip>
+                <Text>{props.user.phoneNumber}</Text>
               </TableCell>
             </TableRowNoBorder>
           </TableBody>

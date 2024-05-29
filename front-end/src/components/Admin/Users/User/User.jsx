@@ -17,6 +17,7 @@ import { getTokens, refreshTokens, urlAPI } from "../../../../utils/utils";
 import Profile from "./Profile/Profile";
 import Courses from "./Courses/Courses";
 import Levels from "./Levels/Levels";
+import ButtonLoading from "../../../../UI/Buttons/ButtonLoading";
 
 const User = ({ setClosePath }) => {
   const params = useParams();
@@ -25,7 +26,7 @@ const User = ({ setClosePath }) => {
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState({});
 
-  const tabs = [
+  let tabs = [
     {
       options: {
         icon: <AccountCircleIcon />,
@@ -34,30 +35,37 @@ const User = ({ setClosePath }) => {
       },
       link: `/admin/users/${params.username}/profile/`,
     },
-    {
-      options: {
-        icon: <PoolIcon />,
-        iconPosition: "top",
-        label: "Clases",
-      },
-      link: `/admin/users/${params.username}/courses/`,
-    },
-    {
-      options: {
-        icon: <EmojiEventsIcon />,
-        iconPosition: "top",
-        label: "Niveles",
-      },
-      link: `/admin/users/${params.username}/levels/`,
-    },
   ];
+
+  if (user.type === "Estudiante") {
+    tabs.push(
+      ...[
+        {
+          options: {
+            icon: <PoolIcon />,
+            iconPosition: "top",
+            label: "Clases",
+          },
+          link: `/admin/users/${params.username}/courses/`,
+        },
+        {
+          options: {
+            icon: <EmojiEventsIcon />,
+            iconPosition: "top",
+            label: "Niveles",
+          },
+          link: `/admin/users/${params.username}/levels/`,
+        },
+      ]
+    );
+  }
 
   useEffect(() => {
     const getUser = async () => {
       const tokens = getTokens();
       const result = await fetch(
         urlAPI +
-        `users/profile/?username=${params.username ? params.username : ""}`,
+          `users/user/?username=${params.username ? params.username : ""}`,
         {
           method: "GET",
           headers: {
@@ -69,7 +77,7 @@ const User = ({ setClosePath }) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -95,7 +103,7 @@ const User = ({ setClosePath }) => {
   };
 
   return !ready ? (
-    <h1>Loading User...</h1>
+    <ButtonLoading loading>Cargando Usuario</ButtonLoading>
   ) : (
     <Routes>
       <Route
@@ -107,23 +115,36 @@ const User = ({ setClosePath }) => {
         }
       />
 
+      {user.type === "Estudiante" && (
+        <>
+          <Route
+            path="courses/*"
+            element={
+              <Panel tab={1} {...panelOptions}>
+                <Courses />
+              </Panel>
+            }
+          />
+          <Route
+            path="levels/"
+            element={
+              <Panel tab={2} {...panelOptions}>
+                <Levels studentID={user.studentID} />
+              </Panel>
+            }
+          />
+        </>
+      )}
+
       <Route
-        path="courses/*"
+        path="*"
         element={
-          <Panel tab={1} {...panelOptions}>
-            <Courses />
-          </Panel>
+          <Navigate
+            replace
+            to={user.type === "Estudiante" ? "courses/" : "profile/"}
+          />
         }
       />
-      <Route
-        path="levels/"
-        element={
-          <Panel tab={2} {...panelOptions}>
-            <Levels userID={user.id} />
-          </Panel>
-        }
-      />
-      <Route path="*" element={<Navigate replace to="courses/" />} />
     </Routes>
   );
 };

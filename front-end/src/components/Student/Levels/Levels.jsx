@@ -15,7 +15,7 @@ const Levels = () => {
       const tokens = getTokens();
 
       const result = await fetch(
-        urlAPI + `levels/studentLevel/?userID=${authCtx.user.id}`,
+        urlAPI + `levels/studentLevel/?studentID=${authCtx.user.id}`,
         {
           method: "GET",
           headers: {
@@ -27,7 +27,7 @@ const Levels = () => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -50,7 +50,7 @@ const Levels = () => {
       <ChipPrimary label="PRINCIPIANTE" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 1)
+          .filter((item) => item.level__category === 1)
           .map((item, index) => (
             <Level key={index} level={item} />
           ))}
@@ -58,7 +58,7 @@ const Levels = () => {
       <ChipPrimary label="INTERMEDIO" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 2)
+          .filter((item) => item.level__category === 2)
           .map((item, index) => (
             <Level key={index} level={item} />
           ))}
@@ -66,7 +66,7 @@ const Levels = () => {
       <ChipPrimary label="AVANZADO" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 3)
+          .filter((item) => item.level__category === 3)
           .map((item, index) => (
             <Level key={index} level={item} />
           ))}

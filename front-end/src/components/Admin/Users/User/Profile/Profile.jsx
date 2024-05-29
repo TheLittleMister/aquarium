@@ -20,7 +20,6 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import EditIcon from "@mui/icons-material/Edit";
-import SensorOccupiedIcon from "@mui/icons-material/SensorOccupied";
 import SchoolIcon from "@mui/icons-material/School";
 import EscalatorWarningIcon from "@mui/icons-material/EscalatorWarning";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -33,17 +32,13 @@ import UploadImage from "../../../../../utils/UploadImage/UploadImage";
 import ProfileForm from "./ProfileForm/ProfileForm";
 import ButtonDanger from "../../../../../UI/Buttons/ButtonDanger";
 import DeleteProfile from "./DeleteProfile/DeleteProfile";
-import EditTeacher from "./EditTeacher/EditTeacher";
-import EditRole from "./EditRole/EditRole";
 import PasswordForm from "./PasswordForm/PasswordForm";
 
 const Profile = (props) => {
   const [openUpdateSignature, setOpenUpdateSignature] = useState(false);
   const [openDeleteProfile, setOpenDeleteProfile] = useState(false);
   const [openProfileForm, setOpenProfileForm] = useState(false);
-  const [openEditTeacher, setOpenEditTeacher] = useState(false);
   const [openPasswordForm, setOpenPasswordForm] = useState(false);
-  const [openEditRole, setOpenEditRole] = useState(false);
   const [photo, setPhoto] = useState("");
 
   const imageSelected = (e) => {
@@ -68,18 +63,6 @@ const Profile = (props) => {
         setUser={props.setUser}
         open={openPasswordForm}
         setOpen={setOpenPasswordForm}
-      />
-      <EditRole
-        open={openEditRole}
-        setOpen={setOpenEditRole}
-        setUser={props.setUser}
-        user={props.user}
-      />
-      <EditTeacher
-        open={openEditTeacher}
-        setOpen={setOpenEditTeacher}
-        setUser={props.setUser}
-        user={props.user}
       />
       <DeleteProfile
         open={openDeleteProfile}
@@ -147,10 +130,10 @@ const Profile = (props) => {
                 <AssignmentIndIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>{props.user.idType}</Text>
+                <Text fontWeight={500}>Documento</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.identityDocument}</Text>
+                <Text>{props.user.idDocument}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -158,10 +141,10 @@ const Profile = (props) => {
                 <WcIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Sexo</Text>
+                <Text fontWeight={500}>Género</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.sex}</Text>
+                <Text>{props.user.gender}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -173,43 +156,10 @@ const Profile = (props) => {
               </TableCell>
               <TableCell>
                 <Text>
-                  {prettyDate(props.user.dateBirth)} ({props.user.age} años)
+                  {prettyDate(props.user.birthDate)} ({props.user.age} años)
                 </Text>
               </TableCell>
             </TableRowNoBorder>
-            {props.user.type === "Estudiante" && (
-              <>
-                <TableRowNoBorder hover={true}>
-                  <TableCell align="center" component="th" scope="row">
-                    <SchoolIcon sx={{ color: "blue.font" }} />
-                  </TableCell>
-                  <TableCell>
-                    <Text fontWeight={500}>Profesor</Text>
-                  </TableCell>
-                  <TableCell>
-                    <Text>
-                      {props.user.teacher}
-                      <Tooltip title="Editar">
-                        <IconButton onClick={() => setOpenEditTeacher(true)}>
-                          <EditIcon color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                    </Text>
-                  </TableCell>
-                </TableRowNoBorder>
-                <TableRowNoBorder hover={true}>
-                  <TableCell align="center" component="th" scope="row">
-                    <EscalatorWarningIcon sx={{ color: "blue.font" }} />
-                  </TableCell>
-                  <TableCell>
-                    <Text fontWeight={500}>Acudiente</Text>
-                  </TableCell>
-                  <TableCell>
-                    <Text>{props.user.parent}</Text>
-                  </TableCell>
-                </TableRowNoBorder>
-              </>
-            )}
             <TableRowNoBorder hover={true}>
               <TableCell align="center" component="th" scope="row">
                 <EmailIcon sx={{ color: "blue.font" }} />
@@ -226,54 +176,66 @@ const Profile = (props) => {
                 <PhoneIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Tel / Cel (1)</Text>
+                <Text fontWeight={500}>Celular</Text>
               </TableCell>
               <TableCell>
                 <Link
-                  href={`https://api.whatsapp.com/send?phone=57${props.user.phone1}`}
+                  href={`https://api.whatsapp.com/send?phone=${props.user.phoneNumber.slice(
+                    1
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Text>{props.user.phone1}</Text>
+                  <Text>{props.user.phoneNumber}</Text>
                 </Link>
               </TableCell>
             </TableRowNoBorder>
-            <TableRowNoBorder hover={true}>
-              <TableCell align="center" component="th" scope="row">
-                <PhoneIcon sx={{ color: "blue.font" }} />
-              </TableCell>
-              <TableCell>
-                <Text fontWeight={500}>Tel / Cel (2)</Text>
-              </TableCell>
-              <TableCell>
-                <Link
-                  href={`https://api.whatsapp.com/send?phone=57${props.user.phone2}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Text>{props.user.phone2}</Text>
-                </Link>
-              </TableCell>
-            </TableRowNoBorder>
-            <TableRowNoBorder hover={true}>
-              <TableCell align="center" component="th" scope="row">
-                <SensorOccupiedIcon sx={{ color: "blue.font" }} />
-              </TableCell>
-              <TableCell>
-                <Text fontWeight={500}>Role</Text>
-              </TableCell>
-              <TableCell>
-                <Text>
-                  {props.user.type}
-                  <Tooltip title="Editar">
-                    <IconButton onClick={() => setOpenEditRole(true)}>
-                      <EditIcon color="primary" />
-                    </IconButton>
-                  </Tooltip>
-                </Text>
-              </TableCell>
-            </TableRowNoBorder>
-            {props.user.type !== "Estudiante" && (
+            {props.user.type === "Estudiante" && (
+              <>
+                <TableRowNoBorder hover={true}>
+                  <TableCell align="center" component="th" scope="row">
+                    <PhoneIcon sx={{ color: "blue.font" }} />
+                  </TableCell>
+                  <TableCell>
+                    <Text fontWeight={500}>Celular 2</Text>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href={`https://api.whatsapp.com/send?phone=57${props.user.phoneNumber2.slice(
+                        1
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Text>{props.user.phoneNumber2}</Text>
+                    </Link>
+                  </TableCell>
+                </TableRowNoBorder>
+                <TableRowNoBorder hover={true}>
+                  <TableCell align="center" component="th" scope="row">
+                    <EscalatorWarningIcon sx={{ color: "blue.font" }} />
+                  </TableCell>
+                  <TableCell>
+                    <Text fontWeight={500}>Acudiente</Text>
+                  </TableCell>
+                  <TableCell>
+                    <Text>{props.user.parentName}</Text>
+                  </TableCell>
+                </TableRowNoBorder>
+                <TableRowNoBorder hover={true}>
+                  <TableCell align="center" component="th" scope="row">
+                    <SchoolIcon sx={{ color: "blue.font" }} />
+                  </TableCell>
+                  <TableCell>
+                    <Text fontWeight={500}>Profesor</Text>
+                  </TableCell>
+                  <TableCell>
+                    <Text>{props.user.teacherName}</Text>
+                  </TableCell>
+                </TableRowNoBorder>
+              </>
+            )}
+            {props.user.type === "Profesor" && (
               <TableRowNoBorder hover={true}>
                 <TableCell align="center" component="th" scope="row">
                   <HistoryEduIcon sx={{ color: "blue.font" }} />
@@ -283,7 +245,7 @@ const Profile = (props) => {
                 </TableCell>
                 <TableCell>
                   <img
-                    src={props.user.signature || "/"}
+                    src={props.user.eSignature || "/"}
                     alt="Signature"
                     style={{ height: "8rem", borderRadius: "1rem" }}
                   />

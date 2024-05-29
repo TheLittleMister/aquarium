@@ -5,7 +5,7 @@ import TableRowNoBorder from "../../../../../UI/Tables/TableRows/TableRowNoBorde
 import { Typography as Text } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getHour } from "../../../../../utils/utils";
+import { getHour, weekday } from "../../../../../utils/utils";
 import ScheduleDelete from "./ScheduleDelete/ScheduleDelete";
 
 const ScheduleItem = ({ item, setReload }) => {
@@ -21,7 +21,7 @@ const ScheduleItem = ({ item, setReload }) => {
       />
       <TableRowNoBorder hover={true}>
         <TableCell align="center" component="th" scope="row">
-          <Text>{item.weekday__weekday}</Text>
+          <Text>{weekday[item.weekday]}</Text>
         </TableCell>
         <TableCell align="center">
           <Text>{getHour(item.start_time)}</Text>

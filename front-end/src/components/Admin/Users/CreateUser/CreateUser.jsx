@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import {
   FormControl,
@@ -8,6 +8,7 @@ import {
   Stack,
   TextField,
   Box,
+  Autocomplete,
 } from "@mui/material";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -21,16 +22,21 @@ import * as styles from "./CreateUserStyles";
 
 import { urlAPI, getTokens, refreshTokens } from "../../../../utils/utils";
 import { AuthContext } from "../../../../context/AuthContext";
+import ButtonLoading from "../../../../UI/Buttons/ButtonLoading";
 
 const CreateUser = ({ setReload, open, setOpen }) => {
   const authCtx = useContext(AuthContext);
+
+  const [value, setValue] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [ready, setReady] = useState(false);
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [collapseOpen, setCollapseOpen] = useState(false);
 
   // Form States
-  const [idType, setIdType] = useState("");
+  const [type, setType] = useState("Estudiante");
   const [gender, setGender] = useState("");
   const [birth, setBirth] = useState(null);
 
@@ -42,12 +48,14 @@ const CreateUser = ({ setReload, open, setOpen }) => {
     const tokens = getTokens();
     const dataArr = [...new FormData(e.target)];
     const dataObj = Object.fromEntries(dataArr);
-    dataObj["date_birth"] =
+    dataObj["birth_date"] =
       birth && birth instanceof Date && !isNaN(birth)
         ? birth.toISOString().split("T")[0]
         : "";
 
-    const result = await fetch(urlAPI + `users/profile/`, {
+    dataObj["teacher"] = value ? value.id : "";
+
+    const result = await fetch(urlAPI + `users/user/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +65,7 @@ const CreateUser = ({ setReload, open, setOpen }) => {
     });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -67,8 +75,8 @@ const CreateUser = ({ setReload, open, setOpen }) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       setReload(true);
@@ -76,6 +84,37 @@ const CreateUser = ({ setReload, open, setOpen }) => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    const getTeachers = async () => {
+      const tokens = getTokens();
+
+      const result = await fetch(urlAPI + "users/teacher/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tokens.access,
+        },
+      });
+
+      const data = await result.json();
+
+      if (result.status === 401) {
+        const refreshed = await refreshTokens(
+          result.statusText,
+          tokens.refresh,
+          authCtx.setUser
+        );
+
+        if (refreshed) getTeachers();
+        return;
+      }
+      setOptions(data.teachers);
+      setReady(true);
+    };
+
+    getTeachers();
+  }, [authCtx.setUser, type]);
 
   return (
     <ModalUI open={open} setOpen={setOpen}>
@@ -88,6 +127,55 @@ const CreateUser = ({ setReload, open, setOpen }) => {
         setCollapseOpen={setCollapseOpen}
         submitText="Crear"
       >
+        <Stack sx={styles.stack}>
+          <FormControl variant="filled">
+            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={type}
+              label="type"
+              name="type"
+              onChange={(e) => setType(e.target.value)}
+              sx={{
+                backgroundColor: "transparent",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+              required
+            >
+              <MenuItem value="Estudiante">Estudiante</MenuItem>
+              <MenuItem value="Profesor">Profesor</MenuItem>
+            </Select>
+          </FormControl>
+          {type === "Estudiante" ? (
+            <>
+              {!ready ? (
+                <ButtonLoading loading>Cargando Profesores</ButtonLoading>
+              ) : (
+                <Stack sx={styles.stack}>
+                  <Autocomplete
+                    value={value}
+                    onChange={(event, newValue) => {
+                      setValue(newValue);
+                    }}
+                    disablePortal
+                    id="combo-box-demo"
+                    options={options}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Profesor" />
+                    )}
+                  />
+                </Stack>
+              )}{" "}
+            </>
+          ) : (
+            <Box></Box>
+          )}
+        </Stack>
+
         <Stack sx={styles.stack}>
           <TextField
             id="outlined-textarea"
@@ -102,7 +190,6 @@ const CreateUser = ({ setReload, open, setOpen }) => {
             placeholder="Email"
             name="email"
             type="email"
-            // required
           />
         </Stack>
 
@@ -125,48 +212,13 @@ const CreateUser = ({ setReload, open, setOpen }) => {
 
         <Stack sx={styles.stack}>
           <FormControl variant="filled" sx={{ width: "25rem" }}>
-            <InputLabel id="demo-simple-select-label">
-              Tipo de documento
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={idType}
-              label="type"
-              onChange={(e) => setIdType(e.target.value)}
-              name="id_type"
-              sx={{
-                backgroundColor: "transparent",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <MenuItem value={1}>Cédula de Ciudadanía</MenuItem>
-              <MenuItem value={2}>Tarjeta de Identidad</MenuItem>
-              <MenuItem value={3}>Registro Civil</MenuItem>
-              <MenuItem value={4}>Permiso Especial de Permanencia</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            id="outlined-textarea"
-            label="Número de documento"
-            placeholder="Número de documento"
-            name="identity_document"
-            type="number"
-            // required
-          />
-        </Stack>
-
-        <Stack sx={styles.stack}>
-          <FormControl variant="filled" sx={{ width: "25rem" }}>
             <InputLabel id="demo-simple-select-label">Género</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={gender}
               label="gender"
-              name="sex"
+              name="gender"
               onChange={(e) => setGender(e.target.value)}
               sx={{
                 backgroundColor: "transparent",
@@ -174,15 +226,26 @@ const CreateUser = ({ setReload, open, setOpen }) => {
                   backgroundColor: "transparent",
                 },
               }}
+              required
             >
-              <MenuItem value={2}>Femenino</MenuItem>
-              <MenuItem value={3}>Masculino</MenuItem>
+              <MenuItem value="Femenino">Femenino</MenuItem>
+              <MenuItem value="Masculino">Masculino</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            id="outlined-textarea"
+            label="Número de documento"
+            placeholder="Número de documento"
+            name="id_document"
+            type="number"
+          />
+        </Stack>
+
+        <Stack sx={styles.stack}>
           <Box sx={{ width: "25rem" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                name="date_birth"
+                name="birth_date"
                 inputFormat="dd/MM/yyyy"
                 label="Fecha de nacimiento"
                 value={birth}
@@ -193,33 +256,31 @@ const CreateUser = ({ setReload, open, setOpen }) => {
               />
             </LocalizationProvider>
           </Box>
-        </Stack>
-        <Stack sx={styles.parent}>
           <TextField
             id="outlined-textarea"
-            label="Acudiente"
-            placeholder="Acudiente"
-            name="parent"
-          />
-        </Stack>
-        <Stack sx={styles.stack}>
-          <TextField
-            id="outlined-textarea"
-            label="Tel / Cel (1)"
+            label="Celular"
             placeholder="+57 (311) 8381534"
-            name="phone_1"
-            type="number"
-            // required
-          />
-          <TextField
-            id="outlined-textarea"
-            label="Tel / Cel (2)"
-            placeholder="+57 (311) 8381534"
-            name="phone_2"
-            type="number"
-            // required
+            name="phone_number"
+            type="text"
           />
         </Stack>
+        {type === "Estudiante" && (
+          <Stack sx={styles.stack}>
+            <TextField
+              id="outlined-textarea"
+              label="Acudiente"
+              placeholder="Acudiente"
+              name="parent_name"
+            />
+            <TextField
+              id="outlined-textarea"
+              label="Celular (2)"
+              placeholder="+57 (311) 8381534"
+              name="phone_number_2"
+              type="text"
+            />
+          </Stack>
+        )}
       </Form>
     </ModalUI>
   );

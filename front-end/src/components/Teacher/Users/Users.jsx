@@ -38,8 +38,8 @@ const Content = (props) => {
   const [paginationCount, setPaginationCount] = useState(0);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [type, setType] = useState(1);
-  const [order, setOrder] = useState("date_joined");
+  const [filter, setFilter] = useState(1);
+  const [order, setOrder] = useState("user__date_joined");
 
   // Search User States
   const [loading, setLoading] = useState(false);
@@ -65,7 +65,7 @@ const Content = (props) => {
         },
         body: JSON.stringify({
           page,
-          type,
+          filter,
           order,
           search,
         }),
@@ -73,7 +73,7 @@ const Content = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -84,6 +84,7 @@ const Content = (props) => {
 
         return;
       }
+
       setResultCount(data.count);
       setPaginationCount(data.paginationCount);
       setUsers(data.page);
@@ -93,7 +94,7 @@ const Content = (props) => {
     getUsers();
 
     if (props.reload) props.setReload(false);
-  }, [authCtx.setUser, page, type, order, props, search]);
+  }, [authCtx.setUser, page, filter, order, props, search]);
 
   return (
     <Box>
@@ -106,24 +107,26 @@ const Content = (props) => {
         gap={0.4}
       >
         <FormControl variant="filled" sx={{ m: 1, minWidth: 160 }}>
-          <InputLabel id="userType-select-small">Filtro de usuarios</InputLabel>
+          <InputLabel id="userFilter-select-small">
+            Filtro de usuarios
+          </InputLabel>
           <Select
-            labelId="userType-select-small"
-            id="userType-select-small"
-            value={type}
+            labelId="userFilter-select-small"
+            id="userFilter-select-small"
+            value={filter}
             label="Tipo"
             autoWidth
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setFilter(e.target.value)}
             sx={{ backgroundColor: "transparent" }}
           >
             <ListSubheader>Mis Estudiantes</ListSubheader>
             <MenuItem value={1}>
               <Text>Todos</Text>
             </MenuItem>
-            <MenuItem value={8}>
+            <MenuItem value={2}>
               <Text>Est. sin nivel activo</Text>
             </MenuItem>
-            <MenuItem value={9}>
+            <MenuItem value={3}>
               <Text>100% sin certificado</Text>
             </MenuItem>
           </Select>
@@ -139,13 +142,13 @@ const Content = (props) => {
             onChange={(e) => setOrder(e.target.value)}
             sx={{ backgroundColor: "transparent" }}
           >
-            <MenuItem value="date_joined">
+            <MenuItem value="user__date_joined">
               <Text>Recientes</Text>
             </MenuItem>
-            <MenuItem value="last_name">
+            <MenuItem value="user__last_name">
               <Text>Apellidos</Text>
             </MenuItem>
-            <MenuItem value="first_name">
+            <MenuItem value="user__first_name">
               <Text>Nombres</Text>
             </MenuItem>
           </Select>
@@ -157,7 +160,7 @@ const Content = (props) => {
         messages={[]}
         loading={loading}
         collapseOpen={false}
-        setCollapseOpen={() => { }}
+        setCollapseOpen={() => {}}
         submitText="Buscar"
         direction="row"
       >

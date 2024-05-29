@@ -31,6 +31,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
 import * as styles from "./CoursePrintStyles";
+import ButtonLoading from "../../../../../UI/Buttons/ButtonLoading";
 
 const CoursePrint = ({ course }) => {
   const authCtx = useContext(AuthContext);
@@ -38,7 +39,6 @@ const CoursePrint = ({ course }) => {
   const [attendances, setAttendances] = useState();
   const [attendancesTotal, setAttendancesTotal] = useState(0);
   const [ready, setReady] = useState(false);
-
 
   useEffect(() => {
     const getAttendances = async () => {
@@ -57,7 +57,7 @@ const CoursePrint = ({ course }) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -91,9 +91,7 @@ const CoursePrint = ({ course }) => {
             DE {getHour(course.start_time)} A {getHour(course.end_time)}
           </Text>
           <br />
-          <Text>
-            {attendancesTotal} ESTUDIANTES
-          </Text>
+          <Text>{attendancesTotal} ESTUDIANTES</Text>
         </Box>
         <Box width="50%">
           <img
@@ -107,9 +105,10 @@ const CoursePrint = ({ course }) => {
       <hr />
       <br />
       <TableContainer>
-        {!ready
-          ? "Loading..."
-          : attendances.map((item, index, arr) => {
+        {!ready ? (
+          <ButtonLoading loading>Cargando...</ButtonLoading>
+        ) : (
+          attendances.map((item, index, arr) => {
             return (
               <React.Fragment key={index}>
                 <Table aria-label="simple table" size="small">
@@ -192,13 +191,11 @@ const CoursePrint = ({ course }) => {
                                         {item.attendance ? (
                                           <CheckIcon fontSize="small" />
                                         ) : new Date(
-                                          new Date()
-                                            .toISOString()
-                                            .split("T")[0] + " "
-                                        ) >
-                                          new Date(
-                                            item.course__date + " "
-                                          ) ? (
+                                            new Date()
+                                              .toISOString()
+                                              .split("T")[0] + " "
+                                          ) >
+                                          new Date(item.course__date + " ") ? (
                                           <CloseIcon fontSize="small" />
                                         ) : (
                                           course.date === item.course__date &&
@@ -230,7 +227,8 @@ const CoursePrint = ({ course }) => {
                 <br />
               </React.Fragment>
             );
-          })}
+          })
+        )}
       </TableContainer>
     </Container>
   );

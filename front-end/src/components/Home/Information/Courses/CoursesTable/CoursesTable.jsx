@@ -11,7 +11,7 @@ import {
 import TableRowNoBorder from "../../../../../UI/Tables/TableRows/TableRowNoBorder";
 
 import * as styles from "./CoursesTableStyles";
-import { getHour } from "../../../../../utils/utils";
+import { getHour, weekday } from "../../../../../utils/utils";
 
 const CoursesTable = ({ schedules }) => {
   return (
@@ -34,7 +34,7 @@ const CoursesTable = ({ schedules }) => {
           {schedules.map((item, index, arr) => (
             <TableRowNoBorder key={index} hover={true}>
               <TableCell align="center" component="th" scope="row">
-                <Text>{item.weekday__weekday}</Text>
+                <Text>{weekday[item.weekday]}</Text>
               </TableCell>
               <TableCell align="center">
                 <Text>{getHour(item.start_time)}</Text>

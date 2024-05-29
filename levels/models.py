@@ -12,8 +12,9 @@ class Student_Level(models.Model):
 
     level = models.ForeignKey(
         Level, on_delete=models.CASCADE, related_name="levels")
-    date = models.DateField("Desde", null=True)
-    attendances = models.IntegerField("Asistencias Requeridas", default=0)
+
+    date = models.DateField()
+    attendances = models.IntegerField(default=0)
 
     certificate_img = models.ImageField(
         upload_to="certificates", null=True, blank=True)

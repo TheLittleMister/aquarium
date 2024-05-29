@@ -14,6 +14,7 @@ import {
   urlAPI,
 } from "../../../../../../utils/utils";
 import { AuthContext } from "../../../../../../context/AuthContext";
+import ButtonLoading from "../../../../../../UI/Buttons/ButtonLoading";
 
 const CoursesForm = (props) => {
   const params = useParams();
@@ -37,7 +38,7 @@ const CoursesForm = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -75,13 +76,15 @@ const CoursesForm = (props) => {
       <ModalTitle>Editar Clases</ModalTitle>
       <AddCourseForm setDates={setDates} username={params.username} />
       <br />
-      {ready && (
+      {ready ? (
         <SelectCoursesForm
           dates={dates}
           setReload={props.setReload}
           username={params.username}
           setOpen={props.setOpen}
         />
+      ) : (
+        <ButtonLoading loading>Cargando Cursos</ButtonLoading>
       )}
     </ModalUI>
   );

@@ -21,7 +21,7 @@ const Levels = (props) => {
       const tokens = getTokens();
 
       const result = await fetch(
-        urlAPI + `levels/studentLevel/?userID=${props.userID}`,
+        urlAPI + `levels/studentLevel/?studentID=${props.studentID}`,
         {
           method: "GET",
           headers: {
@@ -33,7 +33,7 @@ const Levels = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -50,14 +50,14 @@ const Levels = (props) => {
     getStudentLevels();
 
     if (reload) setReload(false);
-  }, [authCtx.setUser, props.userID, reload]);
+  }, [authCtx.setUser, props.studentID, reload]);
 
   return (
     <>
       <LevelsForm
         open={open}
         setOpen={setOpen}
-        userID={props.userID}
+        studentID={props.studentID}
         setReload={setReload}
       />
       <Box textAlign="center" p={3}>
@@ -71,12 +71,12 @@ const Levels = (props) => {
       <ChipPrimary label="PRINCIPIANTE" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 1)
+          .filter((item) => item.level__category === 1)
           .map((item, index) => (
             <Level
               key={index}
               level={item}
-              userID={props.userID}
+              studentID={props.studentID}
               setReload={setReload}
             />
           ))}
@@ -84,12 +84,12 @@ const Levels = (props) => {
       <ChipPrimary label="INTERMEDIO" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 2)
+          .filter((item) => item.level__category === 2)
           .map((item, index) => (
             <Level
               key={index}
               level={item}
-              userID={props.userID}
+              studentID={props.studentID}
               setReload={setReload}
             />
           ))}
@@ -97,12 +97,12 @@ const Levels = (props) => {
       <ChipPrimary label="AVANZADO" sx={{ m: 2 }} />
       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {levels
-          .filter((item) => item.level__category__id === 3)
+          .filter((item) => item.level__category === 3)
           .map((item, index) => (
             <Level
               key={index}
               level={item}
-              userID={props.userID}
+              studentID={props.studentID}
               setReload={setReload}
             />
           ))}

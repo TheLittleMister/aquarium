@@ -4,15 +4,7 @@ export const stack = {
   flexWrap: "wrap",
   alignItems: "center",
   justifyContent: "center",
-};
-
-export const parent = {
-  "@media (min-width: 27em)": {
-    width: "52rem",
-    m: "0 auto",
-  },
-  "@media (max-width: 27em)": {
+  "& > *": {
     width: "25rem",
-    m: "0 auto",
   },
 };

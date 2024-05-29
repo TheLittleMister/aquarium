@@ -49,7 +49,7 @@ const LevelsForm = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -82,22 +82,20 @@ const LevelsForm = (props) => {
       date && date instanceof Date && !isNaN(date)
         ? date.toISOString().split("T")[0]
         : "";
-    dataObj["student"] = props.userID;
+    dataObj["student"] = props.studentID;
+    dataObj["studentLevelID"] = props.level ? props.level.id : "";
 
-    const result = await fetch(
-      urlAPI + `levels/studentLevel/?id=${props.level ? props.level.id : ""}`,
-      {
-        method: props.level ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + tokens.access,
-        },
-        body: JSON.stringify(dataObj),
-      }
-    );
+    const result = await fetch(urlAPI + `levels/studentLevel/`, {
+      method: props.level ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tokens.access,
+      },
+      body: JSON.stringify(dataObj),
+    });
 
     const data = await result.json();
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -107,8 +105,8 @@ const LevelsForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
     } else {
       props.setReload(true);
@@ -151,7 +149,7 @@ const LevelsForm = (props) => {
               <ListSubheader>Principiante</ListSubheader>
 
               {levels
-                .filter((item) => item.category__id === 1)
+                .filter((item) => item.category === 1)
                 .map((item, index, arr) => (
                   <MenuItem key={index} value={item.id}>
                     <Text>{item.name}</Text>
@@ -159,7 +157,7 @@ const LevelsForm = (props) => {
                 ))}
               <ListSubheader>Intermedio</ListSubheader>
               {levels
-                .filter((item) => item.category__id === 2)
+                .filter((item) => item.category === 2)
                 .map((item, index, arr) => (
                   <MenuItem key={index} value={item.id}>
                     <Text>{item.name}</Text>
@@ -167,7 +165,7 @@ const LevelsForm = (props) => {
                 ))}
               <ListSubheader>Avanzado</ListSubheader>
               {levels
-                .filter((item) => item.category__id === 3)
+                .filter((item) => item.category === 3)
                 .map((item, index, arr) => (
                   <MenuItem key={index} value={item.id}>
                     <Text>{item.name}</Text>

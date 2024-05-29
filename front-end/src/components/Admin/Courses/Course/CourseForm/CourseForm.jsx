@@ -9,6 +9,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AuthContext } from "../../../../../context/AuthContext";
 import { getTokens, refreshTokens, urlAPI } from "../../../../../utils/utils";
 import { useNavigate } from "react-router-dom";
+import ButtonLoading from "../../../../../UI/Buttons/ButtonLoading";
 
 const CourseForm = (props) => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const CourseForm = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -54,7 +55,7 @@ const CourseForm = (props) => {
 
       const students = data.users.map((item, index, arr) => {
         return {
-          name: item.first_name + " " + item.last_name,
+          name: item.user__first_name + " " + item.user__last_name,
           default: item.default,
           id: item.id,
         };
@@ -93,7 +94,7 @@ const CourseForm = (props) => {
 
     const data = await result.json();
 
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -103,8 +104,8 @@ const CourseForm = (props) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
       setLoading(false);
     } else {
@@ -176,7 +177,7 @@ const CourseForm = (props) => {
             </Box>
           </Stack>
         </Stack>
-        {ready && (
+        {ready ? (
           <Autocomplete
             sx={{ minWidth: "30rem" }}
             multiple
@@ -196,6 +197,8 @@ const CourseForm = (props) => {
               />
             )}
           />
+        ) : (
+          <ButtonLoading loading>Cargando Estudiantes</ButtonLoading>
         )}
       </Form>
     </ModalUI>

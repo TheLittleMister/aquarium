@@ -15,6 +15,7 @@ from .labels import *
 from courses.models import *
 
 # REST FRAMEWORK
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -22,8 +23,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # USER AUTHENTICATION
-@api_view(["POST"])
+@api_view(["GET", "POST"])
 def login(request):
+
+    if request.method == "GET":
+        return Response(getUser(request.user))
+
     response = {"errors": list()}
     post = request.data.copy()
     post["username"] = str(post["username"]).strip().lower()
@@ -67,185 +72,211 @@ def changePassword(request):
 
 @api_view(["POST"])
 @permission_classes([IsAdminUser])
-def defaultUserPassword(request):
+def resetUserPassword(request):
     response = {"errors": list()}
 
     username = request.data["username"]
-    user = Account.objects.get(username=username)
+    user = User.objects.get(username=username)
 
     if not request.user.check_password(request.data["password"]):
         response["errors"].append("Contraseña Incorrecta.")
 
-    else:
-        user.set_password("AquariumSchool")
+    elif user.id_document:
+        user.set_password(str(user.id_document))
         user.save()
         response = {"messages": ["Contraseña reseteada!"]}
+
+    else:
+        response["errors"].append("El usuario debe tener número de documento.")
 
     return Response(response)
 
 
-@api_view(["GET", "PUT", "POST"])
-@permission_classes([IsAuthenticated])
-def profile(request):
+@api_view(["GET", "POST", "PUT", "DELETE"])  # PATCH (?)
+@permission_classes([IsAdminUser])
+def user(request):
     response = {"errors": list()}
-
     user = request.user
     username = request.GET.get("username", "")
 
-    if username and (request.user.is_admin or request.user.is_teacher):
-        user = Account.objects.get(username=username)
+    if username:
+        user = User.objects.get(username=username)
 
     if request.method == "GET":
         return Response(getUser(user))
 
-    data = request.data.copy()
-    data["username"] = str(data["username"]).strip().lower()
+    elif request.method == "DELETE":
+        if request.user.check_password(request.data["password"]):
+            user.delete()
+        else:
+            response["errors"].append("Contraseña Incorrecta.")
 
-    if request.method == "PUT":
-        form = ProfileForm(data=data, instance=user)
-
-    elif request.method == "POST" and request.user.is_admin:
-        form = ProfileForm(data=data)
-
-    else:
-        response["errors"] += ["403 (Forbidden)"]
         return Response(response)
 
-    if form.is_valid():
-        user = form.save(commit=False)
-
-        user.email = (
-            str(BaseUserManager.normalize_email(user.email)).lower()
-            if user.email
-            else None
-        )
-
-        user.first_name = unidecode(str(user.first_name).upper())
-        user.last_name = unidecode(str(user.last_name).upper())
-
-        if user.parent:
-            user.parent = unidecode(str(user.parent).upper())
-
-        if request.method == "POST" and request.user.is_admin:
-            user.set_password("AquariumSchool")
-
-        user.save()
-
-        response = getUser(user)
-
     else:
-        response["errors"] += getFormErrors(form)
+        data = request.data.copy()
 
-    return Response(response)
+        userForm = UserAdminForm(data={**data, "type": user.type},
+                                 instance=user) if request.method == "PUT" else UserAdminForm(data=data)
+
+        if userForm.is_valid():
+            user = userForm.save(commit=False)
+
+            user.email = BaseUserManager.normalize_email(
+                user.email).lower() if user.email else None
+            user.first_name = unidecode(user.first_name).upper()
+            user.last_name = unidecode(user.last_name).upper()
+
+            if user.id_document and not (user.password or user.has_usable_password()):
+                user.set_password(user.id_document)
+
+            if user.type == "Estudiante":
+
+                studentForm = StudentAdminForm(
+                    data=data, instance=user.student if request.method == "PUT" else None)
+
+                if studentForm.is_valid():
+                    student = studentForm.save(commit=False)
+
+                    if request.method == "POST":
+                        student.user = user
+
+                    student.parent_name = unidecode(
+                        student.parent_name).upper() if student.parent_name else ""
+
+                    user.save()
+                    student.save()
+                    return Response(getUser(user))
+
+                else:
+                    response["errors"] += getFormErrors(studentForm)
+                    return Response(response)
+
+            elif user.type == "Profesor":
+                # Future TeacherForm(data=data)
+                user.save()
+
+                if request.method == "POST":
+                    Teacher.objects.create(user=user)
+
+                return Response(getUser(user))
+
+            elif user.type == "Administrador":
+                user.save()
+                return Response(getUser(user))
+
+        else:
+            response["errors"] += getFormErrors(userForm)
+            return Response(response)
 
 
 @api_view(["POST"])
 @permission_classes([IsAdminUser])
 def users(request):
-    # response = {"errors": list()}
-
+    # response = {"errors" : list() }
+    model = Student
     search = " ".join(request.data.get("search").split())
-    userType = request.data.get("type")
+    filterOption = request.data.get("filter")
     order = request.data.get("order")
     filter = dict()
     qObjects = Q()
 
-    if search:
-        filters = ["full_name__icontains",
-                   "username__icontains",
-                   "email__icontains",
-                   "id_document__icontains",
-                   "parent__icontains",
-                   "phone_1__icontains",
-                   "phone_2__icontains"]
+    valuesList = ["user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
+                  "user__phone_number", "user__last_session"]
 
-        tags = [{filter: search} for filter in filters]
+    values = {value: F(value) for value in valuesList}
+
+    orders = ["user__last_session", "user__date_joined"]
+
+    annotations = {"full_name": Concat(
+        "user__first_name", Value(" "), "user__last_name")}
+
+    filters = ["full_name__icontains",
+               "user__username__icontains",
+               "user__email__icontains",
+               "user__id_document__icontains",
+               "user__phone_number__icontains"]
+
+    if filterOption == 1:
+        filters += ["parent_name__icontains", "phone_number_2__icontains"]
+
+    elif filterOption == 2:
+        model = Teacher
+
+    elif filterOption == 3:
+        model = User
+        filter["type"] = "Administrador"
+        order = order[6:]
+        values = {value: F(value[6:]) for value in valuesList}
+        orders = ["last_session", "date_joined"]
+        annotations = {"full_name": Concat(
+            "first_name", Value(" "), "last_name")}
+        filters = [filter.replace("user__", "") for filter in filters]
+
+    else:
+        filter["attendances__course__date__gte"] = datetime.datetime.now()
+
+    if filterOption == 4:
+        filter["attendances__quota"] = "PAGO"
+        filter["courses__date__gte"] = datetime.datetime.now()
+
+    elif filterOption == 5:
+        filter["teacher__isnull"] = True
+        filter["courses__date__gte"] = datetime.datetime.now()
+
+    if search:
+        tags = [{
+            filter:
+            search} for filter in filters]
 
         for tag in tags:
             qObjects |= Q(**tag)
 
-    if userType == 1:
-        filter["is_admin"] = False
-        filter["is_teacher"] = False
+    results = model.objects.annotate(**annotations).filter(qObjects, **filter).values(
+        **values).order_by(F(order).desc(nulls_last=True) if order in orders else order).distinct()
 
-    elif userType == 2:
-        filter["is_admin"] = False
-        filter["is_teacher"] = True
+    if filterOption == 6:
+        results = getPlus(results)
 
-    elif userType == 3:
-        filter["is_admin"] = True
-        filter["is_teacher"] = False
+    elif filterOption == 7:
+        results = getInconsistencies(results)
 
-    elif userType == 4:
-        filter["is_admin"] = False
-        filter["is_teacher"] = False
-        filter["attendances__course__date__gte"] = datetime.datetime.now()
-        filter["attendances__quota"] = "PAGO"
+    elif filterOption == 8:
+        results = getUsersWithoutLevel(results)
 
-    elif userType == 5:
-        filter["is_admin"] = False
-        filter["is_teacher"] = False
-        filter["teacher__isnull"] = True
-        filter["attendances__course__date__gte"] = datetime.datetime.now()
+    elif filterOption == 9:
+        results = getHundredWithoutCertificate(results)
 
-    if userType in [1, 2, 3, 4, 5]:
-        accounts = list(Account.objects.annotate(
-            full_name=Concat("first_name", Value(" "), "last_name"),
-        ).filter(qObjects, **filter).values("username", "id", "id_document", "first_name", "last_name",
-                                            "phone_1", "last_session").order_by(F(order).desc(nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct())
+    elif filterOption == 10:
+        results = getNoHundredWithCertificate(results)
 
-    else:
-        filter["is_admin"] = False
-        filter["is_teacher"] = False
-        filter["courses__date__gte"] = datetime.datetime.now()
-
-        accountObjects = Account.objects.annotate(
-            full_name=Concat("first_name", Value(" "), "last_name"),
-        ).filter(qObjects, **filter).order_by(F(order).desc(
-            nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct()
-
-        if userType == 6:
-            accounts = getPlus(accountObjects)
-
-        elif userType == 7:
-            accounts = getInconsistencies(accountObjects)
-
-        elif userType == 8:
-            accounts = getUsersWithoutLevel(accountObjects)
-
-        elif userType == 9:
-            accounts = getHundredWithoutCertificate(accountObjects)
-
-        elif userType == 10:
-            accounts = getNoHundredWithCertificate(accountObjects)
-
-    accountPaginator = Paginator(accounts, 14)
+    userPaginator = Paginator(list(results), 14)
     page_num = request.data.get("page")
-    page = accountPaginator.get_page(page_num)
+    page = userPaginator.get_page(page_num)
 
     return Response({
         "page": page.object_list,
-        "count": accountPaginator.count,
-        "paginationCount": accountPaginator.num_pages
+        "count": userPaginator.count,
+        "paginationCount": userPaginator.num_pages
     })
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def changePhoto(request):
-    response = {"url": "", "field": "profile_image"}
+    response = {"url": "", "field": "profileImage"}
 
     user = request.user
     username = request.data["username"]
 
     if request.user.is_admin:
-        user = Account.objects.get(username=username)
+        user = User.objects.get(username=username)
 
     if (
-        request.FILES.get("profile_image", False) != False
-        and "profile_image" in request.FILES["profile_image"].content_type
+        request.FILES.get("image", False) != False
+        and "image" in request.FILES["image"].content_type
     ):
-        user.profile_image.save("profile.png", request.FILES["profile_image"])
+        user.profile_image.save("profile.png", request.FILES["image"])
         response["url"] = mysite + user.profile_image.url
 
     return Response(response)
@@ -254,167 +285,138 @@ def changePhoto(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser])
 def changeSignature(request):
-    response = {"url": "", "field": "signature"}
+    response = {"url": "", "field": "eSignature"}
 
     username = request.data["username"]
-    user = Account.objects.get(username=username)
+    teacher = Teacher.objects.get(user__username=username)
 
     if (
-        request.FILES.get("profile_image", False) != False
-        and "profile_image" in request.FILES["profile_image"].content_type
+        request.FILES.get("image", False) != False
+        and "image" in request.FILES["image"].content_type
     ):
-        user.signature.save("signature.png", request.FILES["profile_image"])
-        response["url"] = mysite + user.signature.url
+        teacher.e_signature.save("signature.png", request.FILES["image"])
+        response["url"] = mysite + teacher.e_signature.url
 
     return Response(response)
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 @permission_classes([IsAdminUser])
-def changeRole(request):
+def teacher(request):
+    response = {"teachers": list()}
+
+    response["teachers"] += list(Teacher.objects.all().annotate(  # all() ???
+        label=Concat("user__first_name", Value(" "), "user__last_name")).values("label", "id").order_by("label"))
+
+    username = request.GET.get("username", "")
+    if username:
+        student = Student.objects.get(user__username=username)
+        response["teacherID"] = student.teacher.id if student.teacher else ""
+
+    return Response(response)
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def userUpdate(request):
     response = {"errors": list()}
+    user = request.user
+    userForm = UserForm(data=request.data, instance=user)
 
-    username = request.data["username"]
-    user = Account.objects.get(username=username)
+    if userForm.is_valid():
+        user = userForm.save(commit=False)
 
-    if not request.user.check_password(request.data["password"]):
-        response["errors"].append("Contraseña Incorrecta.")
+        user.email = BaseUserManager.normalize_email(
+            user.email).lower() if user.email else None
+        user.first_name = unidecode(user.first_name).upper()
+        user.last_name = unidecode(user.last_name).upper()
+
+        if user.type == "Estudiante":
+            studentForm = StudentForm(data=request.data, instance=user.student)
+
+            if studentForm.is_valid():
+                student = studentForm.save(commit=False)
+                student.parent_name = unidecode(
+                    student.parent_name).upper() if student.parent_name else ""
+
+                user.save()
+                student.save()
+                return Response(getUser(user))
+
+            else:
+                response["errors"] += getFormErrors(studentForm)
+                return Response(response)
+
+        elif user.type == "Profesor":
+            user.save()
+            return Response(getUser(user))
 
     else:
-        type = request.data["radio-buttons-group"]
-        user.is_admin = False
-        user.is_staff = False
-        user.is_superuser = False
-        user.is_teacher = False
-
-        if type == "Profesor":
-            user.is_teacher = True
-
-        elif type == "Administrador":
-            user.is_admin = True
-            user.is_staff = True
-            user.is_superuser = True
-
-        user.save()
-
-        if not user.is_teacher:
-            for account in Account.objects.filter(teacher=user):
-                account.teacher = None
-                account.save()
-
-        response["type"] = type
-
-    return Response(response)
-
-
-@api_view(["DELETE"])
-@permission_classes([IsAdminUser])
-def deleteProfile(request):
-    response = {"errors": list()}
-
-    username = request.data["username"]
-    user = Account.objects.get(username=username)
-
-    if not request.user.check_password(request.data["password"]):
-        response["errors"].append("Contraseña Incorrecta.")
-
-    else:
-        user.delete()
-
-    return Response(response)
+        response["errors"] += getFormErrors(userForm)
+        return Response(response)
 
 
 @api_view(["GET", "POST"])
-@permission_classes([IsAdminUser])
-def teacher(request):
-
-    response = {"teachers": list()}
-
-    if request.method == "GET":
-
-        response["teachers"] += list(Account.objects.filter(is_admin=False, is_teacher=True).annotate(
-            label=Concat("first_name", Value(" "), "last_name")).values("label", "id").order_by("id"))
-
-    else:
-
-        username = request.data["username"]
-        user = Account.objects.get(username=username)
-        teacher = request.data["teacher"]
-
-        if teacher:
-            teacher = Account.objects.get(pk=teacher["id"])
-
-        user.teacher = teacher
-        user.save()
-
-        response["teacher"] = teacher.first_name + \
-            " " + teacher.last_name if teacher else ""
-
-        response["teacherID"] = teacher.id if user.teacher else ""
-
-    return Response(response)
-
-
-@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def students(request):
 
-    if request.user.is_teacher:
+    if request.user.type == "Profesor":
+        if request.method == "GET":
+            return Response(getUser(User.objects.get(username=request.GET.get("username", ""))))
+
         search = " ".join(request.data.get("search").split())
-        userType = request.data.get("type")
+        filterOption = request.data.get("filter")
         order = request.data.get("order")
-        filter = {"teacher": request.user}
+        filter = {"teacher": request.user.teacher}
         qObjects = Q()
 
-        if search:
-            filters = ["full_name__icontains",
-                       "username__icontains",
-                       "email__icontains",
-                       "id_document__icontains",
-                       "parent__icontains",
-                       "phone_1__icontains",
-                       "phone_2__icontains"]
+        valuesList = ["user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
+                      "user__phone_number", "user__last_session"]
 
-            tags = [{filter: search} for filter in filters]
+        values = {value: F(value) for value in valuesList}
+
+        orders = ["user__last_session", "user__date_joined"]
+
+        annotations = {"full_name": Concat(
+            "user__first_name", Value(" "), "user__last_name")}
+
+        filters = ["full_name__icontains",
+                   "user__username__icontains",
+                   "user__email__icontains",
+                   "user__id_document__icontains",
+                   "user__phone_number__icontains",
+                   "parent_name__icontains",
+                   "phone_number_2__icontains"]
+
+        if search:
+            tags = [{
+                filter:
+                search} for filter in filters]
 
             for tag in tags:
                 qObjects |= Q(**tag)
 
-        if userType == 1:
-            filter["is_admin"] = False
-            filter["is_teacher"] = False
-
-        if userType in [1]:
-            accounts = list(Account.objects.annotate(
-                full_name=Concat("first_name", Value(" "), "last_name"),
-            ).filter(qObjects, **filter).values("username", "id", "id_document", "first_name", "last_name",
-                                                "phone_1", "last_session").order_by(F(order).desc(nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct())
-
-        else:
-            filter["is_admin"] = False
-            filter["is_teacher"] = False
+        if filterOption != 1:
             filter["courses__date__gte"] = datetime.datetime.now()
 
-            accountObjects = Account.objects.annotate(
-                full_name=Concat("first_name", Value(" "), "last_name"),
-            ).filter(qObjects, **filter).order_by(F(order).desc(
-                nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct()
+        results = Student.objects.annotate(**annotations).filter(qObjects, **filter).values(
+            **values).order_by(F(order).desc(nulls_last=True) if order in orders else order).distinct()
 
-            if userType == 8:
-                accounts = getUsersWithoutLevel(accountObjects)
+        if filterOption == 2:
+            results = getUsersWithoutLevel(results)
 
-            elif userType == 9:
-                accounts = getHundredWithoutCertificate(accountObjects)
+        elif filterOption == 3:
+            results = getHundredWithoutCertificate(results)
 
-        accountPaginator = Paginator(accounts, 14)
+        userPaginator = Paginator(list(results), 14)
         page_num = request.data.get("page")
-        page = accountPaginator.get_page(page_num)
+        page = userPaginator.get_page(page_num)
 
         return Response({
             "page": page.object_list,
-            "count": accountPaginator.count,
-            "paginationCount": accountPaginator.num_pages
+            "count": userPaginator.count,
+            "paginationCount": userPaginator.num_pages
         })
 
     else:
-        return Response({"errors": ["403 (Forbidden)"]})
+        Response({}, status=status.HTTP_403_FORBIDDEN)

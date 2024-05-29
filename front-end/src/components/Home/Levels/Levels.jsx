@@ -20,6 +20,7 @@ const Levels = () => {
             <Level
               key={index}
               index={index}
+              value={item.value}
               title={item.title}
               text={item.text}
               Icon={item.Icon}

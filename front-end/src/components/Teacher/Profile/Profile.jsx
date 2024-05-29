@@ -86,10 +86,10 @@ const Profile = (props) => {
                 <AssignmentIndIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>{props.user.idType}</Text>
+                <Text fontWeight={500}>Documento</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.identityDocument}</Text>
+                <Text>{props.user.idDocument}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -97,10 +97,10 @@ const Profile = (props) => {
                 <WcIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Sexo</Text>
+                <Text fontWeight={500}>Género</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.sex}</Text>
+                <Text>{props.user.gender}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -112,7 +112,7 @@ const Profile = (props) => {
               </TableCell>
               <TableCell>
                 <Text>
-                  {prettyDate(props.user.dateBirth)} ({props.user.age} años)
+                  {prettyDate(props.user.birthDate)} ({props.user.age} años)
                 </Text>
               </TableCell>
             </TableRowNoBorder>
@@ -132,21 +132,10 @@ const Profile = (props) => {
                 <PhoneIcon sx={{ color: "blue.font" }} />
               </TableCell>
               <TableCell>
-                <Text fontWeight={500}>Tel / Cel (1)</Text>
+                <Text fontWeight={500}>Celular</Text>
               </TableCell>
               <TableCell>
-                <Text>{props.user.phone1}</Text>
-              </TableCell>
-            </TableRowNoBorder>
-            <TableRowNoBorder hover={true}>
-              <TableCell align="center" component="th" scope="row">
-                <PhoneIcon sx={{ color: "blue.font" }} />
-              </TableCell>
-              <TableCell>
-                <Text fontWeight={500}>Tel / Cel (2)</Text>
-              </TableCell>
-              <TableCell>
-                <Text>{props.user.phone2}</Text>
+                <Text>{props.user.phoneNumber}</Text>
               </TableCell>
             </TableRowNoBorder>
             <TableRowNoBorder hover={true}>
@@ -158,7 +147,7 @@ const Profile = (props) => {
               </TableCell>
               <TableCell>
                 <img
-                  src={props.user.signature || "/"}
+                  src={props.user.eSignature || "/"}
                   alt="Sin firma, debe enviar firma a administración"
                   style={{ height: "8rem", borderRadius: "1rem" }}
                 />

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 
 import { getTokens, refreshTokens, urlAPI, userBase } from "../utils/utils";
+import ButtonLoading from "../UI/Buttons/ButtonLoading";
 
 export const AuthContext = createContext();
 
@@ -13,10 +14,10 @@ const AuthProvider = (props) => {
 
     if (!tokens.expired) {
       const getUser = async (tokens) => {
-        const result = await fetch(urlAPI + "users/profile/", {
+        const result = await fetch(urlAPI + "users/login/", {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/ json",
             Authorization: "Bearer " + tokens.access,
           },
         });
@@ -44,7 +45,11 @@ const AuthProvider = (props) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      {ready ? props.children : <h1>Loading...</h1>}
+      {ready ? (
+        props.children
+      ) : (
+        <ButtonLoading loading>Cargando...</ButtonLoading>
+      )}
     </AuthContext.Provider>
   );
 };

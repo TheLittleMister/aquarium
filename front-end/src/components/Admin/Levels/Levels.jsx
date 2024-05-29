@@ -27,7 +27,7 @@ const Levels = (props) => {
 
       const data = await result.json();
 
-      if (!result.ok) {
+      if (result.status === 401) {
         const refreshed = await refreshTokens(
           result.statusText,
           tokens.refresh,
@@ -37,6 +37,7 @@ const Levels = (props) => {
         if (refreshed) getLevels();
         return;
       }
+
       setLevels(data.levels);
     };
 
@@ -54,21 +55,21 @@ const Levels = (props) => {
       <Box>
         <ChipPrimary label="PRINCIPIANTE" sx={{ m: 2 }} />
         <AccordionLevels
-          levels={levels.filter((item) => item.category__id === 1)}
+          levels={levels.filter((item) => item.category === 1)}
           setReload={setReload}
         />
       </Box>
       <Box>
         <ChipPrimary label="INTERMEDIO" sx={{ m: 2 }} />
         <AccordionLevels
-          levels={levels.filter((item) => item.category__id === 2)}
+          levels={levels.filter((item) => item.category === 2)}
           setReload={setReload}
         />
       </Box>
       <Box>
         <ChipPrimary label="AVANZADO" sx={{ m: 2 }} />
         <AccordionLevels
-          levels={levels.filter((item) => item.category__id === 3)}
+          levels={levels.filter((item) => item.category === 3)}
           setReload={setReload}
         />
       </Box>

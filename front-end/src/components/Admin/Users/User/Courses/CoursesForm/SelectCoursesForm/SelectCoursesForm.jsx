@@ -42,7 +42,7 @@ const SelectCoursesForm = ({ dates, username, setReload, setOpen }) => {
 
     const data = await result.json();
 
-    if (!result.ok) {
+    if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
         tokens.refresh,
@@ -52,8 +52,8 @@ const SelectCoursesForm = ({ dates, username, setReload, setOpen }) => {
       return;
     }
 
-    if (data.errors && data.errors.length > 0) {
-      setMessages(data.errors);
+    if (data.detail || (data.errors && data.errors.length > 0)) {
+      setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);
       setLoading(false);
     } else {

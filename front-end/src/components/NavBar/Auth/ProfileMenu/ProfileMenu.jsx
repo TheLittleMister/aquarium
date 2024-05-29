@@ -33,12 +33,12 @@ const ProfileMenu = () => {
           <Avatar
             tabIndex={-1}
             alt={authCtx.user.username}
-            src={authCtx.user.image}
+            src={authCtx.user.profileImage}
             sx={{ width: 24, height: 24 }}
           />
         }
       >
-        {authCtx.user.username}
+        {authCtx.user.username.slice(0, 15)}
       </ButtonSecondary>
       <Menu
         id="basic-menu"
