@@ -10,9 +10,9 @@ class AuthBackend(object):
     def authenticate(self, request, username=None, password=None):
         try:
             if username.isdigit():
-                user = User.objects.get(id_document=username)
+                user = Account.objects.get(id_document=username)
             else:
-                user = User.objects.get(
+                user = Account.objects.get(
                     Q(username=username) | Q(email=username))
 
         except User.DoesNotExist:
@@ -22,6 +22,6 @@ class AuthBackend(object):
 
     def get_user(self, user_id):
         try:
-            return User.objects.get(pk=user_id)
+            return Account.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None

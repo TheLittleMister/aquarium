@@ -76,7 +76,7 @@ def resetUserPassword(request):
     response = {"errors": list()}
 
     username = request.data["username"]
-    user = User.objects.get(username=username)
+    user = Account.objects.get(username=username)
 
     if not request.user.check_password(request.data["password"]):
         response["errors"].append("Contraseña Incorrecta.")
@@ -100,7 +100,7 @@ def user(request):
     username = request.GET.get("username", "")
 
     if username:
-        user = User.objects.get(username=username)
+        user = Account.objects.get(username=username)
 
     if request.method == "GET":
         return Response(getUser(user))
@@ -270,7 +270,7 @@ def changePhoto(request):
     username = request.data["username"]
 
     if request.user.is_admin:
-        user = User.objects.get(username=username)
+        user = Account.objects.get(username=username)
 
     if (
         request.FILES.get("image", False) != False
@@ -362,7 +362,7 @@ def students(request):
 
     if request.user.type == "Profesor":
         if request.method == "GET":
-            return Response(getUser(User.objects.get(username=request.GET.get("username", ""))))
+            return Response(getUser(Account.objects.get(username=request.GET.get("username", ""))))
 
         search = " ".join(request.data.get("search").split())
         filterOption = request.data.get("filter")

@@ -49,7 +49,7 @@ class Manager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class Account(AbstractBaseUser):
     class Types(models.TextChoices):
         admin = "Administrador", "Administrador"
         teacher = "Profesor", "Profesor"
@@ -111,7 +111,7 @@ class User(AbstractBaseUser):
 
 class Teacher(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="teacher")
+        Account, on_delete=models.CASCADE, related_name="teacher")
     e_signature = models.ImageField(
         upload_to="signatures", null=True, blank=True)
 
@@ -132,7 +132,7 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="student")
+        Account, on_delete=models.CASCADE, related_name="student")
     parent_name = models.CharField(max_length=60, null=True, blank=True)
     phone_number_2 = models.CharField(max_length=150, null=True, blank=True, validators=[
         validate_international_phonenumber])
