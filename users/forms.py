@@ -7,7 +7,7 @@ from .models import *
 class UserAdminForm(forms.ModelForm):
 
     class Meta:
-        model = User
+        model = Account
         fields = (
             'type',
             'email',
@@ -42,7 +42,7 @@ class StudentAdminForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
 
     class Meta:
-        model = User
+        model = Account
         fields = (
             'email',
             'username',
