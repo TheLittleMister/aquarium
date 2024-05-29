@@ -13,7 +13,7 @@ class Course(models.Model):
     date = models.DateField("Fecha", null=True)
     # Students(Account.student) M2M
 
-    new_students = models.ManyToManyField(
+    students = models.ManyToManyField(
         Student, related_name="courses", blank=True)  # related_name="courses" (?)
 
     @property
@@ -61,7 +61,7 @@ class Attendance(models.Model):
         paid = "PAGO", "PAGO"
         unpaid = "SEPARADO", "SEPARADO"
 
-    new_student = models.ForeignKey(
+    student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="attendances")
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="attendances")
@@ -82,7 +82,7 @@ class Attendance(models.Model):
         (SEP, "SEPARADO"),
     )
 
-    new_quota = models.CharField(
+    quota = models.CharField(
         max_length=8,
         choices=Quotas.choices,
         default=Quotas.unpaid,
@@ -91,7 +91,7 @@ class Attendance(models.Model):
     note = models.CharField("Nota", max_length=280, null=True, blank=True)
 
     class Meta:
-        ordering = ['new_student']
+        ordering = ['student']
 
     def __str__(self):
         return f"{self.student}: {self.course}"

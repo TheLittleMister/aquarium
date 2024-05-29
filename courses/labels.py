@@ -19,14 +19,14 @@ class Schedule(models.Model):
         saturday = 6, "Sabado"
         sunday = 7, "Domingo"
 
-    new_weekday = models.PositiveSmallIntegerField(choices=Weekdays.choices)
+    weekday = models.PositiveSmallIntegerField(choices=Weekdays.choices)
 
     start_time = models.TimeField("Hora Inicio")  # Time START
     end_time = models.TimeField("Hora Termina")  # Time END
 
     class Meta:
-        ordering = ['new_weekday']
+        ordering = ['weekday']
 
 
 class Price(models.Model):
-    new_price = models.CharField(max_length=280, default="$$$")
+    price = models.CharField(max_length=280, default="$$$")

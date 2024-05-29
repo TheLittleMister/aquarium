@@ -16,7 +16,7 @@ class Level(models.Model):
 
     name = models.CharField(max_length=60)
 
-    new_category = models.SmallIntegerField(choices=Categories.choices)
+    category = models.SmallIntegerField(choices=Categories.choices)
     position = models.IntegerField(default=0)
 
     def __str__(self):
