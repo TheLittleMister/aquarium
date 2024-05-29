@@ -1,4 +1,4 @@
-from .models import User
+from .models import *
 from django.db.models import Q
 
 
