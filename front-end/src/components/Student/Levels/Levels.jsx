@@ -15,7 +15,7 @@ const Levels = () => {
       const tokens = getTokens();
 
       const result = await fetch(
-        urlAPI + `levels/studentLevel/?studentID=${authCtx.user.id}`,
+        urlAPI + `levels/studentLevel/?studentID=${authCtx.user.studentID}`,
         {
           method: "GET",
           headers: {
@@ -42,7 +42,7 @@ const Levels = () => {
     };
 
     getStudentLevels();
-  }, [authCtx.setUser, authCtx.user.id]);
+  }, [authCtx.setUser, authCtx.user.studentID]);
 
   return (
     <>

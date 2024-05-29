@@ -200,6 +200,8 @@ def studentLevel(request):
 
             response["studentLevels"].append(values)
 
+        return Response(response)
+
     if request.user.is_admin or request.user.type == "Profesor":
         if request.method == "POST":
             form = StudentLevelForm(request.data)
