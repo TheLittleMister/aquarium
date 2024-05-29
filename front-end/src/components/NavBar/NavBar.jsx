@@ -1,6 +1,6 @@
 import { AppBar, Container, Toolbar, Stack } from "@mui/material";
 
-import logo from "./images/logo.png";
+import logo from "../../UI/Logo/logo.png";
 
 import * as styles from "./NavBarStyles";
 import { Link } from "react-router-dom";

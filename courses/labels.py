@@ -10,8 +10,19 @@ class Weekday(models.Model):
 
 
 class Schedule(models.Model):
+    class Weekdays(models.IntegerChoices):
+        monday = 1, "Lunes"
+        tuesday = 2, "Martes"
+        wednesday = 3, "Miercoles"
+        thursday = 4, "Jueves"
+        friday = 5, "Viernes"
+        saturday = 6, "Sabado"
+        sunday = 7, "Domingo"
+
     weekday = models.ForeignKey(
         Weekday, on_delete=models.CASCADE, related_name="schedules")
+
+    new_weekday = models.PositiveSmallIntegerField(choices=Weekdays.choices)
 
     start_time = models.TimeField("Hora Inicio")  # Time START
     end_time = models.TimeField("Hora Termina")  # Time END
@@ -22,3 +33,4 @@ class Schedule(models.Model):
 
 class Price(models.Model):
     price = models.IntegerField(default=0)
+    new_price = models.CharField(max_length=280, default="$$$")

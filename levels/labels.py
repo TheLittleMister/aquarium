@@ -9,6 +9,11 @@ class Category(models.Model):
 
 
 class Level(models.Model):
+    class Categories(models.IntegerChoices):
+        beginner = 1, "Principiante"
+        intermediate = 2, "Intermedio"
+        advanced = 3, "Avanzado"
+
     name = models.CharField(max_length=60)
     category = models.ForeignKey(
         Category,
@@ -16,6 +21,7 @@ class Level(models.Model):
         related_name="levels",
         null=True,
     )
+    new_category = models.SmallIntegerField(choices=Categories.choices)
     position = models.IntegerField(default=0)
 
     def __str__(self):

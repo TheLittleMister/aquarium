@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import validate_email
+from phonenumber_field.validators import validate_international_phonenumber
+
 from .labels import *
 from PIL import Image
 
@@ -15,17 +19,28 @@ from django_rest_passwordreset.signals import reset_password_token_created
 
 
 class Manager(BaseUserManager):
-    def create_user(self, username, password=None):  # self.normalize_email(email)
-        if not username:
-            raise ValueError("Users must have an username")
+    def create_user(self, email, username, password=None):
+        if not username or not password:
+            raise ValueError("Users must have an username and password")
 
-        user = self.model(username=username)  # username.lower() with no spaces
+        user = self.model(
+            email=self.normalize_email(email),
+            username=username,
+        )
+
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password=None):
-        user = self.create_user(username=username, password=password)
+    def create_superuser(self, email, username, password=None):
+        if not username or not password:
+            raise ValueError("Superusers must have an username and password")
+
+        user = self.create_user(
+            email=self.normalize_email(email),
+            username=username,
+            password=password,
+        )
 
         user.is_admin = True
         user.is_staff = True
@@ -35,12 +50,24 @@ class Manager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
+    class Types(models.TextChoices):
+        admin = "Administrador", "Administrador"
+        teacher = "Profesor", "Profesor"
+        student = "Estudiante", "Estudiante"
 
-    username = models.CharField("Usuario", max_length=60, unique=True)
-    email = models.EmailField(
-        "Correo Electrónico", max_length=60, unique=True, null=True, blank=True
-    )
-    image = models.ImageField(
+    class Genders(models.TextChoices):
+        male = "Masculino", "Masculino"
+        female = "Femenino", "Femenino"
+
+    type = models.CharField(
+        max_length=13, choices=Types.choices)
+
+    username = models.CharField(max_length=150,
+                                unique=True,
+                                validators=[UnicodeUsernameValidator()])
+    email = models.EmailField(max_length=60, unique=True, validators=[
+                              validate_email], null=True, blank=True)
+    profile_image = models.ImageField(
         default="default-profile.png", upload_to="profile_pics", blank=True
     )
     first_name = models.CharField("Nombres", max_length=30)
@@ -53,13 +80,15 @@ class Account(AbstractBaseUser):
         blank=True,
         verbose_name="Tipo de Documento",
     )  # Make tests
-    identity_document = models.BigIntegerField(
+    id_document = models.BigIntegerField(
         "Número de Documento", unique=True, null=True, blank=True
     )  # ID
 
     parent = models.CharField(
         "Acudiente", max_length=60, null=True, blank=True)
     phone_1 = models.BigIntegerField("Tel/Cel (1)", null=True, blank=True)
+    phone_number = models.CharField(max_length=150, null=True, blank=True, validators=[
+                                    validate_international_phonenumber])
     phone_2 = models.BigIntegerField("Tel/Cel (2)", null=True, blank=True)
     sex = models.ForeignKey(
         Sex,
@@ -69,19 +98,21 @@ class Account(AbstractBaseUser):
         blank=True,
         verbose_name="Sexo Biológico",
     )
-    date_birth = models.DateField("Fecha de Nacimiento", null=True, blank=True)
+    gender = models.CharField(
+        max_length=9, choices=Genders.choices)
+    birth_date = models.DateField("Fecha de Nacimiento", null=True, blank=True)
 
-    teacher = models.ForeignKey(
+    my_teacher = models.ForeignKey(
         "self",
         on_delete=models.SET_NULL,
-        related_name="my_teacher",
+        related_name="my_teacher_field",
         null=True,
         blank=True,
     )
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
-    real_last_login = models.DateTimeField(null=True)
+    last_session = models.DateTimeField(null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -95,7 +126,7 @@ class Account(AbstractBaseUser):
     objects = Manager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["email"]
 
     class Meta:
         ordering = ["last_name"]
@@ -123,6 +154,36 @@ class Account(AbstractBaseUser):
                 img = img.resize((new_width, new_height), Image.ANTIALIAS)
                 img.save(self.signature.path)
 
+
+class Teacher(models.Model):
+    user = models.OneToOneField(
+        Account, on_delete=models.CASCADE, related_name="teacher")
+    e_signature = models.ImageField(
+        upload_to="signatures", null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.e_signature:
+            img = Image.open(self.e_signature.path)
+
+            if img.height != 80:
+
+                new_height = 80
+                new_width = int(new_height * img.width / img.height)
+
+                img = img.resize((new_width, new_height), Image.ANTIALIAS)
+                img.save(self.e_signature.path)
+
+
+class Student(models.Model):
+    user = models.OneToOneField(
+        Account, on_delete=models.CASCADE, related_name="student")
+    parent_name = models.CharField(max_length=60, null=True, blank=True)
+    phone_number_2 = models.CharField(max_length=150, null=True, blank=True, validators=[
+                                      validate_international_phonenumber])
+    teacher = models.ForeignKey(
+        Teacher, on_delete=models.SET_NULL, related_name="students", null=True, blank=True)
 
 # RESET PASSWORD EMAIL
 

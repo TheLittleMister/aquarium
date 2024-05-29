@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Account
+from users.models import *
 import datetime
 from datetime import date
 from .labels import *
@@ -14,8 +14,9 @@ class Course(models.Model):
     # Students(Account.student) M2M
     students = models.ManyToManyField(
         Account, blank=True, related_name="courses")
-    teachers = models.ManyToManyField(
-        Account, blank=True, related_name="teacher_courses")
+
+    new_students = models.ManyToManyField(
+        Student, related_name="courses", blank=True)  # related_name="courses" (?)
 
     @property
     def is_past_due(self):
@@ -58,8 +59,14 @@ class Course(models.Model):
 
 
 class Attendance(models.Model):
+    class Quotas(models.TextChoices):
+        paid = "PAGO", "PAGO"
+        unpaid = "SEPARADO", "SEPARADO"
+
     student = models.ForeignKey(
         Account, on_delete=models.CASCADE, related_name="attendances")
+    new_student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="attendances")
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="attendances")
 
@@ -84,6 +91,12 @@ class Attendance(models.Model):
         choices=quota_choices,
         default=SEP,
     )  # SEPARADO / PAGO / NO PAGO
+
+    new_quota = models.CharField(
+        max_length=8,
+        choices=Quotas.choices,
+        default=Quotas.unpaid,
+    )
 
     note = models.CharField("Nota", max_length=280, null=True, blank=True)
 

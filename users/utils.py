@@ -26,19 +26,19 @@ def getUser(user):
     return {
         "id": user.id,
         "username": user.username if user.username else "",
-        "image": mysite + user.image.url,
+        "image": mysite + user.profile_image.url,
         "type": "Administrador" if user.is_admin else "Profesor" if user.is_teacher else "Estudiante",
         "firstName": user.first_name if user.first_name else "",
         "lastName": user.last_name if user.last_name else "",
         "idType": user.id_type.id_type if user.id_type else "",
         "idTypeID": user.id_type.id if user.id_type else "",
-        "identityDocument": user.identity_document if user.identity_document else "",
+        "identityDocument": user.id_document if user.id_document else "",
         "sex": user.sex.sex_name if user.sex else "",
         "sexID": user.sex.id if user.sex else "",
-        "dateBirth": user.date_birth,
-        "age": round((datetime.date.today() - user.date_birth).days // 365.25) if user.date_birth else None,
-        "teacher": user.teacher.first_name + " " + user.teacher.last_name if user.teacher else "",
-        "teacherID": user.teacher.id if user.teacher else "",
+        "dateBirth": user.birth_date,
+        "age": round((datetime.date.today() - user.birth_date).days // 365.25) if user.birth_date else None,
+        "teacher": user.my_teacher.first_name + " " + user.my_teacher.last_name if user.my_teacher else "",
+        "teacherID": user.my_teacher.id if user.my_teacher else "",
         "parent": user.parent if user.parent else "",
         "email": user.email if user.email else "",
         "phone1": user.phone_1 if user.phone_1 else "",
@@ -66,11 +66,11 @@ def getPlus(accounts):
                     students.append({
                         "username": student.username,
                         "id": student.id,
-                        "identity_document": student.identity_document,
+                        "identity_document": student.id_document,
                         "first_name": student.first_name,
                         "last_name": student.last_name,
                         "phone_1": student.phone_1,
-                        "real_last_login": student.real_last_login
+                        "real_last_login": student.last_session
                     })
 
                 break
@@ -95,11 +95,11 @@ def getInconsistencies(accounts):
             students.append({
                 "username": student.username,
                 "id": student.id,
-                "identity_document": student.identity_document,
+                "identity_document": student.id_document,
                 "first_name": student.first_name,
                 "last_name": student.last_name,
                 "phone_1": student.phone_1,
-                "real_last_login": student.real_last_login
+                "real_last_login": student.last_session
             })
 
     return students
@@ -114,11 +114,11 @@ def getUsersWithoutLevel(accounts):
             students.append({
                 "username": student.username,
                 "id": student.id,
-                "identity_document": student.identity_document,
+                "identity_document": student.id_document,
                 "first_name": student.first_name,
                 "last_name": student.last_name,
                 "phone_1": student.phone_1,
-                "real_last_login": student.real_last_login
+                "real_last_login": student.last_session
             })
 
         else:
@@ -143,11 +143,11 @@ def getUsersWithoutLevel(accounts):
                 students.append({
                     "username": student.username,
                     "id": student.id,
-                    "identity_document": student.identity_document,
+                    "identity_document": student.id_document,
                     "first_name": student.first_name,
                     "last_name": student.last_name,
                     "phone_1": student.phone_1,
-                    "real_last_login": student.real_last_login
+                    "real_last_login": student.last_session
                 })
 
     return students
@@ -173,11 +173,11 @@ def getHundredWithoutCertificate(accounts):
                 students.append({
                     "username": student.username,
                     "id": student.id,
-                    "identity_document": student.identity_document,
+                    "identity_document": student.id_document,
                     "first_name": student.first_name,
                     "last_name": student.last_name,
                     "phone_1": student.phone_1,
-                    "real_last_login": student.real_last_login
+                    "real_last_login": student.last_session
                 })
                 break
 
@@ -204,11 +204,11 @@ def getNoHundredWithCertificate(accounts):
                 students.append({
                     "username": student.username,
                     "id": student.id,
-                    "identity_document": student.identity_document,
+                    "identity_document": student.id_document,
                     "first_name": student.first_name,
                     "last_name": student.last_name,
                     "phone_1": student.phone_1,
-                    "real_last_login": student.real_last_login
+                    "real_last_login": student.last_session
                 })
                 break
 

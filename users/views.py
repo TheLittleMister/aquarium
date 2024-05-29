@@ -39,7 +39,7 @@ def login(request):
                 "access": str(refresh.access_token),
             },
         }
-        user.real_last_login = timezone.now()
+        user.last_session = timezone.now()
         user.save()
 
     else:
@@ -154,7 +154,7 @@ def users(request):
         filters = ["full_name__icontains",
                    "username__icontains",
                    "email__icontains",
-                   "identity_document__icontains",
+                   "id_document__icontains",
                    "parent__icontains",
                    "phone_1__icontains",
                    "phone_2__icontains"]
@@ -191,8 +191,8 @@ def users(request):
     if userType in [1, 2, 3, 4, 5]:
         accounts = list(Account.objects.annotate(
             full_name=Concat("first_name", Value(" "), "last_name"),
-        ).filter(qObjects, **filter).values("username", "id", "identity_document", "first_name", "last_name",
-                                            "phone_1", "real_last_login").order_by(F(order).desc(nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct())
+        ).filter(qObjects, **filter).values("username", "id", "id_document", "first_name", "last_name",
+                                            "phone_1", "last_session").order_by(F(order).desc(nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct())
 
     else:
         filter["is_admin"] = False
@@ -202,7 +202,7 @@ def users(request):
         accountObjects = Account.objects.annotate(
             full_name=Concat("first_name", Value(" "), "last_name"),
         ).filter(qObjects, **filter).order_by(F(order).desc(
-            nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct()
+            nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct()
 
         if userType == 6:
             accounts = getPlus(accountObjects)
@@ -233,7 +233,7 @@ def users(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def changePhoto(request):
-    response = {"url": "", "field": "image"}
+    response = {"url": "", "field": "profile_image"}
 
     user = request.user
     username = request.data["username"]
@@ -242,11 +242,11 @@ def changePhoto(request):
         user = Account.objects.get(username=username)
 
     if (
-        request.FILES.get("image", False) != False
-        and "image" in request.FILES["image"].content_type
+        request.FILES.get("profile_image", False) != False
+        and "profile_image" in request.FILES["profile_image"].content_type
     ):
-        user.image.save("profile.png", request.FILES["image"])
-        response["url"] = mysite + user.image.url
+        user.profile_image.save("profile.png", request.FILES["profile_image"])
+        response["url"] = mysite + user.profile_image.url
 
     return Response(response)
 
@@ -260,10 +260,10 @@ def changeSignature(request):
     user = Account.objects.get(username=username)
 
     if (
-        request.FILES.get("image", False) != False
-        and "image" in request.FILES["image"].content_type
+        request.FILES.get("profile_image", False) != False
+        and "profile_image" in request.FILES["profile_image"].content_type
     ):
-        user.signature.save("signature.png", request.FILES["image"])
+        user.signature.save("signature.png", request.FILES["profile_image"])
         response["url"] = mysite + user.signature.url
 
     return Response(response)
@@ -370,7 +370,7 @@ def students(request):
             filters = ["full_name__icontains",
                        "username__icontains",
                        "email__icontains",
-                       "identity_document__icontains",
+                       "id_document__icontains",
                        "parent__icontains",
                        "phone_1__icontains",
                        "phone_2__icontains"]
@@ -387,8 +387,8 @@ def students(request):
         if userType in [1]:
             accounts = list(Account.objects.annotate(
                 full_name=Concat("first_name", Value(" "), "last_name"),
-            ).filter(qObjects, **filter).values("username", "id", "identity_document", "first_name", "last_name",
-                                                "phone_1", "real_last_login").order_by(F(order).desc(nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct())
+            ).filter(qObjects, **filter).values("username", "id", "id_document", "first_name", "last_name",
+                                                "phone_1", "last_session").order_by(F(order).desc(nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct())
 
         else:
             filter["is_admin"] = False
@@ -398,7 +398,7 @@ def students(request):
             accountObjects = Account.objects.annotate(
                 full_name=Concat("first_name", Value(" "), "last_name"),
             ).filter(qObjects, **filter).order_by(F(order).desc(
-                nulls_last=True) if order == "real_last_login" or order == "date_joined" else order).distinct()
+                nulls_last=True) if order == "last_session" or order == "date_joined" else order).distinct()
 
             if userType == 8:
                 accounts = getUsersWithoutLevel(accountObjects)

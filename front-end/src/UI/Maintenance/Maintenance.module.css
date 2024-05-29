@@ -1,0 +1,60 @@
+.x {
+  background: var(--blue-light);
+  background: linear-gradient(180deg, var(--blue-light) 50%, var(--white) 75%);
+  /* padding: 8rem 0; */
+}
+
+.maintenance {
+  background: linear-gradient(0deg, var(--white), var(--blue-light));
+  background-size: 400% 400%;
+
+  -webkit-animation: bgcolors 10s ease infinite;
+  -moz-animation: bgcolors 10s ease infinite;
+  -o-animation: bgcolors 10s ease infinite;
+  animation: bgcolors 10s ease infinite;
+}
+
+@-webkit-keyframes bgcolors {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+@-moz-keyframes bgcolors {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+@-o-keyframes bgcolors {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+@keyframes bgcolors {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
