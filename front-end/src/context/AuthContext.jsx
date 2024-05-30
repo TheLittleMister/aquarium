@@ -25,13 +25,13 @@ const AuthProvider = (props) => {
         const data = await result.json();
 
         if (!result.ok) {
-          const refreshed = await refreshTokens(
-            result.statusText,
-            tokens.refresh
-          );
-          if (refreshed) getUser(getTokens());
-          else setReady(true);
-
+          // const refreshed = await refreshTokens(
+          //   result.statusText,
+          //   tokens.refresh
+          // );
+          // if (refreshed) getUser(getTokens());
+          // else setReady(true);
+          localStorage.removeItem("tokens");
           return;
         } else {
           setUser(data);
