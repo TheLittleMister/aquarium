@@ -235,20 +235,23 @@ def users(request):
     results = model.objects.annotate(**annotations).filter(qObjects, **filter).values(
         **values).order_by(F(order).desc(nulls_last=True) if order in orders else order).distinct()
 
-    if filterOption == 6:
-        results = getPlus(results)
+    try:
+        if filterOption == 6:
+            results = getPlus(results)
 
-    elif filterOption == 7:
-        results = getInconsistencies(results)
+        elif filterOption == 7:
+            results = getInconsistencies(results)
 
-    elif filterOption == 8:
-        results = getUsersWithoutLevel(results)
+        elif filterOption == 8:
+            results = getUsersWithoutLevel(results)
 
-    elif filterOption == 9:
-        results = getHundredWithoutCertificate(results)
+        elif filterOption == 9:
+            results = getHundredWithoutCertificate(results)
 
-    elif filterOption == 10:
-        results = getNoHundredWithCertificate(results)
+        elif filterOption == 10:
+            results = getNoHundredWithCertificate(results)
+    except Exception as error:
+        return Response({"error": error})
 
     userPaginator = Paginator(list(results), 14)
     page_num = request.data.get("page")
