@@ -102,21 +102,29 @@ def resetUserPassword(request):
 def user(request):
     response = {"errors": list()}
     user = request.user
-    username = request.GET.get("username", "")
 
-    if username:
-        user = Account.objects.get(username=username)
+    try:
+        username = request.GET.get("username", "")
+
+        if username:
+            user = Account.objects.get(username=username)
+    except Exception as error:
+        return Response({"error": str(error)})
 
     if request.method == "GET":
         return Response(getUser(user))
 
     elif request.method == "DELETE":
-        if request.user.check_password(request.data["password"]):
-            user.delete()
-        else:
-            response["errors"].append("Contraseña Incorrecta.")
 
-        return Response(response)
+        try:
+            if request.user.check_password(request.data["password"]):
+                user.delete()
+            else:
+                response["errors"].append("Contraseña Incorrecta.")
+
+            return Response(response)
+        except Exception as error:
+            return Response({"error": str(error)})
 
     else:
         data = request.data.copy()
