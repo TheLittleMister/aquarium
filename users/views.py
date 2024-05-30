@@ -174,68 +174,68 @@ def user(request):
 @permission_classes([IsAdminUser])
 def users(request):
     # response = {"errors" : list() }
-    model = Student
-    search = " ".join(request.data.get("search").split())
-    filterOption = request.data.get("filter")
-    order = request.data.get("order")
-    filter = dict()
-    qObjects = Q()
-
-    valuesList = ["user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
-                  "user__phone_number", "user__last_session"]
-
-    values = {value: F(value) for value in valuesList}
-
-    orders = ["user__last_session", "user__date_joined"]
-
-    annotations = {"full_name": Concat(
-        "user__first_name", Value(" "), "user__last_name")}
-
-    filters = ["full_name__icontains",
-               "user__username__icontains",
-               "user__email__icontains",
-               "user__id_document__icontains",
-               "user__phone_number__icontains"]
-
-    if filterOption == 1:
-        filters += ["parent_name__icontains", "phone_number_2__icontains"]
-
-    elif filterOption == 2:
-        model = Teacher
-
-    elif filterOption == 3:
-        model = Account
-        filter["type"] = "Administrador"
-        order = order[6:]
-        values = {value: F(value[6:]) for value in valuesList}
-        orders = ["last_session", "date_joined"]
-        annotations = {"full_name": Concat(
-            "first_name", Value(" "), "last_name")}
-        filters = [filter.replace("user__", "") for filter in filters]
-
-    else:
-        filter["attendances__course__date__gte"] = datetime.datetime.now()
-
-    if filterOption == 4:
-        filter["attendances__quota"] = "PAGO"
-        filter["courses__date__gte"] = datetime.datetime.now()
-
-    elif filterOption == 5:
-        filter["teacher__isnull"] = True
-        filter["courses__date__gte"] = datetime.datetime.now()
-
-    if search:
-        tags = [{
-            filter:
-            search} for filter in filters]
-
-        for tag in tags:
-            qObjects |= Q(**tag)
-
-    results = model.objects.annotate(**annotations).filter(qObjects, **filter).values(
-        **values).order_by(F(order).desc(nulls_last=True) if order in orders else order).distinct()
-
     try:
+        model = Student
+        search = " ".join(request.data.get("search").split())
+        filterOption = request.data.get("filter")
+        order = request.data.get("order")
+        filter = dict()
+        qObjects = Q()
+
+        valuesList = ["user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
+                      "user__phone_number", "user__last_session"]
+
+        values = {value: F(value) for value in valuesList}
+
+        orders = ["user__last_session", "user__date_joined"]
+
+        annotations = {"full_name": Concat(
+            "user__first_name", Value(" "), "user__last_name")}
+
+        filters = ["full_name__icontains",
+                   "user__username__icontains",
+                   "user__email__icontains",
+                   "user__id_document__icontains",
+                   "user__phone_number__icontains"]
+
+        if filterOption == 1:
+            filters += ["parent_name__icontains", "phone_number_2__icontains"]
+
+        elif filterOption == 2:
+            model = Teacher
+
+        elif filterOption == 3:
+            model = Account
+            filter["type"] = "Administrador"
+            order = order[6:]
+            values = {value: F(value[6:]) for value in valuesList}
+            orders = ["last_session", "date_joined"]
+            annotations = {"full_name": Concat(
+                "first_name", Value(" "), "last_name")}
+            filters = [filter.replace("user__", "") for filter in filters]
+
+        else:
+            filter["attendances__course__date__gte"] = datetime.datetime.now()
+
+        if filterOption == 4:
+            filter["attendances__quota"] = "PAGO"
+            filter["courses__date__gte"] = datetime.datetime.now()
+
+        elif filterOption == 5:
+            filter["teacher__isnull"] = True
+            filter["courses__date__gte"] = datetime.datetime.now()
+
+        if search:
+            tags = [{
+                filter:
+                search} for filter in filters]
+
+            for tag in tags:
+                qObjects |= Q(**tag)
+
+        results = model.objects.annotate(**annotations).filter(qObjects, **filter).values(
+            **values).order_by(F(order).desc(nulls_last=True) if order in orders else order).distinct()
+
         if filterOption == 6:
             results = getPlus(results)
 
