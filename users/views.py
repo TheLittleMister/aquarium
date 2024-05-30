@@ -127,7 +127,7 @@ def user(request):
             user.first_name = unidecode(user.first_name).upper()
             user.last_name = unidecode(user.last_name).upper()
 
-            if user.id_document and request.method == "POST":
+            if user.id_document and (not user.password or not user.has_usable_password()):
                 user.set_password(str(user.id_document))
 
             if user.type == "Estudiante":
