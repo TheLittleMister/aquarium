@@ -27,16 +27,19 @@ const DeleteProfile = (props) => {
     const tokens = getTokens();
     const dataArr = [...new FormData(e.target)];
     const dataObj = Object.fromEntries(dataArr);
-    dataObj["username"] = props.user.username;
+    // dataObj["username"] = props.user.username;
 
-    const result = await fetch(urlAPI + "users/user/", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + tokens.access,
-      },
-      body: JSON.stringify(dataObj),
-    });
+    const result = await fetch(
+      urlAPI + `users/user/?username=${props.user.username}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tokens.access,
+        },
+        // body: JSON.stringify(dataObj),
+      }
+    );
 
     const data = await result.json();
     if (result.status === 401) {
