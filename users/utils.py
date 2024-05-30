@@ -89,8 +89,7 @@ def getPlus(students):
     studentsFiltered = list()
 
     for student in students:
-        return student
-        student_user = Account.objects.get(pk=student.user__id).student
+        student_user = Account.objects.get(pk=student["user__id"]).student
 
         courseDates = []
 
@@ -116,7 +115,7 @@ def getInconsistencies(students):
     studentsFiltered = list()
 
     for student in students:
-        student_user = Account.objects.get(pk=student.user__id).student
+        student_user = Account.objects.get(pk=student["user__id"]).student
         if (
             student_user.attendances.filter(
                 quota="PAGO", recover=False, onlyday=False
@@ -133,7 +132,7 @@ def getUsersWithoutLevel(students):
     studentsFiltered = list()
 
     for student in students:
-        student_user = Account.objects.get(pk=student.user__id).student
+        student_user = Account.objects.get(pk=student["user__id"]).student
         if not student_user.levels.filter().exists():
             studentsFiltered.append(getStudentInfo(student_user))
 
@@ -165,7 +164,7 @@ def getHundredWithoutCertificate(students):
     studentsFiltered = list()
 
     for student in students:
-        student_user = Account.objects.get(pk=student.user__id).student
+        student_user = Account.objects.get(pk=student["user__id"]).student
         for level in student_user.levels.filter(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
@@ -189,7 +188,7 @@ def getNoHundredWithCertificate(students):
     studentsFiltered = list()
 
     for student in students:
-        student_user = Account.objects.get(pk=student.user__id).student
+        student_user = Account.objects.get(pk=student["user__id"]).student
         for level in student_user.levels.filter().exclude(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
