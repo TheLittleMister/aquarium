@@ -21,36 +21,45 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
+# try:
+#     pass
+# except Exception as error:
+#     print(str(error))
+
 
 # USER AUTHENTICATION
 @api_view(["GET", "POST"])
 def login(request):
+    try:
 
-    if request.method == "GET":
-        return Response(getUser(request.user))
+        if request.method == "GET":
+            return Response(getUser(request.user))
 
-    response = {"errors": list()}
-    post = request.data.copy()
-    post["username"] = str(post["username"]).strip().lower()
-    form = AuthenticationForm(data=post)
+        response = {"errors": list()}
+        post = request.data.copy()
+        post["username"] = str(post["username"]).strip().lower()
+        form = AuthenticationForm(data=post)
 
-    if form.is_valid():
-        user = form.get_user()
-        refresh = RefreshToken.for_user(user)
-        response = {
-            "user": getUser(user),
-            "tokens": {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            },
-        }
-        user.last_session = timezone.now()
-        user.save()
+        if form.is_valid():
+            user = form.get_user()
+            refresh = RefreshToken.for_user(user)
+            response = {
+                "user": getUser(user),
+                "tokens": {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+            }
+            user.last_session = timezone.now()
+            user.save()
 
-    else:
-        response["errors"] += getFormErrors(form)
+        else:
+            response["errors"] += getFormErrors(form)
 
-    return Response(response)
+        return Response(response)
+
+    except Exception as error:
+        return Response({"error": str(error)})
 
 
 @api_view(["POST"])
