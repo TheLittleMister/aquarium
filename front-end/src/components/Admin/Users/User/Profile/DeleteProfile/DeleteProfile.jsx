@@ -41,9 +41,8 @@ const DeleteProfile = (props) => {
       }
     );
 
-    console.log(data);
-
     const data = await result.json();
+    console.log(data);
     if (result.status === 401) {
       const refreshed = await refreshTokens(
         result.statusText,
