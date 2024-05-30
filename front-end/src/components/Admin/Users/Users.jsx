@@ -87,8 +87,6 @@ const Content = (props) => {
         return;
       }
 
-      console.log(data);
-
       setResultCount(data.count);
       setPaginationCount(data.paginationCount);
       setUsers(data.page);
