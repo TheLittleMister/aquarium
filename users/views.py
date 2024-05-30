@@ -256,7 +256,7 @@ def users(request):
         page = userPaginator.get_page(page_num)
 
     except Exception as error:
-        return Response({"error": type(error).__name__})
+        return Response({"error": type(error).__name__ + ": " + str(error)})
 
     return Response({
         "page": page.object_list,
