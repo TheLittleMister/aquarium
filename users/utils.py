@@ -1,3 +1,4 @@
+from .models import *
 from courses.models import *
 from django.conf import settings
 
@@ -73,6 +74,7 @@ def getTeacher(user):
 
 def getStudentInfo(student):
     return {
+        "pk": student.pk,
         "user__username": student.user.username,
         "user__id": student.user.id,
         "user__id_document": student.user.id_document,
@@ -88,9 +90,11 @@ def getPlus(students):
     studentsFiltered = list()
 
     for student in students:
+        student_user = Student.objects.get(pk=student.pk)
+
         courseDates = []
 
-        courses = student.courses.filter(
+        courses = student_user.courses.filter(
             date__gte=datetime.datetime.now() - datetime.timedelta(30)
         ).order_by("date", "start_time")
 
@@ -99,7 +103,7 @@ def getPlus(students):
             if len(courseDates) > 1:
                 timeDelta = courseDates[1] - courseDates[0]
                 if timeDelta.days < 7:
-                    studentsFiltered.append(getStudentInfo(student))
+                    studentsFiltered.append(getStudentInfo(student_user))
                 break
 
             else:
@@ -112,14 +116,15 @@ def getInconsistencies(students):
     studentsFiltered = list()
 
     for student in students:
+        student_user = Student.objects.get(pk=student.pk)
         if (
-            student.attendances.filter(
+            student_user.attendances.filter(
                 quota="PAGO", recover=False, onlyday=False
             ).count()
             % 4
             != 0
         ):
-            studentsFiltered.append(getStudentInfo(student))
+            studentsFiltered.append(getStudentInfo(student_user))
 
     return studentsFiltered
 
@@ -128,17 +133,17 @@ def getUsersWithoutLevel(students):
     studentsFiltered = list()
 
     for student in students:
-
-        if not student.levels.filter().exists():
-            studentsFiltered.append(getStudentInfo(student))
+        student_user = Student.objects.get(pk=student.pk)
+        if not student_user.levels.filter().exists():
+            studentsFiltered.append(getStudentInfo(student_user))
 
         else:
             to_append = True
-            for level in student.levels.all():
+            for level in student_user.levels.all():
                 percentage = round(
                     Attendance.objects.filter(
                         course__date__gte=level.date,
-                        student=student,
+                        student=student_user,
                         attendance=True,
                     ).count()
                     * 100
@@ -151,7 +156,7 @@ def getUsersWithoutLevel(students):
                     break
 
             if to_append:
-                studentsFiltered.append(getStudentInfo(student))
+                studentsFiltered.append(getStudentInfo(student_user))
 
     return studentsFiltered
 
@@ -160,11 +165,12 @@ def getHundredWithoutCertificate(students):
     studentsFiltered = list()
 
     for student in students:
-        for level in student.levels.filter(certificate_img=""):
+        student_user = Student.objects.get(pk=student.pk)
+        for level in student_user.levels.filter(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
                     course__date__gte=level.date,
-                    student=student,
+                    student=student_user,
                     attendance=True,
                 ).count()
                 * 100
@@ -173,7 +179,7 @@ def getHundredWithoutCertificate(students):
             )
 
             if percentage >= 100:
-                studentsFiltered.append(getStudentInfo(student))
+                studentsFiltered.append(getStudentInfo(student_user))
                 break
 
     return studentsFiltered
@@ -183,11 +189,12 @@ def getNoHundredWithCertificate(students):
     studentsFiltered = list()
 
     for student in students:
-        for level in student.levels.filter().exclude(certificate_img=""):
+        student_user = Student.objects.get(pk=student.pk)
+        for level in student_user.levels.filter().exclude(certificate_img=""):
             percentage = round(
                 Attendance.objects.filter(
                     course__date__gte=level.date,
-                    student=student,
+                    student=student_user,
                     attendance=True,
                 ).count()
                 * 100
@@ -196,7 +203,7 @@ def getNoHundredWithCertificate(students):
             )
 
             if percentage < 100:
-                studentsFiltered.append(getStudentInfo(student))
+                studentsFiltered.append(getStudentInfo(student_user))
                 break
 
     return studentsFiltered

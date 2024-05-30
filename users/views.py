@@ -181,7 +181,7 @@ def users(request):
     filter = dict()
     qObjects = Q()
 
-    valuesList = ["user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
+    valuesList = ["pk", "user__username", "user__id", "user__id_document", "user__first_name", "user__last_name",
                   "user__phone_number", "user__last_session"]
 
     values = {value: F(value) for value in valuesList}
