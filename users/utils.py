@@ -89,6 +89,7 @@ def getPlus(students):
     studentsFiltered = list()
 
     for student in students:
+        return student
         student_user = Account.objects.get(pk=student.user__id).student
 
         courseDates = []
