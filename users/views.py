@@ -250,12 +250,13 @@ def users(request):
 
         elif filterOption == 10:
             results = getNoHundredWithCertificate(results)
+
+        userPaginator = Paginator(list(results), 14)
+        page_num = request.data.get("page")
+        page = userPaginator.get_page(page_num)
+
     except Exception as error:
         return Response({"error": error})
-
-    userPaginator = Paginator(list(results), 14)
-    page_num = request.data.get("page")
-    page = userPaginator.get_page(page_num)
 
     return Response({
         "page": page.object_list,
