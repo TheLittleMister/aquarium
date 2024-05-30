@@ -40,8 +40,6 @@ const Content = () => {
     const data = await result.json();
     if (!result.ok) throw new Error("Something went wrong! 🍰");
 
-    console.log(data);
-
     if (data.detail || (data.errors && data.errors.length > 0)) {
       setMessages(data.errors || [data.detail]);
       setCollapseOpen(true);

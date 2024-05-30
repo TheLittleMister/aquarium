@@ -15,7 +15,7 @@ class AuthBackend(object):
                 user = Account.objects.get(
                     Q(username=username) | Q(email=username))
 
-        except User.DoesNotExist:
+        except Account.DoesNotExist:
             return None
 
         return user if user.check_password(password) else None
@@ -23,5 +23,5 @@ class AuthBackend(object):
     def get_user(self, user_id):
         try:
             return Account.objects.get(pk=user_id)
-        except User.DoesNotExist:
+        except Account.DoesNotExist:
             return None
