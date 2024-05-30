@@ -37,7 +37,7 @@ const DeleteProfile = (props) => {
           "Content-Type": "application/json",
           Authorization: "Bearer " + tokens.access,
         },
-        // body: JSON.stringify(dataObj),
+        body: JSON.stringify(dataObj),
       }
     );
 
