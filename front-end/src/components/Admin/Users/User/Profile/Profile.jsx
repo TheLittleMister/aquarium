@@ -201,7 +201,7 @@ const Profile = (props) => {
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`https://api.whatsapp.com/send?phone=57${props.user.phoneNumber2.slice(
+                      href={`https://api.whatsapp.com/send?phone=${props.user.phoneNumber2.slice(
                         1
                       )}`}
                       target="_blank"
