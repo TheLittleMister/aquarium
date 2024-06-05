@@ -50,10 +50,10 @@ Front-End: **React JS**
 7. Migrations and Run server:
 
    - Inside the project folder (Project root):
-     - 1. Make Database migrations: ```python manage.py makemigrations <app>```
-     - 2. Migrate: ```python manage.py migrate <app>```
-     - 3. Run server: ```python manage.py runserver```
-     - 4. If you want to change server port: ```python manage.py runserver <your backend port>``` _e.g_ ```python manage.py runserver 8080```
+     - 1. Make Database migrations: `python manage.py makemigrations <app>`
+     - 2. Migrate: `python manage.py migrate <app>`
+     - 3. Run server: `python manage.py runserver`
+     - 4. If you want to change server port: `python manage.py runserver <your backend port>` _e.g_ `python manage.py runserver 8080`
 
 8. To see the changes made before pull request:
 
