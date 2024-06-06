@@ -24,11 +24,11 @@ import StatisticsChart from "./StatisticsChart/StatisticsChart";
 const Statistics = () => {
   const authCtx = useContext(AuthContext);
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // const tomorrow = new Date();
+  // tomorrow.setDate(tomorrow.getDate() + 1);
 
   const [data, setData] = useState({ dates: [], students_count: [] });
-  const [date, setDate] = useState(tomorrow);
+  const [date, setDate] = useState(new Date());
   const [lastN, setLastN] = useState(30);
 
   useEffect(() => {
