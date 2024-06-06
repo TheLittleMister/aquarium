@@ -11,9 +11,9 @@ import {
 } from "@mui/material";
 import { AuthContext } from "../../../context/AuthContext";
 import {
-  completeDate,
   getTokens,
   refreshTokens,
+  shortDate,
   urlAPI,
 } from "../../../utils/utils";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -61,7 +61,7 @@ const Statistics = () => {
       }
 
       data.dates.forEach(
-        (item, index) => (data.dates[index] = completeDate(item))
+        (item, index) => (data.dates[index] = shortDate(item))
       );
 
       setData(data);
