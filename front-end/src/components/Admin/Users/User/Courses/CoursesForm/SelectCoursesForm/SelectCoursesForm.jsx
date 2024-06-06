@@ -9,10 +9,15 @@ import {
 } from "../../../../../../../utils/utils";
 import { AuthContext } from "../../../../../../../context/AuthContext";
 
-const SelectCoursesForm = ({ dates, username, setReload, setOpen }) => {
+const SelectCoursesForm = ({
+  courses,
+  setCourses,
+  dates,
+  username,
+  setReload,
+  setOpen,
+}) => {
   const authCtx = useContext(AuthContext);
-  const defaultDates = dates.filter((date) => date.default);
-  const [courses, setCourses] = useState(defaultDates);
 
   // FORM STATES
   const [messages, setMessages] = useState([]);
@@ -80,8 +85,8 @@ const SelectCoursesForm = ({ dates, username, setReload, setOpen }) => {
         getOptionLabel={(date) => date.date}
         disableCloseOnSelect
         filterSelectedOptions
-        isOptionEqualToValue={(option, value) => option.date === value.date}
-        defaultValue={defaultDates}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        value={courses}
         onChange={(event, value) => setCourses(value)}
         renderInput={(params) => (
           <TextField

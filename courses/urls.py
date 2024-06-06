@@ -20,4 +20,7 @@ urlpatterns = [
     # SCHEDULES
     path("schedules/", schedules, name="schedules"),
     path("schedulesInfo/", schedulesInfo, name="schedulesInfo"),
+
+    # STATISTICS
+    path("statistics/", statistics, name="statistics"),
 ]

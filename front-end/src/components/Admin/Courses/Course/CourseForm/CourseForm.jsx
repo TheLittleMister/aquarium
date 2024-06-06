@@ -186,7 +186,7 @@ const CourseForm = (props) => {
             getOptionLabel={(user) => user.name}
             disableCloseOnSelect
             filterSelectedOptions
-            isOptionEqualToValue={(option, value) => option.name === value.name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             defaultValue={students.filter((user) => user.default)}
             onChange={(event, value) => setUsers(value)}
             renderInput={(params) => (

@@ -8,12 +8,14 @@ import Profile from "./Profile/Profile";
 import Courses from "./Courses/Courses";
 import Levels from "./Levels/Levels";
 import Schedules from "./Schedules/Schedules";
+import Statistics from "./Statistics/Statistics";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import GroupsIcon from "@mui/icons-material/Groups";
 import PoolIcon from "@mui/icons-material/Pool";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import InsightsIcon from "@mui/icons-material/Insights";
 
 const Admin = () => {
   const authCtx = useContext(AuthContext);
@@ -42,6 +44,14 @@ const Admin = () => {
         label: "Clases",
       },
       link: "/admin/courses",
+    },
+    {
+      options: {
+        icon: <InsightsIcon />,
+        iconPosition: "top",
+        label: "Estadísticas",
+      },
+      link: "/admin/statistics",
     },
     {
       options: {
@@ -94,9 +104,17 @@ const Admin = () => {
         }
       />
       <Route
-        path="levels/*"
+        path="statistics/"
         element={
           <Panel tab={3} {...panelOptions}>
+            <Statistics />
+          </Panel>
+        }
+      />
+      <Route
+        path="levels/*"
+        element={
+          <Panel tab={4} {...panelOptions}>
             <Levels />
           </Panel>
         }
@@ -104,7 +122,7 @@ const Admin = () => {
       <Route
         path="schedules/"
         element={
-          <Panel tab={4} {...panelOptions}>
+          <Panel tab={5} {...panelOptions}>
             <Schedules />
           </Panel>
         }

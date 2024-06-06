@@ -89,7 +89,7 @@ const Content = (props) => {
         <Box sx={{ width: "25rem" }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
-              name="date_birth"
+              name="courses_date"
               inputFormat="dd/MM/yyyy"
               label="Buscar Clases "
               value={search}

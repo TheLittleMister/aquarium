@@ -21,6 +21,7 @@ const CoursesForm = (props) => {
   const authCtx = useContext(AuthContext);
   const [dates, setDates] = useState([]);
   const [ready, setReady] = useState(false);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const getCourses = async () => {
@@ -48,9 +49,9 @@ const CoursesForm = (props) => {
         return;
       }
 
-      setDates(
-        data.courses.map((item, index, arr) => {
-          return {
+      const { dates, courses } = data.courses.reduce(
+        (acc, item) => {
+          const course = {
             date: (
               `${item.count} - ` +
               completeDate(item.date) +
@@ -62,8 +63,16 @@ const CoursesForm = (props) => {
             default: item.default,
             id: item.id,
           };
-        })
+
+          acc.dates.push(course);
+          if (item.default) acc.courses.push(course);
+          return acc;
+        },
+        { dates: [], courses: [] }
       );
+
+      setDates(dates);
+      setCourses(courses);
 
       setReady(true);
     };
@@ -78,6 +87,8 @@ const CoursesForm = (props) => {
       <br />
       {ready ? (
         <SelectCoursesForm
+          setCourses={setCourses}
+          courses={courses}
           dates={dates}
           setReload={props.setReload}
           username={params.username}

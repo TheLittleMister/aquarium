@@ -390,3 +390,25 @@ def schedulesInfo(request):
     }
 
     return Response(response)
+
+# STATISTICS
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def statistics(request):
+    response = { "dates": list(), "students_count": list() }
+    filter = dict()
+    date = request.data.get("date")
+    lastN = int(request.data.get("lastN"))
+
+    filter["date__lte"] = date.split("T")[0]
+
+    data = Course.objects.filter(**filter).annotate(
+        count=Count("students")).values(
+            "date",
+            "count"
+        )[:lastN]
+    
+    response["dates"] = list(data.values_list("date", flat=True))
+    response["students_count"] = list(data.values_list("count", flat=True))
+
+    return Response(response)
