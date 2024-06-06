@@ -24,11 +24,11 @@ import StatisticsChart from "./StatisticsChart/StatisticsChart";
 const Statistics = () => {
   const authCtx = useContext(AuthContext);
 
-  // const tomorrow = new Date();
+  const tomorrow = new Date();
   // tomorrow.setDate(tomorrow.getDate() + 1);
 
   const [data, setData] = useState({ dates: [], students_count: [] });
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(tomorrow);
   const [lastN, setLastN] = useState(30);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const Statistics = () => {
               inputFormat="dd/MM/yyyy"
               label="Hasta la fecha"
               value={date}
-              maxDate={date}
+              maxDate={tomorrow}
               onChange={(newValue) => {
                 setDate(newValue);
               }}
