@@ -112,7 +112,7 @@ const Statistics = () => {
               inputFormat="dd/MM/yyyy"
               label="Hasta la fecha"
               value={date}
-              maxDate={tomorrow}
+              maxDate={date}
               onChange={(newValue) => {
                 setDate(newValue);
               }}
