@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import { AuthContext } from "../../../context/AuthContext";
 import {
+  completeDate,
   getTokens,
-  prettyDate,
   refreshTokens,
   urlAPI,
 } from "../../../utils/utils";
@@ -61,7 +61,7 @@ const Statistics = () => {
       }
 
       data.dates.forEach(
-        (item, index) => (data.dates[index] = prettyDate(item))
+        (item, index) => (data.dates[index] = completeDate(item))
       );
 
       setData(data);
