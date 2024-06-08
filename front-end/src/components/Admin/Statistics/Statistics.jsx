@@ -64,7 +64,7 @@ const Statistics = () => {
       data.dates.forEach(
         (item, index) =>
           (data.dates[index] =
-            shortDate(item) + " " + getHour(data.start_time[index]))
+            shortDate(item) + " " + getHour(data.start_times[index]))
       );
 
       setData(data);
