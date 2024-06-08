@@ -398,7 +398,7 @@ def statistics(request):
     response = { "dates": list(), "students_count": list() }
     filter = dict()
     date = request.data.get("date")
-    lastN = int(request.data.get("lastN")) if int(request.data.get("lastN")) != 0 else None
+    lastN = int(request.data.get("lastN"))
 
     filter["date__lte"] = date.split("T")[0]
     filter["attendances__attendance"] = True
@@ -409,7 +409,10 @@ def statistics(request):
         'date',
         'count'
         'start_time'
-    ).order_by('-date')[:lastN]
+    ).order_by('-date')
+
+    if lastN != 0:
+        data = data[:lastN]
 
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["students_count"] = list(data.values_list("count", flat=True))[::-1]
