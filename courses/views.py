@@ -409,7 +409,7 @@ def statistics(request):
         'date',
         'count',
         'start_time'
-    ).order_by('-date')[:lastN]
+    ).order_by('-date', 'start_time')[:lastN]
 
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["start_times"] = list(data.values_list("start_time", flat=True))[::-1]
