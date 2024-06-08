@@ -29,7 +29,7 @@ const Statistics = () => {
 
   const [data, setData] = useState({ dates: [], students_count: [] });
   const [date, setDate] = useState(tomorrow);
-  const [lastN, setLastN] = useState(30);
+  const [lastN, setLastN] = useState(480);
 
   useEffect(() => {
     const getStatistics = async () => {
@@ -102,6 +102,9 @@ const Statistics = () => {
             </MenuItem>
             <MenuItem value={240}>
               <Text>240</Text>
+            </MenuItem>
+            <MenuItem value={480}>
+              <Text>480</Text>
             </MenuItem>
           </Select>
         </FormControl>
