@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { AuthContext } from "../../../context/AuthContext";
 import {
+  getHour,
   getTokens,
   refreshTokens,
   shortDate,
@@ -61,7 +62,9 @@ const Statistics = () => {
       }
 
       data.dates.forEach(
-        (item, index) => (data.dates[index] = shortDate(item))
+        (item, index) =>
+          (data.dates[index] =
+            shortDate(item) + " " + getHour(data.start_time[index]))
       );
 
       setData(data);
@@ -91,6 +94,9 @@ const Statistics = () => {
             onChange={(e) => setLastN(e.target.value)}
             sx={{ backgroundColor: "transparent" }}
           >
+            <MenuItem value={0}>
+              <Text>TODO</Text>
+            </MenuItem>
             <MenuItem value={30}>
               <Text>30</Text>
             </MenuItem>

@@ -69,13 +69,15 @@ export const completeDate = (time) =>
     .toUpperCase();
 
 export const shortDate = (time) =>
-  new Date(time + " 00:00").toLocaleDateString("es-ES", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "America/Bogota",
-  });
+  new Date(time + " 00:00")
+    .toLocaleDateString("es-ES", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "America/Bogota",
+    })
+    .toUpperCase();
 
 export const refreshTokens = async (statusText, refresh, setUser = null) => {
   // if (statusText !== "Unauthorized") return false;
