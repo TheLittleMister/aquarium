@@ -408,7 +408,7 @@ def statistics(request):
     ).values(
         'date',
         'count'
-    ).order_by('-date')
+    ).order_by('-date')[:lastN]
 
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["students_count"] = list(data.values_list("count", flat=True))[::-1]
