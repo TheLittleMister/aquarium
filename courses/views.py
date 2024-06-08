@@ -401,7 +401,7 @@ def statistics(request):
     lastN = int(request.data.get("lastN"))
 
     filter["date__lte"] = date.split("T")[0]
-    # filter["attendances__attendance"] = True
+    filter["attendances__attendance"] = True
 
     data = Course.objects.filter(**filter).annotate(
         count=Count('attendances', filter=Q(attendances__attendance=True))
