@@ -1,4 +1,4 @@
-from django.db.models import Count, Exists, OuterRef
+from django.db.models import Count, Exists, OuterRef, Q
 import datetime
 from django.core.paginator import Paginator
 
@@ -401,13 +401,15 @@ def statistics(request):
     lastN = int(request.data.get("lastN"))
 
     filter["date__lte"] = date.split("T")[0]
+    # filter["attendances__attendance"] = True
 
     data = Course.objects.filter(**filter).annotate(
-        count=Count("students")).values(
-            "date",
-            "count"
-        ).order_by("-date")[:lastN]
-    
+        count=Count('attendances', filter=Q(attendances__attendance=True))
+    ).values(
+        'date',
+        'count'
+    ).order_by('-date')
+
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["students_count"] = list(data.values_list("count", flat=True))[::-1]
 
