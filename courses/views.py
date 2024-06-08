@@ -409,10 +409,7 @@ def statistics(request):
         'date',
         'count'
         'start_time'
-    ).order_by('-date')
-
-    if lastN != 0:
-        data = data[:lastN]
+    ).order_by('-date')[:lastN]
 
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["students_count"] = list(data.values_list("count", flat=True))[::-1]
