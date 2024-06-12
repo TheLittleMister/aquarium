@@ -397,10 +397,12 @@ def schedulesInfo(request):
 def statistics(request):
     response = { "dates": list(), "students_count": list() }
     filter = dict()
-    date = request.data.get("date")
-    lastN = int(request.data.get("lastN")) if int(request.data.get("lastN")) != 0 else None
+    from_date = request.data.get("fromDate")
+    to_date = request.data.get("toDate")
+    # lastN = int(request.data.get("lastN")) if int(request.data.get("lastN")) != 0 else None
 
-    filter["date__lte"] = date.split("T")[0]
+    filter["date__gte"] = from_date.split("T")[0]
+    filter["date__lte"] = to_date.split("T")[0]
     filter["attendances__attendance"] = True
 
     data = Course.objects.filter(**filter).annotate(
@@ -409,7 +411,8 @@ def statistics(request):
         'date',
         'count',
         'start_time'
-    ).order_by('-date', '-start_time')[:lastN]
+    ).order_by('-date', '-start_time')
+    # [:lastN]
 
     response["dates"] = list(data.values_list("date", flat=True))[::-1]
     response["start_times"] = list(data.values_list("start_time", flat=True))[::-1]

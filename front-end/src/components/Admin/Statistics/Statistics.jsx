@@ -1,14 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Stack,
-  TextField,
-  Typography as Text,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Box, Stack, TextField } from "@mui/material";
 import { AuthContext } from "../../../context/AuthContext";
 import {
   getHour,
@@ -19,7 +10,6 @@ import {
 } from "../../../utils/utils";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
 import StatisticsChart from "./StatisticsChart/StatisticsChart";
 
 const Statistics = () => {
@@ -27,10 +17,13 @@ const Statistics = () => {
 
   const tomorrow = new Date();
   // tomorrow.setDate(tomorrow.getDate() + 1);
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
   const [data, setData] = useState({ dates: [], students_count: [] });
-  const [date, setDate] = useState(tomorrow);
-  const [lastN, setLastN] = useState(480);
+  const [fromDate, setFromDate] = useState(oneMonthAgo);
+  const [toDate, setToDate] = useState(tomorrow);
+  // const [lastN, setLastN] = useState(480);
 
   useEffect(() => {
     const getStatistics = async () => {
@@ -43,8 +36,9 @@ const Statistics = () => {
           Authorization: "Bearer " + tokens.access,
         },
         body: JSON.stringify({
-          date,
-          lastN,
+          fromDate,
+          toDate,
+          // lastN,
         }),
       });
 
@@ -71,7 +65,7 @@ const Statistics = () => {
     };
 
     getStatistics();
-  }, [date, lastN, authCtx.setUser]);
+  }, [fromDate, toDate, authCtx.setUser]);
 
   return (
     <Box>
@@ -83,7 +77,7 @@ const Statistics = () => {
         p={2}
         gap={1}
       >
-        <FormControl variant="filled" sx={{ m: 1, minWidth: 150 }}>
+        {/* <FormControl variant="filled" sx={{ m: 1, minWidth: 150 }}>
           <InputLabel id="lastN-select-small">Número de cursos</InputLabel>
           <Select
             labelId="lastN-select-small"
@@ -113,17 +107,32 @@ const Statistics = () => {
               <Text>480</Text>
             </MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
+        <Box sx={{ width: "25rem" }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              name="statistics_date"
+              inputFormat="dd/MM/yyyy"
+              label="Desde la fecha"
+              value={fromDate}
+              maxDate={tomorrow}
+              onChange={(newValue) => {
+                setFromDate(newValue);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        </Box>
         <Box sx={{ width: "25rem" }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               name="statistics_date"
               inputFormat="dd/MM/yyyy"
               label="Hasta la fecha"
-              value={date}
+              value={toDate}
               maxDate={tomorrow}
               onChange={(newValue) => {
-                setDate(newValue);
+                setToDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} />}
             />
